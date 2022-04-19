@@ -3,6 +3,6 @@ export const Distance = ({leg})=>{
 
     return(<>
     <h1>{leg.distance.value*3/5000} Miles</h1>
-    <h1>{leg.duration.value / 60}</h1>
+    <h1>{leg.duration.value / 60} Minutes</h1>
     </>)
 }

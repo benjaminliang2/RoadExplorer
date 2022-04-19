@@ -1,10 +1,14 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
-import {StartPlaces, EndPlaces} from "./places"
+import {SearchPlaces} from "./places"
 import {Distance} from "./distance"
+import { Businesses} from "./BusinessesResults/businesses"
+import { RouteView } from "./RouteView/Route_View";
 import "./styles.css"
 /*global google*/
 const libraries = ["places"]
+
+
 export const Map = ()=>{
 
   const {isLoaded} = useLoadScript({
@@ -24,15 +28,18 @@ export const Map = ()=>{
 
   const [start, setStart] = useState(null)
   const [end, setEnd] = useState(null)
-  const [coordinatesOfInterest, setCoordinatesOfInterest] = useState([])
+  const [yelpSearchPoints, setYelpSearchPoints] = useState([])
   const [directions, setDirections] = useState(null)
   const [hikes, setHikes] = useState([])
   const [markers, setMarkers] = useState([])
+  const [googleWaypoints, setGoogleWaypoints] = useState([])
+  const [waypoints, setWaypoints] = useState([])
   // const [milesDriven, setMilesDriven] = useState(0)
   
 useEffect(()=>{
   getNearbyHikes()
-},[coordinatesOfInterest])
+  console.log(yelpSearchPoints)
+},[yelpSearchPoints])
 
 useEffect(()=>{
   generateCoordinatesBetweenStartEnd()
@@ -41,6 +48,18 @@ useEffect(()=>{
 useEffect(()=>{
   showHikes()
 },[hikes])
+
+useEffect(()=>{
+  fetchDirections()
+},[googleWaypoints])
+
+useEffect(()=>{ 
+  const temp= []
+  waypoints?.map((waypoint) => {
+    temp.push({location: {lat: waypoint.coordinates.latitude, lng: waypoint.coordinates.longitude}})
+  })
+  setGoogleWaypoints(temp)
+}, [waypoints])
 
   // const onMapClick = useCallback((event)=>{
   //   setMarkers((prevState) => [...prevState, 
@@ -54,7 +73,7 @@ useEffect(()=>{
 
   const showHikes = ()=>{
     if(hikes.length === 0 ){
-      console.log("hikes array ios empty.")
+      console.log("hikes array is empty.")
     }
     hikes.map((hike)=>{
       setMarkers((prevState) =>[...prevState,
@@ -79,8 +98,9 @@ useEffect(()=>{
 
   const getNearbyHikes = async ()=>{
     console.log("get nearby hikes")
-    coordinatesOfInterest.forEach(async (coordinate) =>{
-      const {lat, lng} = coordinate
+    console.log(yelpSearchPoints)
+    yelpSearchPoints.forEach(async (point) =>{
+      const {lat, lng} = point.coordinates
       await fetch ('http://localhost:5000/' + lat + "/" + lng)
       .then(res => {
           // console.log(res)
@@ -99,14 +119,16 @@ useEffect(()=>{
 
   const fetchDirections = ()=>{  
     if(!start || !end) return     
-    
-    setCoordinatesOfInterest((coordinatesOfInterest) => [...coordinatesOfInterest, start, end ] )
+
+    setYelpSearchPoints((prevState) => [...prevState, start, end ] )
     const service = new google.maps.DirectionsService();
     service.route(
       {
-        origin: start,
-        destination: end,
+        origin: start.coordinates,
+        destination: end.coordinates,
         travelMode: google.maps.TravelMode.DRIVING,
+        // waypoints: googleWaypoints,
+        // optimizeWaypoints: true
       },
       (result, status) => {
         if (status === "OK" && result) {
@@ -124,7 +146,6 @@ useEffect(()=>{
   
     if(directions){
       let miles = 0
-      let distanceTraveled = 0
       let midpoints = []
       //70000meters < 50 miles. 
       const diameter = 70000
@@ -144,7 +165,7 @@ useEffect(()=>{
               // console.log("prevRemainder =" + prevRemainingStepMiles)
               // console.log(steps[i].path.length +'...' + pathIndex)
               
-              midpoints.push(steps[i].path[Math.floor(pathIndex)].toJSON())
+              midpoints.push({coordinates:steps[i].path[Math.floor(pathIndex)].toJSON()})
               miles -= diameter;
               count +=1
 
@@ -152,49 +173,79 @@ useEffect(()=>{
         }
         count = 1;
       }
-      setCoordinatesOfInterest((coordinatesOfInterest) => [...coordinatesOfInterest, ...midpoints] )
+      setYelpSearchPoints((intermediatePoints) => [...intermediatePoints, ...midpoints] )
 
 // DEBUGGER:set markers below will show the COORD or coordinates of interest between start and end 
       // setMarkers((prevState) =>[...prevState, ...midpoints])
       // console.log(midpoints.length)
-
-
-      
-      // console.log(directions.routes[0].legs[0].steps[6].path.length)
-      // console.log(directions.routes[0].legs[0].steps[6].distance.value)
-      // console.log(directions.routes[0].legs[0].steps[6].instructions)
-      // console.log(directions.routes[0].legs[0].steps[5].path[23].toJSON())
     }
+  }
 
-
-
+const addToTrip=(isChecked, coordinates, title, yelpID)=>{
+  if(isChecked){
+    setWaypoints((waypoints)=>[...waypoints, {name:title, yelp_id:yelpID, coordinates:coordinates}])
+  } else if(!isChecked){
+    const newWaypoints = (yelpID)=>{
+      waypoints.filter((waypoint)=>waypoint.yelp_id !== yelpID)
+    }
+    setWaypoints(newWaypoints)
   }
 
 
+  // setGoogleWaypoints((waypoints) =>[...waypoints, {location: {lat: coordinates.latitude, lng: coordinates.longitude}}]);  
+}
+
+ 
   if(!isLoaded) return <div>Loading...</div>
   
     return<>
     
     <div className="container">
       <div className="controls">
-        <h1>Commute Controls</h1>
-        <StartPlaces
-           setStart = {setStart}
-        />
-        <EndPlaces
-          setEnd = {setEnd}
+        <h1>Route Controls</h1>
+        
+        <SearchPlaces
+
+        setStart={setStart}
+        setEnd={setEnd}
         />
         <button onClick={fetchDirections}> Fetch  directions </button>
         <button onClick={showHikes}> Show Hikes </button>
-      </div>
-
-
-      {directions && (
+        {directions && (
         <>
         {/* the routes array is multiple different ways to travel from A to B */}
         <Distance leg={directions.routes[0].legs[0]}/>
         </>
-      )}
+        )}
+          <h4>Route Detail View</h4>
+
+        {(directions && 
+          <RouteView
+            start={start}
+            end={end}
+            waypoints = {waypoints}
+
+          />)}
+      </div>
+
+      {hikes.length>0 && (
+          <Businesses
+            img = {hikes[0].image_url}
+            title = {hikes[0].name}
+            location = {hikes[0].location.address1}
+            description = {hikes[0].categories[0].title}
+            star = {hikes[0].rating}
+            reviewCount = {hikes[0].review_count}
+            addToTrip = {addToTrip}
+            coordinates= {hikes[0].coordinates}
+            yelpID = {hikes[0].id}
+            
+
+          />
+        )}
+
+
+      
 
 
       <div className="map">
@@ -220,17 +271,6 @@ useEffect(()=>{
           />
           </>
         )}
-
-{/* 
-        {office && (
-          <>
-          <Marker position= {office}/>
-          <Circle center={office} radius={10000} options={closeOptions}/>
-          <Circle center={office} radius={30000} options={middleOptions}/>
-          <Circle center={office} radius={45000} options={farOptions}/>
-
-          </>
-        )} */}
         
 
         {markers.map(marker =>
@@ -252,33 +292,3 @@ useEffect(()=>{
 
   </>
 }
-
-const defaultOptions = {
-  strokeOpacity: 0.5,
-  strokeWeight: 2,
-  clickable: false,
-  draggable: false,
-  editable: false,
-  visible: true,
-};
-const closeOptions = {
-  ...defaultOptions,
-  zIndex: 3,
-  fillOpacity: 0.05,
-  strokeColor: "#8BC34A",
-  fillColor: "#8BC34A",
-};
-const middleOptions = {
-  ...defaultOptions,
-  zIndex: 2,
-  fillOpacity: 0.05,
-  strokeColor: "#FBC02D",
-  fillColor: "#FBC02D",
-};
-const farOptions = {
-  ...defaultOptions,
-  zIndex: 1,
-  fillOpacity: 0.05,
-  strokeColor: "#FF5252",
-  fillColor: "#FF5252",
-};

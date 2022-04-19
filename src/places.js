@@ -12,14 +12,18 @@ export const StartPlaces = ({setStart})=>{
         clearSuggestions();
 
         const results = await getGeocode({address: val});
+        // console.log(results[0])
         const {lat, lng} = await getLatLng(results[0])
-        setStart({lat, lng})
+        setStart({
+            coordinates: {lat, lng},
+            name: val
+        })
     }
 
     return<>
         <h4>Enter Starting Location</h4>
         <Combobox onSelect={handleSelect}>
-            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Location"/>
+            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Location" disabled={!ready}/>
             <ComboboxPopover>
                 <ComboboxList>
                     {status === "OK" && data.map(({place_id, description}) =><ComboboxOption key={place_id} value={description}/>)}
@@ -35,17 +39,22 @@ export const EndPlaces = ({setEnd})=>{
         
         setValue(val, false);
         clearSuggestions();
-
         const results = await getGeocode({address: val});
+        // console.log(results[0])
         const {lat, lng} = await getLatLng(results[0])
-        setEnd({lat, lng})
+        setEnd({
+            coordinates: {lat, lng},
+            name: val
+
+        })
+            
     }
 
     return<>
         <h4>Enter Ending Location</h4>
 
         <Combobox onSelect={handleSelect}>
-            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Location"/>
+            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Location" disabled={!ready}/>
             <ComboboxPopover>
                 <ComboboxList>
                     {status === "OK" && data.map(({place_id, description}) =><ComboboxOption key={place_id} value={description}/>)}
@@ -55,9 +64,9 @@ export const EndPlaces = ({setEnd})=>{
     </>
 }
 
-// export const SearchPlaces = ({setEnd, setStart})=>{
-//     return(<>
-//         <StartPlaces setStart = {setStart}/>
-//         <EndPlaces setEnd = {setEnd}/>
-//     </>)
-// }
+export const SearchPlaces = ({setEnd, setStart})=>{
+    return(<>
+        <StartPlaces setStart = {setStart}/>
+        <EndPlaces setEnd = {setEnd}/>
+    </>)
+}
