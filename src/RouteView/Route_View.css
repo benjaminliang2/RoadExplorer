@@ -1,0 +1,19 @@
+.waypoint {
+    display: flex;
+    /* position: relative; */
+    margin: 20px;
+    padding: 20px;
+    border-bottom: 1px solid lightgray;
+    cursor: pointer;
+  }
+
+.waypoint:hover {
+    opacity: 0.8;
+}
+
+.waypoint img {
+    height: 60px;
+    width: 60px;
+    border-radius: 10px;
+
+}

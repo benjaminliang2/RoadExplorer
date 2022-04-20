@@ -21,7 +21,7 @@ app.get("/:lat/:lng", (req, res) => {
       lat+
       '&longitude='+
       lng+
-      '&limit=3&sort_by=review_count',
+      '&limit=1&sort_by=review_count',
       headers: { 
         'Authorization': process.env.YELP_API
       }

@@ -1,0 +1,21 @@
+
+.businessesColumn {
+    padding: 20px;
+    width: 50%;
+  }
+
+.businessesColumn > p {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.businessesColumn > h1 {
+    margin-bottom: 30px;
+}
+
+.businessesColumn > button {
+    border-radius: 30px;
+    text-transform: inherit;
+    margin: 5px;
+  }
+  

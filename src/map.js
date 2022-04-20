@@ -38,7 +38,7 @@ export const Map = ()=>{
   
 useEffect(()=>{
   getNearbyHikes()
-  console.log(yelpSearchPoints)
+  // console.log(yelpSearchPoints)
 },[yelpSearchPoints])
 
 useEffect(()=>{
@@ -183,11 +183,10 @@ useEffect(()=>{
 
 const addToTrip=(isChecked, coordinates, title, yelpID)=>{
   if(isChecked){
+    console.log(waypoints)
     setWaypoints((waypoints)=>[...waypoints, {name:title, yelp_id:yelpID, coordinates:coordinates}])
   } else if(!isChecked){
-    const newWaypoints = (yelpID)=>{
-      waypoints.filter((waypoint)=>waypoint.yelp_id !== yelpID)
-    }
+    const newWaypoints = waypoints.filter((waypoint)=>waypoint.yelp_id !== yelpID)
     setWaypoints(newWaypoints)
   }
 
