@@ -1,8 +1,8 @@
-import {Map} from "./map"
+import {MapComponent} from "./map"
 
 function App() {
   return (<>
-    <Map/>
+    <MapComponent/>
 
   </>
   );

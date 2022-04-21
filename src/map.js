@@ -9,7 +9,7 @@ import "./styles.css"
 const libraries = ["places"]
 
 
-export const Map = ()=>{
+export const MapComponent = ()=>{
 
   const {isLoaded} = useLoadScript({
     googleMapsApiKey:process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -42,11 +42,24 @@ useEffect(()=>{
 },[yelpSearchPoints])
 
 useEffect(()=>{
+  //if user changes origin or destination, then reset everything. 
+  setYelpSearchPoints([start, end ])
+  setHikes([])
+  setMarkers([])
+  setWaypoints([])
+  setGoogleWaypoints([])
+
+  console.log(yelpSearchPoints)
+
+},[start, end])
+
+useEffect(()=>{
   generateCoordinatesBetweenStartEnd()
 }, [directions])
 
 useEffect(()=>{
-  showHikes()
+  // showHikes()
+  console.log(hikes)
 },[hikes])
 
 useEffect(()=>{
@@ -60,6 +73,10 @@ useEffect(()=>{
   })
   setGoogleWaypoints(temp)
 }, [waypoints])
+
+// useEffect(()=>{
+//   console.log("markers length = " + markers.length)
+// }, [markers])
 
   // const onMapClick = useCallback((event)=>{
   //   setMarkers((prevState) => [...prevState, 
@@ -75,6 +92,7 @@ useEffect(()=>{
     if(hikes.length === 0 ){
       console.log("hikes array is empty.")
     }
+    console.log(hikes.length)
     hikes.map((hike)=>{
       setMarkers((prevState) =>[...prevState,
         {
@@ -99,7 +117,9 @@ useEffect(()=>{
   const getNearbyHikes = async ()=>{
     console.log("get nearby hikes")
     console.log(yelpSearchPoints)
+    var tempStorage = [];
     yelpSearchPoints.forEach(async (point) =>{
+      tempStorage.push(1)
       const {lat, lng} = point.coordinates
       await fetch ('http://localhost:5000/' + lat + "/" + lng)
       .then(res => {
@@ -107,20 +127,36 @@ useEffect(()=>{
           return (res.json())
       })
       .then(res => {
-          // console.log(hikes)
-          setHikes((hikes) => [...hikes, ...res.businesses])
-          // setHikes({hikes: [...hikes, ...res.businesses]}, ()=>{ console.log(hikes)})
-  
+          
+          // tempStorage.push(...res.businesses) 
+          checkForDuplicateBusiness(res.businesses)
+
       })
     })
- 
-
+    // checkForDuplicateBusiness(tempStorage) 
+    // console.log(tempStorage)
   }
+
+
+  // const checkForDuplicateBusiness = (businessArray)=>{
+  //   let temp = []
+  //   businessArray.forEach(singleBusiness=>{
+  //     if(!hikes.some(hike => hike.id === singleBusiness.id)){
+  //       temp = [...temp, singleBusiness]
+  //     }
+  //   })
+  //   setHikes(temp)
+  // }
+
+  const checkForDuplicateBusiness = (businessArray) => {
+    const dataMap = new Map();
+    hikes.concat(businessArray).forEach((res) => dataMap.set(res.id, res));
+    setHikes(Array.from(dataMap.values()));
+  };
+
 
   const fetchDirections = ()=>{  
     if(!start || !end) return     
-
-    setYelpSearchPoints((prevState) => [...prevState, start, end ] )
     const service = new google.maps.DirectionsService();
     service.route(
       {
@@ -139,11 +175,6 @@ useEffect(()=>{
   }
 
   const generateCoordinatesBetweenStartEnd = ()=>{
-    // console.log(directions.routes[0].overview_path[50].toJSON())
-    // console.log(directions.routes[0].overview_path[100].toJSON())
-
-    // console.log(directions.routes[0].overview_path.length)
-  
     if(directions){
       let miles = 0
       let midpoints = []
@@ -168,12 +199,11 @@ useEffect(()=>{
               midpoints.push({coordinates:steps[i].path[Math.floor(pathIndex)].toJSON()})
               miles -= diameter;
               count +=1
-
-        
         }
         count = 1;
       }
-      setYelpSearchPoints((intermediatePoints) => [...intermediatePoints, ...midpoints] )
+      //right now, if i were to the yelpsearchpoints would include points from the first route and and routes after that
+      setYelpSearchPoints((prevState) => [...prevState, ...midpoints] )
 
 // DEBUGGER:set markers below will show the COORD or coordinates of interest between start and end 
       // setMarkers((prevState) =>[...prevState, ...midpoints])
@@ -183,6 +213,7 @@ useEffect(()=>{
 
 const addToTrip=(isChecked, coordinates, title, yelpID)=>{
   if(isChecked){
+    //check if the place is already added to waypoints
     console.log(waypoints)
     setWaypoints((waypoints)=>[...waypoints, {name:title, yelp_id:yelpID, coordinates:coordinates}])
   } else if(!isChecked){
@@ -228,17 +259,12 @@ const addToTrip=(isChecked, coordinates, title, yelpID)=>{
       </div>
 
       {hikes.length>0 && (
+        
           <Businesses
-            img = {hikes[0].image_url}
-            title = {hikes[0].name}
-            location = {hikes[0].location.address1}
-            description = {hikes[0].categories[0].title}
-            star = {hikes[0].rating}
-            reviewCount = {hikes[0].review_count}
-            addToTrip = {addToTrip}
-            coordinates= {hikes[0].coordinates}
-            yelpID = {hikes[0].id}
             
+            hikes = {hikes}
+            addToTrip = {addToTrip}
+
 
           />
         )}
