@@ -16,12 +16,12 @@ app.get("/:lat/:lng", (req, res) => {
 
     var config = {
       method: 'get',
-      url: 'https://api.yelp.com/v3/businesses/search?term=hikes'+
+      url: 'https://api.yelp.com/v3/businesses/search?term=tourist'+
       '&latitude='+
       lat+
       '&longitude='+
       lng+
-      '&limit=2&sort_by=review_count',
+      '&limit=3&sort_by=review_count',
       headers: { 
         'Authorization': process.env.YELP_API
       }

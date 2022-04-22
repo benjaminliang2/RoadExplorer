@@ -30,11 +30,11 @@ export const MapComponent = ()=>{
   const [end, setEnd] = useState(null)
   const [yelpSearchPoints, setYelpSearchPoints] = useState([])
   const [directions, setDirections] = useState(null)
+  const [middleman, setMiddleman] = useState([]);
   const [hikes, setHikes] = useState([])
   const [markers, setMarkers] = useState([])
-  const [googleWaypoints, setGoogleWaypoints] = useState([])
   const [waypoints, setWaypoints] = useState([])
-  // const [milesDriven, setMilesDriven] = useState(0)
+  const [googleWaypoints, setGoogleWaypoints] = useState([])
   
 useEffect(()=>{
   getNearbyHikes()
@@ -43,7 +43,8 @@ useEffect(()=>{
 
 useEffect(()=>{
   //if user changes origin or destination, then reset everything. 
-  setYelpSearchPoints([start, end ])
+  setYelpSearchPoints([start, end])
+  setMiddleman([])
   setHikes([])
   setMarkers([])
   setWaypoints([])
@@ -57,9 +58,16 @@ useEffect(()=>{
   generateCoordinatesBetweenStartEnd()
 }, [directions])
 
+useEffect(()=>{ 
+  const dataMap = new Map();
+  //hikes is not guranteed to be updated from the prvious setState / setHike
+  middleman.forEach((res) => dataMap.set(res.id, res));
+  setHikes(Array.from(dataMap.values()));
+}, [middleman])
+
 useEffect(()=>{
   // showHikes()
-  console.log(hikes.length)
+  console.log(hikes)
 },[hikes])
 
 useEffect(()=>{
@@ -118,43 +126,14 @@ useEffect(()=>{
 
   
   const getNearbyHikes = async ()=>{
-    let businessesResults = []
-    const results = await Promise.all(yelpSearchPoints.map(async point => {
-      const {lat, lng} = point.coordinates;
-      const resp = await fetch ('http://localhost:5000/' + lat + "/" + lng);
-
-      return resp.json();
-    }));
-    results.forEach((result)=>{
-      businessesResults.push(...result.businesses)
-
-    })
-
-    console.log(businessesResults)
-    checkForDuplicateBusiness(businessesResults) 
-
+    const fetchData = async (point) =>{
+      const {lat, lng} = point.coordinates
+      const response = await fetch('http://localhost:5000/' + lat + "/" + lng)
+      const result = await response.json();
+      setMiddleman((prevState) => [...prevState, ...result.businesses])
+    }
+    yelpSearchPoints.forEach(point => fetchData(point))
   }
-
-
-
-  const checkForDuplicateBusiness = (businessArray)=>{
-    let noDuplicates = []
-    businessArray.forEach(singleBusiness=>{
-      if(!noDuplicates.some(each => each.id === singleBusiness.id)){
-        noDuplicates = [...noDuplicates, singleBusiness]
-      }
-    })
-    console.log(noDuplicates)
-    setHikes(noDuplicates)
-  }
-
-  // const checkForDuplicateBusiness = (businessArray) => {
-  //   const dataMap = new Map();
-  //   hikes.concat(businessArray).forEach((res) => dataMap.set(res.id, res));
-  //   // setHikes(Array.from(dataMap.values()));
-  //   console.log(Array.from(dataMap.values()))
-  // };
-
 
   const fetchDirections = ()=>{  
     if(!start || !end) return     
@@ -165,7 +144,9 @@ useEffect(()=>{
         destination: end.coordinates,
         travelMode: google.maps.TravelMode.DRIVING,
         waypoints: googleWaypoints,
-        // optimizeWaypoints: true
+
+
+        optimizeWaypoints: true
       },
       (result, status) => {
         if (status === "OK" && result) {
@@ -203,8 +184,11 @@ useEffect(()=>{
         }
         count = 1;
       }
-      //right now, if i were to the yelpsearchpoints would include points from the first route and and routes after that
-      setYelpSearchPoints((prevState) => [...prevState, ...midpoints] )
+      if(midpoints.length>0){
+        //right now, if i were to the yelpsearchpoints would include points from the first route and and routes after that
+        setYelpSearchPoints((prevState) => [...prevState, ...midpoints] )
+      }
+      
 
 // DEBUGGER:set markers below will show the COORD or coordinates of interest between start and end 
       // setMarkers((prevState) =>[...prevState, ...midpoints])
