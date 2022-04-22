@@ -59,7 +59,7 @@ useEffect(()=>{
 
 useEffect(()=>{
   // showHikes()
-  console.log(hikes)
+  console.log(hikes.length)
 },[hikes])
 
 useEffect(()=>{
@@ -71,6 +71,7 @@ useEffect(()=>{
   waypoints?.map((waypoint) => {
     temp.push({location: {lat: waypoint.coordinates.latitude, lng: waypoint.coordinates.longitude}})
   })
+  console.log(temp)
   setGoogleWaypoints(temp)
 }, [waypoints])
 
@@ -114,45 +115,45 @@ useEffect(()=>{
   //   mapRef.current.setZoom(15)
   // }
 
-  const getNearbyHikes = async ()=>{
-    console.log("get nearby hikes")
-    console.log(yelpSearchPoints)
-    var tempStorage = [];
-    yelpSearchPoints.forEach(async (point) =>{
-      tempStorage.push(1)
-      const {lat, lng} = point.coordinates
-      await fetch ('http://localhost:5000/' + lat + "/" + lng)
-      .then(res => {
-          // console.log(res)
-          return (res.json())
-      })
-      .then(res => {
-          
-          // tempStorage.push(...res.businesses) 
-          checkForDuplicateBusiness(res.businesses)
 
-      })
+  
+  const getNearbyHikes = async ()=>{
+    let businessesResults = []
+    const results = await Promise.all(yelpSearchPoints.map(async point => {
+      const {lat, lng} = point.coordinates;
+      const resp = await fetch ('http://localhost:5000/' + lat + "/" + lng);
+
+      return resp.json();
+    }));
+    results.forEach((result)=>{
+      businessesResults.push(...result.businesses)
+
     })
-    // checkForDuplicateBusiness(tempStorage) 
-    // console.log(tempStorage)
+
+    console.log(businessesResults)
+    checkForDuplicateBusiness(businessesResults) 
+
   }
 
 
-  // const checkForDuplicateBusiness = (businessArray)=>{
-  //   let temp = []
-  //   businessArray.forEach(singleBusiness=>{
-  //     if(!hikes.some(hike => hike.id === singleBusiness.id)){
-  //       temp = [...temp, singleBusiness]
-  //     }
-  //   })
-  //   setHikes(temp)
-  // }
 
-  const checkForDuplicateBusiness = (businessArray) => {
-    const dataMap = new Map();
-    hikes.concat(businessArray).forEach((res) => dataMap.set(res.id, res));
-    setHikes(Array.from(dataMap.values()));
-  };
+  const checkForDuplicateBusiness = (businessArray)=>{
+    let noDuplicates = []
+    businessArray.forEach(singleBusiness=>{
+      if(!noDuplicates.some(each => each.id === singleBusiness.id)){
+        noDuplicates = [...noDuplicates, singleBusiness]
+      }
+    })
+    console.log(noDuplicates)
+    setHikes(noDuplicates)
+  }
+
+  // const checkForDuplicateBusiness = (businessArray) => {
+  //   const dataMap = new Map();
+  //   hikes.concat(businessArray).forEach((res) => dataMap.set(res.id, res));
+  //   // setHikes(Array.from(dataMap.values()));
+  //   console.log(Array.from(dataMap.values()))
+  // };
 
 
   const fetchDirections = ()=>{  
@@ -163,7 +164,7 @@ useEffect(()=>{
         origin: start.coordinates,
         destination: end.coordinates,
         travelMode: google.maps.TravelMode.DRIVING,
-        // waypoints: googleWaypoints,
+        waypoints: googleWaypoints,
         // optimizeWaypoints: true
       },
       (result, status) => {
