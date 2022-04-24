@@ -38,7 +38,7 @@ export const MapComponent = ()=>{
   
 useEffect(()=>{
   getNearbyHikes()
-  // console.log(yelpSearchPoints)
+  console.log("yelpsearchpoints = " + yelpSearchPoints)
 },[yelpSearchPoints])
 
 useEffect(()=>{
@@ -49,18 +49,16 @@ useEffect(()=>{
   setMarkers([])
   setWaypoints([])
   setGoogleWaypoints([])
-
-  console.log(yelpSearchPoints)
-
 },[start, end])
 
 useEffect(()=>{
+  
   generateCoordinatesBetweenStartEnd()
+  console.log("directions have changed")
 }, [directions])
 
 useEffect(()=>{ 
   const dataMap = new Map();
-  //hikes is not guranteed to be updated from the prvious setState / setHike
   middleman.forEach((res) => dataMap.set(res.id, res));
   setHikes(Array.from(dataMap.values()));
 }, [middleman])
@@ -98,10 +96,6 @@ useEffect(()=>{
   // },[])
 
   const showHikes = ()=>{
-    if(hikes.length === 0 ){
-      console.log("hikes array is empty.")
-    }
-    console.log(hikes.length)
     hikes.map((hike)=>{
       setMarkers((prevState) =>[...prevState,
         {
@@ -109,7 +103,6 @@ useEffect(()=>{
           lng: hike.coordinates.longitude,
           time: new Date()
         }
-
       ])
 
     })
@@ -125,13 +118,14 @@ useEffect(()=>{
 
 
   
-  const getNearbyHikes = async ()=>{
+  const getNearbyHikes = ()=>{
     const fetchData = async (point) =>{
       const {lat, lng} = point.coordinates
       const response = await fetch('http://localhost:5000/' + lat + "/" + lng)
       const result = await response.json();
       setMiddleman((prevState) => [...prevState, ...result.businesses])
     }
+    console.log(yelpSearchPoints)
     yelpSearchPoints.forEach(point => fetchData(point))
   }
 
@@ -156,7 +150,8 @@ useEffect(()=>{
     );
   }
 
-  const generateCoordinatesBetweenStartEnd = ()=>{
+  const generateCoordinatesBetweenStartEnd =()=>{
+    console.log("generate midpoints")
     if(directions){
       let miles = 0
       let midpoints = []
@@ -175,8 +170,6 @@ useEffect(()=>{
               let prevRemainingStepMiles = temp - currentStepMiles;
               let factor = (diameter * count - prevRemainingStepMiles)/ currentStepMiles;
               let pathIndex = steps[i].path.length * factor; 
-              // console.log("prevRemainder =" + prevRemainingStepMiles)
-              // console.log(steps[i].path.length +'...' + pathIndex)
               
               midpoints.push({coordinates:steps[i].path[Math.floor(pathIndex)].toJSON()})
               miles -= diameter;
@@ -184,8 +177,8 @@ useEffect(()=>{
         }
         count = 1;
       }
+      console.log("midpoints = " + midpoints )
       if(midpoints.length>0){
-        //right now, if i were to the yelpsearchpoints would include points from the first route and and routes after that
         setYelpSearchPoints((prevState) => [...prevState, ...midpoints] )
       }
       
@@ -207,7 +200,6 @@ const addToTrip=(isChecked, coordinates, title, yelpID)=>{
   }
 
 
-  // setGoogleWaypoints((waypoints) =>[...waypoints, {location: {lat: coordinates.latitude, lng: coordinates.longitude}}]);  
 }
 
  
