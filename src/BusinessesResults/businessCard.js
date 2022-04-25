@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 // import './SearchResult.css';
 // import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 // import StarIcon from '@mui/icons-material/Star';
@@ -8,27 +8,37 @@ export const BusinessCard = (props)=>{
     const {img, title, location, description, star, reviewCount, addToTrip, coordinates, yelpID} = props;
         
     const [isChecked, setIsChecked] = useState(false);
-    useEffect(()=>{
-        console.log(isChecked)
-        addToTrip(isChecked, coordinates, title, yelpID)
-    },[isChecked])
+    const isMounted = useRef(false)
+
+    // useEffect(()=>{
+    //     if (isMounted.current) {
+    //         addToTrip(isChecked, coordinates, title, yelpID)
+    //     }
+    // },[isChecked])
+
+    // useEffect(()=>{
+    //     isMounted.current = true;
+    //   },[])
+      
     const handleOnChange = ()=>{
         setIsChecked(!isChecked);
+        addToTrip(!isChecked, coordinates, title, yelpID, img);
     }
     return (
         <>
-            <button onClick={()=>addToTrip(title)}>Add to trip</button>
+
             <div className='searchResult'>
-                <img src={img} alt="" />
+                <div className="searchResult__image">
+                    <img src={img} alt="" />
+                </div>
                 {/* <FavoriteBorderIcon className="searchResult__heart" /> */}
 
                 <div className='searchResult__info'>
                     <div className="searchResult__infoTop">
                         <h3>{title}</h3>
-                        <p>{location}</p>
-                        
-                        <p>____</p>
                         <p>{description}</p>
+                        <p>{location}</p>                    
+
                     </div>
 
                     <div className="searchResult__infoBottom">

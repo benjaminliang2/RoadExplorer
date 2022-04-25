@@ -9,7 +9,7 @@ export const RouteView = (props)=>{
 
         {waypoints?.map(waypoint=>
 
-            <Waypoint name = {waypoint.name}/>
+            <Waypoint name = {waypoint.name} imgURL = {waypoint.imgURL}/>
             
         )}
 

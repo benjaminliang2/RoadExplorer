@@ -96,7 +96,6 @@ useEffect(()=>{
     console.log(temp)
     setGoogleWaypoints(temp)
   }
-  console.log("DEP waypoints have changed", waypoints)
 
 }, [waypoints])
 
@@ -198,7 +197,7 @@ useEffect(()=>{
         }
         count = 1;
       }
-      console.log("midpoints = ", midpoints )
+      console.log("midpoints = ", midpoints)
       if(midpoints.length>0){
         setYelpSearchPoints((prevState) => [...prevState, ...midpoints] )
       }
@@ -210,13 +209,12 @@ useEffect(()=>{
     }
   }
 
-const addToTrip= (isChecked, coordinates, title, yelpID)=>{
-  console.log(title)
+const addToTrip= (isChecked, coordinates, title, yelpID, image)=>{
   console.log("added to trip ")
   if(isChecked){
     //check if the place is already added to waypoints
     console.log(waypoints)
-    setWaypoints((waypoints)=>[...waypoints, {name:title, yelp_id:yelpID, coordinates:coordinates}])
+    setWaypoints((waypoints)=>[...waypoints, {name:title, yelp_id:yelpID, coordinates:coordinates, imgURL:image}])
   } else if(!isChecked){
     console.log(waypoints)
     const newWaypoints = waypoints.filter((waypoint)=>waypoint.yelp_id !== yelpID)
@@ -258,17 +256,15 @@ const addToTrip= (isChecked, coordinates, title, yelpID)=>{
       </div>
 
       {hikes.length>0 && (
-        
           <Businesses
-            
             hikes = {hikes}
-            addToTrip = {()=>addToTrip}
-            // addToTrip={()=>console.log("hello")}
-            
-            // addToTrip = {addToTrip}
-
-
+            addToTrip = {addToTrip}
+            // addToTrip = {()=>addToTrip}  
           />
+            // addToTrip = {()=>addToTrip()}
+
+
+          
         )}
 
 

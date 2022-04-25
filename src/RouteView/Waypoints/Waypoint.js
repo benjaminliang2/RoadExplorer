@@ -1,8 +1,9 @@
-export const Waypoint = ({name})=>{
+export const Waypoint = ({name, imgURL})=>{
+    console.log(imgURL)
     return(
         <>
             <div className="waypoint">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpMHRgGhGu9aTtu0Te1mcG91JjK6v24lHbbw&usqp=CAU" alt="globe" />
+            <img src={imgURL} alt="globe" />
                 <h1>{name}</h1>
                 {/* <h1>Address</h1> */}
             </div>
