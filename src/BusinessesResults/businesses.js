@@ -8,6 +8,7 @@ export const Businesses = (props)=>{
 
     return(<>
     <div className="businessesColumn">
+    <button onClick={addToTrip()}>add to trip function</button>
     {hikes.map(hike=>(
         <BusinessCard
             img = {hike.image_url}
@@ -18,8 +19,13 @@ export const Businesses = (props)=>{
             reviewCount = {hike.review_count}
             coordinates= {hike.coordinates}
             yelpID = {hike.id}
+            // addToTrip={()=>addToTrip()}
             addToTrip={addToTrip}
+
+            // addToTrip={()=>addToTrip}
+
         />
+
     ))}
         
     </div>

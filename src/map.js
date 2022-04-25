@@ -35,52 +35,74 @@ export const MapComponent = ()=>{
   const [markers, setMarkers] = useState([])
   const [waypoints, setWaypoints] = useState([])
   const [googleWaypoints, setGoogleWaypoints] = useState([])
+  const isMounted = useRef(false)
   
 useEffect(()=>{
-  getNearbyHikes()
-  console.log("yelpsearchpoints = " + yelpSearchPoints)
+  if (isMounted.current) {
+    getNearbyHikes(yelpSearchPoints)
+    console.log("yelpsearchpoints = ", yelpSearchPoints)
+  } 
 },[yelpSearchPoints])
 
 useEffect(()=>{
   //if user changes origin or destination, then reset everything. 
-  setYelpSearchPoints([start, end])
-  setMiddleman([])
-  setHikes([])
-  setMarkers([])
-  setWaypoints([])
-  setGoogleWaypoints([])
+  if (isMounted.current) {
+    setYelpSearchPoints([start, end])
+    setMiddleman([])
+    setHikes([])
+    setMarkers([])
+    setWaypoints([])
+    setGoogleWaypoints([])
+  }
 },[start, end])
 
 useEffect(()=>{
-  
-  generateCoordinatesBetweenStartEnd()
-  console.log("directions have changed")
+  if (isMounted.current) {
+      generateCoordinatesBetweenStartEnd()
+      console.log("DEP directions have changed")
+  }
 }, [directions])
 
 useEffect(()=>{ 
-  const dataMap = new Map();
-  middleman.forEach((res) => dataMap.set(res.id, res));
-  setHikes(Array.from(dataMap.values()));
+  if (isMounted.current) {
+    const dataMap = new Map();
+    middleman.forEach((res) => dataMap.set(res.id, res));
+    setHikes(Array.from(dataMap.values()));
+    console.log(middleman)
+  }
 }, [middleman])
 
 useEffect(()=>{
   // showHikes()
-  console.log(hikes)
+  if (isMounted.current) {
+    console.log(hikes)
+  }
 },[hikes])
 
 useEffect(()=>{
-  fetchDirections()
+  if (isMounted.current) {
+    fetchDirections()
+    console.log("DEP google waypoints have changed")
+
+  }
 },[googleWaypoints])
 
 useEffect(()=>{ 
-  const temp= []
-  waypoints?.map((waypoint) => {
-    temp.push({location: {lat: waypoint.coordinates.latitude, lng: waypoint.coordinates.longitude}})
-  })
-  console.log(temp)
-  setGoogleWaypoints(temp)
+  if (isMounted.current && waypoints.length > 0) {
+    const temp= []
+    waypoints?.map((waypoint) => {
+      temp.push({location: {lat: waypoint.coordinates.latitude, lng: waypoint.coordinates.longitude}})
+    })
+    console.log(temp)
+    setGoogleWaypoints(temp)
+  }
+  console.log("DEP waypoints have changed", waypoints)
+
 }, [waypoints])
 
+useEffect(()=>{
+  isMounted.current = true;
+},[])
 // useEffect(()=>{
 //   console.log("markers length = " + markers.length)
 // }, [markers])
@@ -118,15 +140,15 @@ useEffect(()=>{
 
 
   
-  const getNearbyHikes = ()=>{
-    const fetchData = async (point) =>{
-      const {lat, lng} = point.coordinates
-      const response = await fetch('http://localhost:5000/' + lat + "/" + lng)
-      const result = await response.json();
-      setMiddleman((prevState) => [...prevState, ...result.businesses])
-    }
-    console.log(yelpSearchPoints)
-    yelpSearchPoints.forEach(point => fetchData(point))
+   const getNearbyHikes = (points)=>{
+    points.forEach(async (point) =>{
+      if(point){
+        const {lat, lng} = point.coordinates
+        const response = await fetch('http://localhost:5000/' + lat + "/" + lng)
+        const result = await response.json();
+        setMiddleman((prevState) => [...prevState, ...result.businesses])
+      }
+    })
   }
 
   const fetchDirections = ()=>{  
@@ -138,12 +160,11 @@ useEffect(()=>{
         destination: end.coordinates,
         travelMode: google.maps.TravelMode.DRIVING,
         waypoints: googleWaypoints,
-
-
         optimizeWaypoints: true
       },
       (result, status) => {
         if (status === "OK" && result) {
+          console.log("set directions")
           setDirections(result);
         }
       }
@@ -177,29 +198,30 @@ useEffect(()=>{
         }
         count = 1;
       }
-      console.log("midpoints = " + midpoints )
+      console.log("midpoints = ", midpoints )
       if(midpoints.length>0){
         setYelpSearchPoints((prevState) => [...prevState, ...midpoints] )
       }
       
 
-// DEBUGGER:set markers below will show the COORD or coordinates of interest between start and end 
+      // DEBUGGER:set markers below will show the COORD or coordinates of interest between start and end 
       // setMarkers((prevState) =>[...prevState, ...midpoints])
       // console.log(midpoints.length)
     }
   }
 
-const addToTrip=(isChecked, coordinates, title, yelpID)=>{
+const addToTrip= (isChecked, coordinates, title, yelpID)=>{
+  console.log(title)
+  console.log("added to trip ")
   if(isChecked){
     //check if the place is already added to waypoints
     console.log(waypoints)
     setWaypoints((waypoints)=>[...waypoints, {name:title, yelp_id:yelpID, coordinates:coordinates}])
   } else if(!isChecked){
+    console.log(waypoints)
     const newWaypoints = waypoints.filter((waypoint)=>waypoint.yelp_id !== yelpID)
     setWaypoints(newWaypoints)
   }
-
-
 }
 
  
@@ -240,7 +262,10 @@ const addToTrip=(isChecked, coordinates, title, yelpID)=>{
           <Businesses
             
             hikes = {hikes}
-            addToTrip = {addToTrip}
+            addToTrip = {()=>addToTrip}
+            // addToTrip={()=>console.log("hello")}
+            
+            // addToTrip = {addToTrip}
 
 
           />

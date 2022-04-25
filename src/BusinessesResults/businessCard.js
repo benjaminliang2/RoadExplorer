@@ -17,7 +17,7 @@ export const BusinessCard = (props)=>{
     }
     return (
         <>
-            
+            <button onClick={()=>addToTrip(title)}>Add to trip</button>
             <div className='searchResult'>
                 <img src={img} alt="" />
                 {/* <FavoriteBorderIcon className="searchResult__heart" /> */}
