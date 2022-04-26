@@ -3,7 +3,7 @@ import "./businesses.css"
 
 
 export const Businesses = (props)=>{
-    const {hikes, addToTrip} = props
+    const {hikes, addToTrip, setActiveMarker} = props
     return(<>
     <div className="businessesColumn">
     {hikes.map(hike=>(
@@ -17,6 +17,7 @@ export const Businesses = (props)=>{
             coordinates= {hike.coordinates}
             yelpID = {hike.id}
             addToTrip={addToTrip}
+            setActiveMarker = {setActiveMarker}
         />
 
     ))}

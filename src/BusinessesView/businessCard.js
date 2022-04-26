@@ -5,10 +5,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import './businessCard.css'
 export const BusinessCard = (props)=>{
 
-    const {img, title, location, description, star, reviewCount, addToTrip, coordinates, yelpID} = props;
+    const {img, title, location, description, star, reviewCount, addToTrip, setActiveMarker,  coordinates, yelpID} = props;
         
-    const [isChecked, setIsChecked] = useState(false);
-    const isMounted = useRef(false)
+    // const [isChecked, setIsChecked] = useState(false);
+    // const isMounted = useRef(false)
 
     // useEffect(()=>{
     //     if (isMounted.current) {
@@ -20,14 +20,15 @@ export const BusinessCard = (props)=>{
     //     isMounted.current = true;
     //   },[])
       
-    const handleOnChange = ()=>{
-        setIsChecked(!isChecked);
-        addToTrip(!isChecked, coordinates, title, yelpID, img);
+    const handleOnClick= ()=>{
+        // setIsChecked(!isChecked);
+        addToTrip(coordinates, title, yelpID, img);
     }
     return (
         <>
 
-            <div className='searchResult'>
+            <div className='searchResult' onMouseEnter={()=>setActiveMarker({id: yelpID})} onMouseLeave={()=>setActiveMarker({id: 'none'})}>
+                
                 <div className="searchResult__image">
                     <img src={img} alt="" />
                 </div>
@@ -55,8 +56,8 @@ export const BusinessCard = (props)=>{
                         </div>
                     </div>
                 </div>
-                <input type="checkbox" checked = {isChecked} onChange={handleOnChange}/>
-                {/* <button onClick={()=>{addToTrip(coordinates, title)}}>Add to Trip</button> */}
+                {/* <input type="checkbox" checked = {isChecked} onChange={handleOnChange}/> */}
+                <button onClick={handleOnClick}>Add to Trip</button>
             </div>
         </>
     )

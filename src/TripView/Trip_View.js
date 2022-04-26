@@ -1,6 +1,6 @@
-import "./Route_View.css"
+import "./Trip_View.css"
 import { Waypoint } from "./Waypoints/Waypoint"
-export const RouteView = (props)=>{
+export const TripView = (props)=>{
     const {start, end,  waypoints} = props;
     return(
         <>

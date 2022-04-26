@@ -1,9 +1,9 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
-import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
-import {SearchPlaces} from "./places"
+import { GoogleMap, useLoadScript, Marker,InfoWindow, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
+import {SearchPlaces} from "./TripView/Places"
 import {Distance} from "./distance"
-import { Businesses} from "./BusinessesResults/businesses"
-import { RouteView } from "./RouteView/Route_View";
+import { Businesses} from "./BusinessesView/businesses"
+import { TripView } from "./TripView/Trip_View";
 import "./styles.css"
 /*global google*/
 const libraries = ["places"]
@@ -17,13 +17,13 @@ export const MapComponent = ()=>{
   })
   const center = useMemo(()=>({lat: 44, lng:-80 }), []);
   const mapRef = useRef();
+  const waypoint_order = useRef();
   const options = useMemo(()=>({
     disableDefaultUI: true,
     clickableIcons: false
   }), [])
   const onMapLoad = useCallback((map)=>{
     mapRef.current = map;
-    console.log("map should only render once")
   }, [])
 
   const [start, setStart] = useState(null)
@@ -32,15 +32,17 @@ export const MapComponent = ()=>{
   const [directions, setDirections] = useState(null)
   const [middleman, setMiddleman] = useState([]);
   const [hikes, setHikes] = useState([])
-  const [markers, setMarkers] = useState([])
-  const [waypoints, setWaypoints] = useState([])
+  const [waypoints, setWaypoints] = useState();
+  const [waypointsSelected, setWaypointsSelected] = useState([])
   const [googleWaypoints, setGoogleWaypoints] = useState([])
+  const [activeMarker, setActiveMarker] = useState({id: 'none'})
   const isMounted = useRef(false)
+
+  
   
 useEffect(()=>{
   if (isMounted.current) {
     getNearbyHikes(yelpSearchPoints)
-    console.log("yelpsearchpoints = ", yelpSearchPoints)
   } 
 },[yelpSearchPoints])
 
@@ -50,8 +52,7 @@ useEffect(()=>{
     setYelpSearchPoints([start, end])
     setMiddleman([])
     setHikes([])
-    setMarkers([])
-    setWaypoints([])
+    setWaypointsSelected([])
     setGoogleWaypoints([])
   }
 },[start, end])
@@ -59,7 +60,6 @@ useEffect(()=>{
 useEffect(()=>{
   if (isMounted.current) {
       generateCoordinatesBetweenStartEnd()
-      console.log("DEP directions have changed")
   }
 }, [directions])
 
@@ -68,36 +68,28 @@ useEffect(()=>{
     const dataMap = new Map();
     middleman.forEach((res) => dataMap.set(res.id, res));
     setHikes(Array.from(dataMap.values()));
-    console.log(middleman)
   }
 }, [middleman])
 
-useEffect(()=>{
-  // showHikes()
-  if (isMounted.current) {
-    console.log(hikes)
-  }
-},[hikes])
+
 
 useEffect(()=>{
   if (isMounted.current) {
     fetchDirections()
-    console.log("DEP google waypoints have changed")
-
   }
 },[googleWaypoints])
 
 useEffect(()=>{ 
-  if (isMounted.current && waypoints.length > 0) {
+  if (isMounted.current && waypointsSelected.length > 0) {
     const temp= []
-    waypoints?.map((waypoint) => {
+    waypointsSelected.map((waypoint) => {
       temp.push({location: {lat: waypoint.coordinates.latitude, lng: waypoint.coordinates.longitude}})
     })
     console.log(temp)
     setGoogleWaypoints(temp)
   }
 
-}, [waypoints])
+}, [waypointsSelected])
 
 useEffect(()=>{
   isMounted.current = true;
@@ -116,18 +108,6 @@ useEffect(()=>{
   //   ])
   // },[])
 
-  const showHikes = ()=>{
-    hikes.map((hike)=>{
-      setMarkers((prevState) =>[...prevState,
-        {
-          lat: hike.coordinates.latitude,
-          lng: hike.coordinates.longitude,
-          time: new Date()
-        }
-      ])
-
-    })
-  }
 
   
 
@@ -163,15 +143,20 @@ useEffect(()=>{
       },
       (result, status) => {
         if (status === "OK" && result) {
-          console.log("set directions")
           setDirections(result);
+          waypoint_order.current = result.routes[0].waypoint_order;
+          sortWaypoints();
         }
       }
     );
   }
 
+  const sortWaypoints = ()=>{
+    const optimizedRoute = waypoint_order.current.map(index =>waypointsSelected[index])
+    setWaypoints(optimizedRoute)   
+  }
+
   const generateCoordinatesBetweenStartEnd =()=>{
-    console.log("generate midpoints")
     if(directions){
       let miles = 0
       let midpoints = []
@@ -197,7 +182,6 @@ useEffect(()=>{
         }
         count = 1;
       }
-      console.log("midpoints = ", midpoints)
       if(midpoints.length>0){
         setYelpSearchPoints((prevState) => [...prevState, ...midpoints] )
       }
@@ -209,17 +193,20 @@ useEffect(()=>{
     }
   }
 
-const addToTrip= (isChecked, coordinates, title, yelpID, image)=>{
-  console.log("added to trip ")
-  if(isChecked){
-    //check if the place is already added to waypoints
-    console.log(waypoints)
-    setWaypoints((waypoints)=>[...waypoints, {name:title, yelp_id:yelpID, coordinates:coordinates, imgURL:image}])
-  } else if(!isChecked){
-    console.log(waypoints)
-    const newWaypoints = waypoints.filter((waypoint)=>waypoint.yelp_id !== yelpID)
-    setWaypoints(newWaypoints)
+const addToTrip= (coordinates, title, yelpID, image)=>{
+  //check if the place is already added to waypoints
+  if(waypointsSelected.some(waypoint => waypoint.yelp_id === yelpID)){
+  } else {
+    setWaypointsSelected((waypoints)=>[...waypoints, {name:title, yelp_id:yelpID, coordinates:coordinates, imgURL:image}])
+
   }
+}
+const removeFromTrip = (yelpID) =>{
+  //remove waypoint
+  console.log(waypointsSelected)
+  const newWaypoints = waypointsSelected.filter((waypoint)=>waypoint.yelp_id !== yelpID)
+  setWaypointsSelected(newWaypoints)
+
 }
 
  
@@ -237,7 +224,9 @@ const addToTrip= (isChecked, coordinates, title, yelpID, image)=>{
         setEnd={setEnd}
         />
         <button onClick={fetchDirections}> Fetch  directions </button>
-        <button onClick={showHikes}> Show Hikes </button>
+        <button onClick={sortWaypoints}> sort waypoints </button>
+
+
         {directions && (
         <>
         {/* the routes array is multiple different ways to travel from A to B */}
@@ -247,7 +236,7 @@ const addToTrip= (isChecked, coordinates, title, yelpID, image)=>{
           <h4>Route Detail View</h4>
 
         {(directions && 
-          <RouteView
+          <TripView
             start={start}
             end={end}
             waypoints = {waypoints}
@@ -259,9 +248,8 @@ const addToTrip= (isChecked, coordinates, title, yelpID, image)=>{
           <Businesses
             hikes = {hikes}
             addToTrip = {addToTrip}
-            // addToTrip = {()=>addToTrip}  
+            setActiveMarker = {setActiveMarker}
           />
-            // addToTrip = {()=>addToTrip()}
 
 
           
@@ -296,18 +284,35 @@ const addToTrip= (isChecked, coordinates, title, yelpID, image)=>{
         )}
         
 
-        {markers.map(marker =>
+        {hikes.map(hike =>
           <Marker 
           
-            position={{lat: marker.lat, lng: marker.lng}}
+            position={{lat: hike.coordinates.latitude, lng: hike.coordinates.longitude}}
             icon = {
               { url:"https://static.thenounproject.com/png/29961-200.png",
                 scaledSize : new google.maps.Size(50,50)
               }
             } 
-            onClick={()=>{console.log("you clicked a marker")}}
+            
+            animation={ 
+              (activeMarker.id === hike.id
+                ? 1 : undefined)
+            }       
+            // onClick={()=>{console.log(activeMarker.id === hike.id)}}
           />
         )}
+
+        {/* {hikes.map(hike =>{
+          const marker = new google.maps.Marker({
+            map: mapRef.current,
+            animation: google.maps.Animation.DROP,
+            position: {lat: hike.coordinates.latitude, lng: hike.coordinates.longitude},
+          })
+          const listener = google.maps.event.addListener(marker, 'click', function () {
+            // do something with this marker ...
+            console.log(listener)
+          });
+        })} */}
         
         </GoogleMap>
       </div>
