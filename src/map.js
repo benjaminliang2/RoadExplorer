@@ -1,9 +1,9 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
-import { GoogleMap, useLoadScript, Marker,InfoWindow, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
 import {SearchPlaces} from "./TripView/Places"
-import {Distance} from "./distance"
 import { Businesses} from "./BusinessesView/businesses"
-import { TripView } from "./TripView/Trip_View";
+import { TripView } from "./TripView/Trip_View"
+import { InfoModal } from "./InfoModal"
 import "./styles.css"
 /*global google*/
 const libraries = ["places"]
@@ -36,6 +36,7 @@ export const MapComponent = ()=>{
   const [waypointsSelected, setWaypointsSelected] = useState([])
   const [googleWaypoints, setGoogleWaypoints] = useState([])
   const [activeMarker, setActiveMarker] = useState({id: 'none'})
+  const [selectedMarker, setSelectedMarker] = useState(false)
   const isMounted = useRef(false)
 
   
@@ -226,20 +227,14 @@ const removeFromTrip = (yelpID) =>{
         <button onClick={fetchDirections}> Fetch  directions </button>
         <button onClick={sortWaypoints}> sort waypoints </button>
 
-
-        {directions && (
-        <>
-        {/* the routes array is multiple different ways to travel from A to B */}
-        <Distance leg={directions.routes[0].legs[0]}/>
-        </>
-        )}
-          <h4>Route Detail View</h4>
+        <h4>Route Detail View</h4>
 
         {(directions && 
           <TripView
             start={start}
             end={end}
             waypoints = {waypoints}
+            directions = {directions}
 
           />)}
       </div>
@@ -249,13 +244,15 @@ const removeFromTrip = (yelpID) =>{
             hikes = {hikes}
             addToTrip = {addToTrip}
             setActiveMarker = {setActiveMarker}
+          />          
+      )}
+
+      {selectedMarker && (
+          <InfoModal
+            selectedBusiness = {selectedMarker}
+            setSelectedMarker= {setSelectedMarker}
           />
-
-
-          
-        )}
-
-
+      )}
       
 
 
@@ -298,7 +295,9 @@ const removeFromTrip = (yelpID) =>{
               (activeMarker.id === hike.id
                 ? 1 : undefined)
             }       
-            // onClick={()=>{console.log(activeMarker.id === hike.id)}}
+            onClick={()=>{setSelectedMarker(hike)}}
+            // onClick={()=>{console.log(hike)}}
+
           />
         )}
 

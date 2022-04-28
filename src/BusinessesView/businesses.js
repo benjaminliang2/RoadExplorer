@@ -9,7 +9,7 @@ export const Businesses = (props)=>{
     {hikes.map(hike=>(
         <BusinessCard
             img = {hike.image_url}
-            title = {hike.name}
+            name = {hike.name}
             location = {hike.location.address1}
             description = {hike.categories[0].title}
             star = {hike.rating}

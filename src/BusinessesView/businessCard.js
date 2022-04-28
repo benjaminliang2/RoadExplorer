@@ -5,7 +5,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import './businessCard.css'
 export const BusinessCard = (props)=>{
 
-    const {img, title, location, description, star, reviewCount, addToTrip, setActiveMarker,  coordinates, yelpID} = props;
+    const {img, name, location, description, star, reviewCount, addToTrip, setActiveMarker,  coordinates, yelpID} = props;
         
     // const [isChecked, setIsChecked] = useState(false);
     // const isMounted = useRef(false)
@@ -22,7 +22,7 @@ export const BusinessCard = (props)=>{
       
     const handleOnClick= ()=>{
         // setIsChecked(!isChecked);
-        addToTrip(coordinates, title, yelpID, img);
+        addToTrip(coordinates, name, yelpID, img);
     }
     return (
         <>
@@ -36,7 +36,7 @@ export const BusinessCard = (props)=>{
 
                 <div className='searchResult__info'>
                     <div className="searchResult__infoTop">
-                        <h3>{title}</h3>
+                        <h3>{name}</h3>
                         <p>{description}</p>
                         <p>{location}</p>                    
 
