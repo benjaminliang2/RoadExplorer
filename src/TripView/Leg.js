@@ -1,8 +1,14 @@
 import "./Leg.css"
 
 
-export const Leg = ({name, imgURL, directions, index})=>{
+export const Leg = ({name, imgURL, directions, index, removeFromTrip, id})=>{
+    
     if(directions){
+        //This resolves the problem where tripView and Legs get rerendered as soon as directions state change
+        //but it depends on the waypoints state too, but it renders before waypoints state update
+        if(index >= directions.routes[0].legs.length){
+            return null;
+        }
         var distance = directions.routes[0].legs[index].distance.value;
         var seconds = directions.routes[0].legs[index].duration.value;
     
@@ -19,6 +25,10 @@ export const Leg = ({name, imgURL, directions, index})=>{
                     <div className="image">
                         <img src={imgURL} alt="globe" />
                     </div>
+                    {removeFromTrip && (
+                        <button onClick={()=>{removeFromTrip(id)}}>Remove From Trip</button>
+                    )}
+                    
                     <div className="name">
                         <h1>{name}</h1>
                     </div>

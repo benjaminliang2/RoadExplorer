@@ -1,27 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import styled from 'styled-components';
-
-
-const MODAL_STYLES = {
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  backgroundColor: '#FFF',
-  padding: '50px',
-  zIndex: 1000
-}
-
-const OVERLAY_STYLES = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, .7)',
-  zIndex: 1000
-}
+import { MdClose } from 'react-icons/md';
+import { useSpring, animated } from 'react-spring';
+import styled from "styled-components"
 
 const Background = styled.div`
   position: fixed;
@@ -34,50 +15,74 @@ const Background = styled.div`
   zindex: 1000
 `;
 
-const ModalWrapper = styled.div`
+const Modal = styled.div`
   position: fixed;
   top: 50%; 
   left: 50%; 
   transform: translate(-50%, -50%);
   background: #FFF;
-  padding: 50px;
+  padding: 50px 30px 30px 30px;
+  border-radius: 10px;
   zindex: 1000;
 
 `;
-const YelpLogo = styled.a`
-  <img src="/yelp_logo.png" alt="" />
+const YelpLogo = styled.img`
+  width: 100px;
+  height: auto;
 `
 
-const ModalImage = styled.img`
+const BusinessImage = styled.img`
   width: 100%;
   min-height: auto;
   max-height : 500px;
+  border-radius: 15px;
 
 `;
 
+const CloseModalButton = styled(MdClose)`
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  z-index: 10;
+`;
 
-export const InfoModal =({selectedBusiness})=>{
-    const { name, image_url, price, rating, review_count, categories, url, location } =selectedBusiness;
+
+export const InfoModal =({selectedBusiness, setSelectedMarker, addToTrip})=>{
+
+    const { name, image_url, price, rating, review_count, categories, url, location, coordinates, id } =selectedBusiness;
   
     const formattedCategories = categories.map((catergory) => catergory.title).join(" • ");
     const formattedAddress = location.display_address.map((each) =>each).join(" ,")
-    console.log(formattedAddress)
+    
+    const animation = useSpring({
+      config: {
+        duration: 250
+      },
+      opacity: selectedBusiness ? 1 : 0,
+      transform: selectedBusiness ? `translateY(0%)` : `translateY(-100%)`
+    });
   
     const description = `${formattedCategories} ${
       price ? " • " + price : ""
     } • 🎫 • ⭐ ${rating}  (${review_count}+)`;
     return ReactDOM.createPortal(
       <>
-      <Background/>
-        <ModalWrapper>
-          <ModalImage src={image_url}/>
+      <Background onClick={()=>setSelectedMarker(null)}/>
 
+
+          <Modal>
+          <CloseModalButton onClick={()=>setSelectedMarker(null)}/>
+            <BusinessImage src={image_url}/>
             <h1 > {name}</h1>
             <h2 >{description} </h2>
             <h2> {formattedAddress}</h2>
-            <a href={url} target="_blank" rel="noreferrer noopener"><img src="/yelp_logo.png" alt="" /></a>
-        </ModalWrapper>
-
+            <a href={url} target="_blank" rel="noreferrer noopener"><YelpLogo src="/yelp_logo.png" alt="" /></a>
+            <button onClick={()=>addToTrip(coordinates, name, id, image_url)}>Add to Trip</button>
+          </Modal>
       </>
 
       ,

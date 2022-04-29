@@ -1,7 +1,9 @@
 
 import { Leg } from "./Leg"
 export const TripView = (props)=>{
-    const {start, end,  waypoints, directions} = props;
+    const {start, end,  waypoints, directions, removeFromTrip} = props;
+    console.log(directions)
+    console.log(waypoints)
     let totalDistance = 0;
     let seconds = 0;
     directions.routes[0].legs.forEach(leg =>{
@@ -15,17 +17,19 @@ export const TripView = (props)=>{
 
     return(
         <>
-        <div className="summary">
-            <h2>Total Miles: {Math.round(totalDistance*0.000621371192 * 10 ) / 10}</h2>
-            <h2>Total Time : {totalDuration}</h2>
-        </div>
-        <div className="total-legs">
-            <Leg name={start.name} directions={directions} index = {0}/>
-            {waypoints?.map((waypoint, index)=>
-                <Leg name = {waypoint.name} imgURL = {waypoint.imgURL} directions={directions} index = {index+1}/>      
-            )}
-            <Leg name={end.name}/>
-        </div>
+            <div className="summary">
+                <h2>Total Miles: {Math.round(totalDistance*0.000621371192 * 10 ) / 10}</h2>
+                <h2>Total Time : {totalDuration}</h2>
+            </div>
+
+            
+            <div className="legs">
+                <Leg name={start.name} directions={directions} index = {0}/>
+                {waypoints?.map((waypoint, index)=>
+                    <Leg name = {waypoint.name} imgURL = {waypoint.imgURL} directions={directions} index = {index+1} removeFromTrip={removeFromTrip} id={waypoint.yelp_id}/>      
+                )}
+                <Leg name={end.name}/>
+            </div>
 
         </>
 

@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
-import {SearchPlaces} from "./TripView/Places"
+import { SearchPlaces } from "./TripView/Places"
 import { Businesses} from "./BusinessesView/businesses"
 import { TripView } from "./TripView/Trip_View"
 import { InfoModal } from "./InfoModal"
@@ -19,6 +19,7 @@ export const MapComponent = ()=>{
   const mapRef = useRef();
   const waypoint_order = useRef();
   const options = useMemo(()=>({
+    mapId: 'e9159de94dc8cc93',
     disableDefaultUI: true,
     clickableIcons: false
   }), [])
@@ -81,13 +82,18 @@ useEffect(()=>{
 },[googleWaypoints])
 
 useEffect(()=>{ 
-  if (isMounted.current && waypointsSelected.length > 0) {
-    const temp= []
-    waypointsSelected.map((waypoint) => {
-      temp.push({location: {lat: waypoint.coordinates.latitude, lng: waypoint.coordinates.longitude}})
-    })
-    console.log(temp)
-    setGoogleWaypoints(temp)
+  if (isMounted.current ) {
+    if(waypointsSelected.length > 0){
+      const temp= []
+      waypointsSelected.map((waypoint) => {
+        temp.push({location: {lat: waypoint.coordinates.latitude, lng: waypoint.coordinates.longitude}})
+      })
+      console.log(temp)
+      setGoogleWaypoints(temp)
+    }else {
+      setGoogleWaypoints([])
+    }
+
   }
 
 }, [waypointsSelected])
@@ -154,6 +160,7 @@ useEffect(()=>{
 
   const sortWaypoints = ()=>{
     const optimizedRoute = waypoint_order.current.map(index =>waypointsSelected[index])
+    console.log("optimized routing" , optimizedRoute)
     setWaypoints(optimizedRoute)   
   }
 
@@ -180,8 +187,8 @@ useEffect(()=>{
               midpoints.push({coordinates:steps[i].path[Math.floor(pathIndex)].toJSON()})
               miles -= diameter;
               count +=1
-        }
-        count = 1;
+          }
+          count = 1;
       }
       if(midpoints.length>0){
         setYelpSearchPoints((prevState) => [...prevState, ...midpoints] )
@@ -198,7 +205,7 @@ const addToTrip= (coordinates, title, yelpID, image)=>{
   //check if the place is already added to waypoints
   if(waypointsSelected.some(waypoint => waypoint.yelp_id === yelpID)){
   } else {
-    setWaypointsSelected((waypoints)=>[...waypoints, {name:title, yelp_id:yelpID, coordinates:coordinates, imgURL:image}])
+    setWaypointsSelected((selectedWaypoints)=>[...selectedWaypoints, {name:title, yelp_id:yelpID, coordinates:coordinates, imgURL:image}])
 
   }
 }
@@ -214,7 +221,14 @@ const removeFromTrip = (yelpID) =>{
   if(!isLoaded) return <div>Loading...</div>
   
     return<>
-    
+    {selectedMarker && (
+          <InfoModal
+            selectedBusiness = {selectedMarker}
+            setSelectedMarker= {setSelectedMarker}
+            addToTrip={addToTrip}
+          />
+      )}
+
     <div className="container">
       <div className="controls">
         <h1>Route Controls</h1>
@@ -224,8 +238,8 @@ const removeFromTrip = (yelpID) =>{
         setStart={setStart}
         setEnd={setEnd}
         />
-        <button onClick={fetchDirections}> Fetch  directions </button>
-        <button onClick={sortWaypoints}> sort waypoints </button>
+        {/* <button onClick={fetchDirections}> Fetch  directions </button>
+        <button onClick={sortWaypoints}> sort waypoints </button> */}
 
         <h4>Route Detail View</h4>
 
@@ -235,6 +249,7 @@ const removeFromTrip = (yelpID) =>{
             end={end}
             waypoints = {waypoints}
             directions = {directions}
+            removeFromTrip={removeFromTrip}
 
           />)}
       </div>
@@ -247,12 +262,7 @@ const removeFromTrip = (yelpID) =>{
           />          
       )}
 
-      {selectedMarker && (
-          <InfoModal
-            selectedBusiness = {selectedMarker}
-            setSelectedMarker= {setSelectedMarker}
-          />
-      )}
+      
       
 
 
