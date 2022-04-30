@@ -2,8 +2,7 @@
 import { Leg } from "./Leg"
 export const TripView = (props)=>{
     const {start, end,  waypoints, directions, removeFromTrip} = props;
-    console.log(directions)
-    console.log(waypoints)
+
     let totalDistance = 0;
     let seconds = 0;
     directions.routes[0].legs.forEach(leg =>{
