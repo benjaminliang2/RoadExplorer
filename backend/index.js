@@ -8,13 +8,15 @@ const axios = require('axios');
 app.use(express.json());
 app.use(cors());
 app.get('/', (req,res)=>{res.send("Server is Running OK")})
-app.get("/:lat/:lng", (req, res) => {
+app.get("/:searchCategory/:lat/:lng", (req, res) => {
   console.log("fetching all businesses")
+    const searchCategory = req.params.searchCategory
     const lat = req.params.lat
     const lng = req.params.lng
     const config = {
       method: 'get',
-      url: 'https://api.yelp.com/v3/businesses/search?term=tourist'+
+      url: 'https://api.yelp.com/v3/businesses/search?term='+
+      searchCategory+
       '&latitude='+
       lat+
       '&longitude='+

@@ -1,10 +1,14 @@
 import { BusinessCard } from "./businessCard"
 import "./businesses.css"
+import { SearchFilter } from "./SearchFilter"
 
 
 export const Businesses = (props)=>{
-    const {hikes, addToTrip, setActiveMarker} = props
+    const {hikes, addToTrip, setActiveMarker, setSearchCategory} = props
     return(<>
+    <div className="search-bar">
+        <SearchFilter setSearchCategory = {setSearchCategory}/>
+    </div>
     <div className="businessesColumn">
     {hikes.map(hike=>(
         <BusinessCard

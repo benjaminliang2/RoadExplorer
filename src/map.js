@@ -5,6 +5,7 @@ import { Businesses} from "./BusinessesView/businesses"
 import { TripView } from "./TripView/Trip_View"
 import { InfoModal } from "./InfoModal"
 import "./styles.css"
+import { Category } from "@mui/icons-material";
 /*global google*/
 const libraries = ["places"]
 
@@ -21,7 +22,8 @@ export const MapComponent = ()=>{
   const options = useMemo(()=>({
     mapId: 'e9159de94dc8cc93',
     disableDefaultUI: true,
-    clickableIcons: false
+    clickableIcons: false,
+    minZoom: 3.5
   }), [])
   const onMapLoad = useCallback((map)=>{
     mapRef.current = map;
@@ -29,8 +31,9 @@ export const MapComponent = ()=>{
 
   const [start, setStart] = useState(null)
   const [end, setEnd] = useState(null)
-  const [yelpSearchPoints, setYelpSearchPoints] = useState([])
   const [directions, setDirections] = useState(null)
+  const [searchCategory, setSearchCategory] = useState('tourist')
+  const [yelpSearchPoints, setYelpSearchPoints] = useState([])
   const [middleman, setMiddleman] = useState([]);
   const [hikes, setHikes] = useState([])
   const [waypoints, setWaypoints] = useState();
@@ -97,6 +100,12 @@ useEffect(()=>{
   }
 
 }, [waypointsSelected])
+useEffect(()=>{
+  console.log(searchCategory)
+  setMiddleman([])
+  setHikes([])
+  getNearbyHikes(yelpSearchPoints)
+},[searchCategory])
 
 useEffect(()=>{
   isMounted.current = true;
@@ -130,7 +139,7 @@ useEffect(()=>{
     points.forEach(async (point) =>{
       if(point){
         const {lat, lng} = point.coordinates
-        const response = await fetch('http://localhost:5000/' + lat + "/" + lng)
+        const response = await fetch('http://localhost:5000/' + searchCategory + '/' + lat + "/" + lng)
         const result = await response.json();
         setMiddleman((prevState) => [...prevState, ...result.businesses])
       }
@@ -258,6 +267,7 @@ const removeFromTrip = (yelpID) =>{
           <Businesses
             hikes = {hikes}
             addToTrip = {addToTrip}
+            setSearchCategory = {setSearchCategory}
             setActiveMarker = {setActiveMarker}
           />          
       )}
