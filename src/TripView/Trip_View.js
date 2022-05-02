@@ -1,5 +1,7 @@
 
 import { Leg } from "./Leg"
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 export const TripView = (props)=>{
     const {start, end,  waypoints, directions, removeFromTrip} = props;
 
@@ -17,9 +19,9 @@ export const TripView = (props)=>{
     return(
         <>
             <div className="summary">
-                <h2>Total Miles: {Math.round(totalDistance*0.000621371192 * 10 ) / 10}</h2>
-                <h2>Total Time : {totalDuration}</h2>
-            </div>
+                <h2><DirectionsCarIcon/> {Math.round(totalDistance*0.000621371192 * 10 ) / 10} Miles</h2>
+                <h2><AccessTimeIcon/> {totalDuration}</h2>
+            </div> 
 
             
             <div className="legs">

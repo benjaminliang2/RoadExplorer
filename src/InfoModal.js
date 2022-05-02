@@ -119,7 +119,7 @@ export const InfoModal =({selectedBusiness, setSelectedMarker, addToTrip})=>{
                   )}
                   
                   
-                  <Link
+                  <Button
                     variant="body2"
                     href={url}
                     target= "_blank"
@@ -133,7 +133,7 @@ export const InfoModal =({selectedBusiness, setSelectedMarker, addToTrip})=>{
                       }}
                     />
                     
-                  </Link>
+                  </Button>
                 </Box>
 
               </Box>

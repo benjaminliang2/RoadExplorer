@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
+import StarRateIcon from '@mui/icons-material/StarRate';
+import Button from '@mui/material/Button';
 // import './SearchResult.css';
 // import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 // import StarIcon from '@mui/icons-material/Star';
@@ -46,8 +48,8 @@ export const BusinessCard = (props)=>{
                         <div className="searchResult__stars">
                             {/* <StarIcon className="searchResult__star" /> */}
                             <p>
-                                <strong>{star}</strong>
-                                <strong>...({reviewCount})</strong>
+                                {star} <StarRateIcon sx={{'vertical-align': 'bottom'}}/>
+                                {reviewCount} + Reviews
                             </p>
                         </div>
                         <div className='searchResults__price'>
@@ -57,7 +59,7 @@ export const BusinessCard = (props)=>{
                     </div>
                 </div>
                 {/* <input type="checkbox" checked = {isChecked} onChange={handleOnChange}/> */}
-                <button onClick={handleOnClick}>Add to Trip</button>
+                <Button sx={{'height': 'auto'}} variant="contained" onClick={handleOnClick}>Add to Trip</Button>
             </div>
         </>
     )

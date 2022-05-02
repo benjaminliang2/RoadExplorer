@@ -1,53 +1,59 @@
 import "./Leg.css"
+import { Grid, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PinDropIcon from '@mui/icons-material/PinDrop';
 
+export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, id }) => {
 
-export const Leg = ({name, imgURL, directions, index, removeFromTrip, id})=>{
-    
-    if(directions){
+    if (directions) {
         //This resolves the problem where tripView and Legs get rerendered as soon as directions state change
         //but it depends on the waypoints state too, but it renders before waypoints state update
-        if(index >= directions.routes[0].legs.length){
+        if (index >= directions.routes[0].legs.length) {
             return null;
         }
         var distance = directions.routes[0].legs[index].distance.value;
         var seconds = directions.routes[0].legs[index].duration.value;
-    
-        var toTimeString = (seconds)=>{
+
+        var toTimeString = (seconds) => {
             return (new Date(seconds * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
         }
         var duration = toTimeString(seconds)
     }
-    
-    return(
+
+    return (
         <>
-            <div className="card">
-                <div className="top">
-                    <div className="image">
-                        <img src={imgURL} alt="globe" />
-                    </div>
-                    {removeFromTrip && (
-                        <button onClick={()=>{removeFromTrip(id)}}>Remove From Trip</button>
-                    )}
-                    
-                    <div className="name">
-                        <h1>{name}</h1>
-                    </div>
-                </div>
-                
-                
-                {/* <h1>Address</h1> */}
-            
-                <div className="details">
+            <Grid container columnSpacing={4} rowSpacing={3} alignItems="center" >
+                <Grid item xs={4} sx={{ 'align-self': 'center', 'text-align': 'center' }}>
+                    {imgURL 
+                        ? <img style={{ 'object-fit': 'cover', 'height': '100%', 'width': '100%' }} alt="complex" src={imgURL} />
+                        : <PinDropIcon />
+                    }
+                </Grid>
+                <Grid item xs={8} >
+                    <Grid item container alignItems="center">
+                        <Grid item xs={10}>
+                            {name}
+                            {/* <p>{address}</p> */}
+                        </Grid>
+                        <Grid item xs={2}>
+                            <IconButton sx={{color: 'white'}} color="secondary" onClick={() => { removeFromTrip(id) }}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid container >
+                <Grid item xs={12}>
                     {/* display details of travel between each waypoint  */}
                     {directions && (
                         <>
-                            <p className="distance"> {Math.round(distance*0.000621371192 * 10 ) / 10} Miles</p>
-                            <p className="duration"> {duration} </p>
+                            <p style={{'text-align': 'center'}} className="distance"> {Math.round(distance * 0.000621371192 * 10) / 10} Miles --- {duration}</p>
                         </>
-                        
                     )}
-                </div>
-            </div>
+                </Grid>
+
+            </Grid>
         </>
     )
-    }
+}

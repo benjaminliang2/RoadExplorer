@@ -250,17 +250,21 @@ const removeFromTrip = (yelpID) =>{
         {/* <button onClick={fetchDirections}> Fetch  directions </button>
         <button onClick={sortWaypoints}> sort waypoints </button> */}
 
-        <h4>Route Detail View</h4>
+        
 
         {(directions && 
+        <>        
+          <h4>Trip Summary</h4>
           <TripView
             start={start}
             end={end}
             waypoints = {waypoints}
             directions = {directions}
             removeFromTrip={removeFromTrip}
+            hikes={hikes}
 
-          />)}
+          />
+        </>)}
       </div>
 
       {hikes.length>0 && (

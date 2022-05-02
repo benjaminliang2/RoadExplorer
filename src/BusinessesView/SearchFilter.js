@@ -1,5 +1,3 @@
-//this component will havee "suggested" selected as default in the filter...and provided other filtering options such as food, shopping, etc
-//this component shall have a search function for users to find their own places. 
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -14,8 +12,12 @@ export const SearchFilter =({setSearchCategory}) =>{
     console.log(event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = (event) => {
+
+  const handleMenuItemClose = (event) => {
     setCategory(event.target.innerText)
+  };
+
+  const handleClose = (event) => {
     setAnchorEl(null);
   };
 
@@ -32,6 +34,7 @@ export const SearchFilter =({setSearchCategory}) =>{
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
+        variant="outlined"
       >
         {category}
       </Button>
@@ -44,12 +47,12 @@ export const SearchFilter =({setSearchCategory}) =>{
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}>Suggested</MenuItem>
-        <MenuItem onClick={handleClose}>Restaurants</MenuItem>
-        <MenuItem onClick={handleClose}>Parks</MenuItem>
-        <MenuItem onClick={handleClose}>Landmarks</MenuItem>
-        <MenuItem onClick={handleClose}>Shopping</MenuItem>
-        <MenuItem onClick={handleClose}>Nightlife</MenuItem>
+        <MenuItem onClick={handleMenuItemClose}>Suggested</MenuItem>
+        <MenuItem onClick={handleMenuItemClose}>Restaurants</MenuItem>
+        <MenuItem onClick={handleMenuItemClose}>Parks</MenuItem>
+        <MenuItem onClick={handleMenuItemClose}>Landmarks</MenuItem>
+        <MenuItem onClick={handleMenuItemClose}>Shopping</MenuItem>
+        <MenuItem onClick={handleMenuItemClose}>Nightlife</MenuItem>
       </Menu>
     </div>
   );
