@@ -101,9 +101,9 @@ useEffect(()=>{
 
 }, [waypointsSelected])
 useEffect(()=>{
-  console.log(searchCategory)
   setMiddleman([])
-  setHikes([])
+  console.log(hikes.length)
+  // setHikes([])
   getNearbyHikes(yelpSearchPoints)
 },[searchCategory])
 
