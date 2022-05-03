@@ -1,7 +1,8 @@
 
 .businessesColumn {
     padding: 20px;
-    width: 50%;
+    width: auto;
+    overflow-y: scroll;
   }
 
 .businessesColumn > p {

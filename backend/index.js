@@ -8,15 +8,15 @@ const axios = require('axios');
 app.use(express.json());
 app.use(cors());
 app.get('/', (req,res)=>{res.send("Server is Running OK")})
-app.get("/:lat/:lng", (req, res) => {
-    console.log("GET Request on LocalHost 5000")
+app.get("/:searchCategory/:lat/:lng", (req, res) => {
+  console.log("fetching all businesses")
+    const searchCategory = req.params.searchCategory
     const lat = req.params.lat
     const lng = req.params.lng
-
-
-    var config = {
+    const config = {
       method: 'get',
-      url: 'https://api.yelp.com/v3/businesses/search?term=tourist'+
+      url: 'https://api.yelp.com/v3/businesses/search?term='+
+      searchCategory+
       '&latitude='+
       lat+
       '&longitude='+
@@ -30,14 +30,34 @@ app.get("/:lat/:lng", (req, res) => {
     axios(config)
     .then((response) => {
         res.json(response.data)
-        console.log(response.data);
+        // console.log(response.data);
     })
     .catch((error) => {
       console.log(error);
     });
     
 });
+app.get('/businesses/:businessID/reviews', (req, res)=>{
+  console.log("fetching reviews for specific business")
+  const config = {
+    method: 'get',
+    url: 'https://api.yelp.com/v3/businesses/' + req.params.businessID + '/reviews',
+    headers : {
+      'Authorization': process.env.YELP_API
+    }
+  };
+  axios(config)
+  .then((response) =>{
+    res.json(response.data)
+    console.log(response.data)
+  })
+  .catch(error=>{
+    console.log(error)
+  })
+})
 
-
-
-app.listen(5000);
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
+app.listen(port);
