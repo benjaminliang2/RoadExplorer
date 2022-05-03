@@ -76,7 +76,9 @@ useEffect(()=>{
   }
 }, [middleman])
 
-
+useEffect(()=>{
+  console.log(hikes)
+}, [hikes])
 
 useEffect(()=>{
   if (isMounted.current) {
@@ -102,8 +104,6 @@ useEffect(()=>{
 }, [waypointsSelected])
 useEffect(()=>{
   setMiddleman([])
-  console.log(hikes.length)
-  // setHikes([])
   getNearbyHikes(yelpSearchPoints)
 },[searchCategory])
 
