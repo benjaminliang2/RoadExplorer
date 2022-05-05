@@ -139,7 +139,7 @@ useEffect(()=>{
     points.forEach(async (point) =>{
       if(point){
         const {lat, lng} = point.coordinates
-        const response = await fetch('http://localhost:5000/' + searchCategory + '/' + lat + "/" + lng)
+        const response = await fetch('http://localhost:5000/' + lat + "/" + lng + "/category/" + searchCategory)
         const result = await response.json();
         setMiddleman((prevState) => [...prevState, ...result.businesses])
       }

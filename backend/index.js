@@ -8,7 +8,7 @@ const axios = require('axios');
 app.use(express.json());
 app.use(cors());
 app.get('/', (req,res)=>{res.send("Server is Running OK")})
-app.get("/:searchCategory/:lat/:lng", (req, res) => {
+app.get("/:lat/:lng/category/:searchCategory", (req, res) => {
   console.log("fetching all businesses")
     const searchCategory = req.params.searchCategory
     const lat = req.params.lat
