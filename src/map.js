@@ -35,7 +35,7 @@ export const MapComponent = ()=>{
   const [searchCategory, setSearchCategory] = useState('tourist')
   const [yelpSearchPoints, setYelpSearchPoints] = useState([])
   const [middleman, setMiddleman] = useState([]);
-  const [hikes, setHikes] = useState([])
+  const [hikes, setHikes] = useState(null)
   const [waypoints, setWaypoints] = useState();
   const [waypointsSelected, setWaypointsSelected] = useState([])
   const [googleWaypoints, setGoogleWaypoints] = useState([])
@@ -56,7 +56,6 @@ useEffect(()=>{
   if (isMounted.current) {
     setYelpSearchPoints([start, end])
     setMiddleman([])
-    setHikes([])
     setWaypointsSelected([])
     setGoogleWaypoints([])
   }
@@ -103,8 +102,11 @@ useEffect(()=>{
 
 }, [waypointsSelected])
 useEffect(()=>{
-  setMiddleman([])
-  getNearbyHikes(yelpSearchPoints)
+  if (isMounted.current ) {
+    console.log(searchCategory)
+    setMiddleman([])
+    getNearbyHikes(yelpSearchPoints)
+  }
 },[searchCategory])
 
 useEffect(()=>{
@@ -139,7 +141,7 @@ useEffect(()=>{
     points.forEach(async (point) =>{
       if(point){
         const {lat, lng} = point.coordinates
-        const response = await fetch('http://localhost:5000/' + lat + "/" + lng + "/category/" + searchCategory)
+        const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + searchCategory)
         const result = await response.json();
         setMiddleman((prevState) => [...prevState, ...result.businesses])
       }
@@ -267,7 +269,7 @@ const removeFromTrip = (yelpID) =>{
         </>)}
       </div>
 
-      {hikes.length>0 && (
+      {hikes && (
           <Businesses
             hikes = {hikes}
             addToTrip = {addToTrip}
@@ -304,8 +306,8 @@ const removeFromTrip = (yelpID) =>{
           </>
         )}
         
-
-        {hikes.map(hike =>
+        {hikes && (
+          hikes.map(hike =>
           <Marker 
           
             position={{lat: hike.coordinates.latitude, lng: hike.coordinates.longitude}}
@@ -323,6 +325,7 @@ const removeFromTrip = (yelpID) =>{
             // onClick={()=>{console.log(hike)}}
 
           />
+          )
         )}
 
         {/* {hikes.map(hike =>{

@@ -107,7 +107,6 @@ export const InfoModal =({selectedBusiness, setSelectedMarker, addToTrip})=>{
 
                   {reviews && (
                     <>
-                      <h1>Review go here</h1>
                       {reviews.map(review => (
                         
                         <Review review={review}/>

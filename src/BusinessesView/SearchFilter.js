@@ -2,19 +2,21 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { is } from '@react-spring/shared';
 
 export const SearchFilter =({setSearchCategory}) =>{
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [category, setCategory] = React.useState('Suggested')
   const open = Boolean(anchorEl);
+  const isMounted = React.useRef(false);
 
   const handleClick = (event) => {
-    console.log(event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuItemClose = (event) => {
     setCategory(event.target.innerText)
+    setAnchorEl(null)
   };
 
   const handleClose = (event) => {
@@ -22,9 +24,17 @@ export const SearchFilter =({setSearchCategory}) =>{
   };
 
   React.useEffect(()=>{
-    const temp = (category === 'Suggested') ? 'Tourist' : category;
-    setSearchCategory(temp)
+    if(isMounted.current){
+        const temp = (category === 'Suggested') ? 'Tourist' : category;
+        setSearchCategory(temp)
+        console.log(category)
+    }
+
   },[category])
+
+  React.useEffect(()=>{
+    isMounted.current = true;
+  },[])
 
   return (
     <div>
