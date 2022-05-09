@@ -3,7 +3,7 @@ import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption,
 import "@reach/combobox/styles.css";
 
 
-export const StartPlaces = ({setStart})=>{
+const StartPlaces = ({setStart})=>{
     const {ready, value, setValue, suggestions: {status, data}, clearSuggestions} = usePlacesAutocomplete();
 
     const handleSelect = async (val)=>{
@@ -32,7 +32,7 @@ export const StartPlaces = ({setStart})=>{
         </Combobox>
     </>
 }
-export const EndPlaces = ({setEnd})=>{
+const EndPlaces = ({setEnd})=>{
     const {ready, value, setValue, suggestions: {status, data}, clearSuggestions} = usePlacesAutocomplete();
 
     const handleSelect = async (val)=>{
@@ -62,6 +62,33 @@ export const EndPlaces = ({setEnd})=>{
             </ComboboxPopover>
         </Combobox>
     </>
+}
+
+export const SearchBox = ({panTo, getCustomResults})=>{
+    const {ready, value, setValue, suggestions: {status, data}, clearSuggestions} = usePlacesAutocomplete();
+    const handleSelect = async (val)=>{
+        setValue(val, false);
+        clearSuggestions();
+        const results = await getGeocode({address: val});
+        const name = val.substr(0, val.indexOf(',')); 
+        const {lat, lng} = await getLatLng(results[0])
+
+        panTo({lat, lng})
+        getCustomResults(name, lat, lng)
+            
+    }
+
+    return<>
+        <Combobox onSelect={handleSelect}>
+            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Places..." disabled={!ready}/>
+            <ComboboxPopover>
+                <ComboboxList>
+                    {status === "OK" && data.map(({place_id, description}) =><ComboboxOption key={place_id} value={description}/>)}
+                </ComboboxList>
+            </ComboboxPopover>
+        </Combobox>
+    </>
+
 }
 
 export const SearchPlaces = ({setEnd, setStart})=>{
