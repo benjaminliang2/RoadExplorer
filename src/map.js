@@ -3,7 +3,7 @@ import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, Direction
 import { SearchPlaces } from "./TripView/Places"
 import { Businesses} from "./BusinessesView/businesses"
 import { TripView } from "./TripView/Trip_View"
-import { InfoModal } from "./InfoModal"
+import { InfoModal } from "./InfoModal/InfoModal"
 import "./styles.css"
 import { Category } from "@mui/icons-material";
 /*global google*/

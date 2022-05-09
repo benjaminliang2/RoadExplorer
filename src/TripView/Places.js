@@ -23,7 +23,7 @@ export const StartPlaces = ({setStart})=>{
     return<>
         <h4>Enter Starting Location</h4>
         <Combobox onSelect={handleSelect}>
-            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Location" disabled={!ready}/>
+            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Enter Starting Location..." disabled={!ready}/>
             <ComboboxPopover>
                 <ComboboxList>
                     {status === "OK" && data.map(({place_id, description}) =><ComboboxOption key={place_id} value={description}/>)}
@@ -54,7 +54,7 @@ export const EndPlaces = ({setEnd})=>{
         <h4>Enter Ending Location</h4>
 
         <Combobox onSelect={handleSelect}>
-            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Location" disabled={!ready}/>
+            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Enter Destination" disabled={!ready}/>
             <ComboboxPopover>
                 <ComboboxList>
                     {status === "OK" && data.map(({place_id, description}) =><ComboboxOption key={place_id} value={description}/>)}
