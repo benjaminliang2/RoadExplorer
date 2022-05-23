@@ -11,6 +11,7 @@
     "@mui/material": "^5.6.3",
     "@reach/combobox": "^0.16.5",
     "@react-google-maps/api": "^2.8.1",
+    "@reduxjs/toolkit": "^1.8.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
@@ -18,7 +19,15 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
+<<<<<<< Updated upstream
     "react-router-dom": "^6.3.0",
+=======
+<<<<<<< Updated upstream
+=======
+    "react-redux": "^8.0.1",
+    "react-router-dom": "^6.3.0",
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     "react-scripts": "5.0.0",
     "react-spring": "^9.4.4",
     "styled-components": "^5.3.5",

@@ -77,6 +77,7 @@ export const SearchBox = ({panTo, getCustomResults})=>{
         getCustomResults(name, lat, lng)
             
     }
+    console.log("git stash testing ")
 
     return<>
         <Combobox onSelect={handleSelect}>

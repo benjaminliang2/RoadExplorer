@@ -1,11 +1,28 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
+<<<<<<< Updated upstream
 import { SearchPlaces, SearchBox } from "./TripView/Places"
 import { Businesses } from "./BusinessesView/businesses"
 import { TripView } from "./TripView/Trip_View"
 import { InfoModal } from "./InfoModal/InfoModal"
+=======
+<<<<<<< Updated upstream
+import { SearchPlaces } from "./TripView/Places"
+import { Businesses} from "./BusinessesView/businesses"
+import { TripView } from "./TripView/Trip_View"
+import { InfoModal } from "./InfoModal"
+=======
+import { SearchPlaces } from "./components/TripView/Places"
+import { Businesses } from "./components/BusinessesView/businesses"
+import { TripView } from "./components/TripView/Trip_View"
+import { InfoModal } from "./components/InfoModal/InfoModal"
+import { WelcomeModal } from "./components/WelcomeModal/WelcomeModal";
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 import "./styles.css"
 import { Category } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
 /*global google*/
 const libraries = ["places"]
 
@@ -29,8 +46,16 @@ export const MapComponent = () => {
     mapRef.current = map;
   }, [])
 
-  const [start, setStart] = useState(null)
-  const [end, setEnd] = useState(null)
+  const start = useSelector((randomname) => 
+    randomname.originDestination.origin
+  )
+  const end = useSelector((configureStore) => 
+    configureStore.originDestination.destination
+  )
+
+  // const [start, setStart] = useState(null)
+  // const [end, setEnd] = useState(null)
+  const [showWelcome, setShowWelcome] = useState(false)
   const [directions, setDirections] = useState(null)
   const [searchCategory, setSearchCategory] = useState('tourist')
   const [yelpSearchPoints, setYelpSearchPoints] = useState([])
@@ -128,12 +153,28 @@ export const MapComponent = () => {
 
 
 
+<<<<<<< Updated upstream
 
   const pan = (position) => {
+=======
+<<<<<<< Updated upstream
+  // const pan = (position)=>{
+  //   setOffice(position)
+  //   mapRef.current.panTo(position)
+  //   mapRef.current.setZoom(15)
+  // }
+=======
+
+  const panTo = (position) => {
+>>>>>>> Stashed changes
     mapRef.current.panTo(position)
     mapRef.current.setZoom(15)
   }
 
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 
   const getNearbyHikes = (points) => {
@@ -237,9 +278,24 @@ export const MapComponent = () => {
   }
 
 
+<<<<<<< Updated upstream
   if (!isLoaded) return <div>Loading...</div>
 
   return <>
+=======
+<<<<<<< Updated upstream
+ 
+  if(!isLoaded) return <div>Loading...</div>
+  
+    return<>
+=======
+  if (!isLoaded) return <div>Loading...</div>
+  
+
+  return <>
+    {isLoaded && <WelcomeModal/>}
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     {selectedMarker && (
       <InfoModal
         selectedBusiness={selectedMarker}
@@ -250,7 +306,21 @@ export const MapComponent = () => {
 
     <div className="container">
       <div className="controls">
+<<<<<<< Updated upstream
         <h1>Route Controls</h1>
+<<<<<<< Updated upstream
+=======
+        
+        <SearchPlaces
+=======
+        <h1>Trip View</h1>
+        <h4>put origin to destination here and edit button</h4>
+        {/* <SearchPlaces
+          // setStart={setStart}
+          // setEnd={setEnd}
+        /> */}
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
         <SearchPlaces
           setStart={setStart}
@@ -276,13 +346,33 @@ export const MapComponent = () => {
           </>)}
       </div>
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+      {hikes.length>0 && (
+          <Businesses
+            hikes = {hikes}
+            addToTrip = {addToTrip}
+            setSearchCategory = {setSearchCategory}
+            setActiveMarker = {setActiveMarker}
+          />          
+=======
+>>>>>>> Stashed changes
       {hikes && (
         <Businesses
           hikes={hikes}
           addToTrip={addToTrip}
           setSearchCategory={setSearchCategory}
           setActiveMarker={setActiveMarker}
+<<<<<<< Updated upstream
         />
+=======
+          panTo={panTo} 
+          getCustomResults={getCustomResults}
+
+        />
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
       )}
 
 
@@ -290,11 +380,24 @@ export const MapComponent = () => {
 
 
       <div className="map">
+<<<<<<< Updated upstream
         <SearchBox panTo={pan} getCustomResults={getCustomResults}/>
+=======
+<<<<<<< Updated upstream
+        <GoogleMap 
+          zoom={10} 
+          center={center} 
+          mapContainerClassName="map-container" 
+=======
+>>>>>>> Stashed changes
         <GoogleMap
           zoom={10}
           center={center}
           mapContainerClassName="map-container"
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
           options={options}
           // onClick={onMapClick}
           onLoad={onMapLoad}
