@@ -19,15 +19,9 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
-<<<<<<< Updated upstream
-    "react-router-dom": "^6.3.0",
-=======
-<<<<<<< Updated upstream
-=======
+
     "react-redux": "^8.0.1",
     "react-router-dom": "^6.3.0",
->>>>>>> Stashed changes
->>>>>>> Stashed changes
     "react-scripts": "5.0.0",
     "react-spring": "^9.4.4",
     "styled-components": "^5.3.5",

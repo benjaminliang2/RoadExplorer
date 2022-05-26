@@ -1,104 +1,98 @@
-import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocomplete"
+import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete"
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption, } from "@reach/combobox"
 import "@reach/combobox/styles.css";
 import { useDispatch } from "react-redux";
-import {setOrigin, setDestination} from '../../Slices/originDestinationSlice'
+import { setOrigin, setDestination } from '../../Slices/originDestinationSlice'
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
 
 
-export const StartPlaces = ()=>{
+export const StartPlaces = () => {
     const dispatch = useDispatch()
-    const {ready, value, setValue, suggestions: {status, data}, clearSuggestions} = usePlacesAutocomplete();
+    const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
 
-    const handleSelect = async (val)=>{
-        
+    const handleSelect = async (val) => {
+        console.log(val)
         setValue(val, true);
         // clearSuggestions();
+        const results = await getGeocode({ address: val });
+        console.log(results[0])
 
-        const results = await getGeocode({address: val});
-        // console.log(results[0])
-        const {lat, lng} = await getLatLng(results[0])
+        const { lat, lng } = await getLatLng(results[0])
+        
         dispatch(setOrigin({
-            coordinates: {lat, lng},
+            coordinates: { lat, lng },
             name: val
         }))
+
     }
-    console.log(value)
-    console.log(data)
-    return<>
+    return <>
         <h4>Enter Origin</h4>
-        {/* <Combobox onSelect={handleSelect}>
-            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Houston, Texas" disabled={!ready}/>
-            <ComboboxPopover>
-                <ComboboxList style={{zIndex: 9999}}>
-                    {status === "OK" && data.map(({place_id, description}) =><ComboboxOption key={place_id} value={description}/>)}
-                </ComboboxList>
-            </ComboboxPopover>
-        </Combobox> */}
-        <Autocomplete 
-        id="free-solo-demo"
-        freeSolo
-        options={data.map(({description}) => description)}
-        renderInput={(params) => <TextField {...params} label="Origin" onChange={(e)=>handleSelect(e.target.value)} placeholder="e.g. Las Vegas"/>}
-        sx={{ width: 300 }}
-      />
+        <Autocomplete
+            id="free-solo-demo"
+            freeSolo
+            options={data.map(({ description }) => description)}
+            onChange={(event, value) => handleSelect(value)}
+            renderInput={(params) => <TextField {...params} label="Origin" onChange={(e) => handleSelect(e.target.value)} placeholder="e.g. Las Vegas" />}
+            sx={{ width: 300 }}
+        />
     </>
 }
-export const EndPlaces = ()=>{
+export const EndPlaces = () => {
     const dispatch = useDispatch()
-    const {ready, value, setValue, suggestions: {status, data}, clearSuggestions} = usePlacesAutocomplete();
+    const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
 
-    const handleSelect = async (val)=>{
-        
+    const handleSelect = async (val) => {
+
         setValue(val, false);
         clearSuggestions();
-        const results = await getGeocode({address: val});
-        // console.log(results[0])
-        const {lat, lng} = await getLatLng(results[0])
+        const results = await getGeocode({ address: val });
+        console.log(results[0])
+        const { lat, lng } = await getLatLng(results[0])
+        console.log(lat, lng)
         dispatch(setDestination({
-            coordinates: {lat, lng},
+            coordinates: { lat, lng },
             name: val
 
         }))
-            
+
     }
 
-    return<>
+    return <>
         <h4>Enter Destination</h4>
 
         <Combobox onSelect={handleSelect}>
-            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Los Angeles, California" disabled={!ready}/>
+            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Los Angeles, California" disabled={!ready} />
             <ComboboxPopover>
                 <ComboboxList>
-                    {status === "OK" && data.map(({place_id, description}) =><ComboboxOption key={place_id} value={description}/>)}
+                    {status === "OK" && data.map(({ place_id, description }) => <ComboboxOption key={place_id} value={description} />)}
                 </ComboboxList>
             </ComboboxPopover>
         </Combobox>
     </>
 }
 
-export const SearchBox = ({panTo, getCustomResults})=>{
-    const {ready, value, setValue, suggestions: {status, data}, clearSuggestions} = usePlacesAutocomplete();
-    const handleSelect = async (val)=>{
+export const SearchBox = ({ panTo, getCustomResults }) => {
+    const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
+    const handleSelect = async (val) => {
         setValue(val, false);
         clearSuggestions();
-        const results = await getGeocode({address: val});
-        const name = val.substr(0, val.indexOf(',')); 
-        const {lat, lng} = await getLatLng(results[0])
+        const results = await getGeocode({ address: val });
+        const name = val.substr(0, val.indexOf(','));
+        const { lat, lng } = await getLatLng(results[0])
 
-        panTo({lat, lng})
+        panTo({ lat, lng })
         getCustomResults(name, lat, lng)
-            
+
     }
 
-    return<>
+    return <>
         <Combobox onSelect={handleSelect}>
-            <ComboboxInput autoFocus value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Places..." disabled={!ready}/>
+            <ComboboxInput autoFocus value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Places..." disabled={!ready} />
             <ComboboxPopover>
                 <ComboboxList>
-                    {status === "OK" && data.map(({place_id, description}) =><ComboboxOption key={place_id} value={description}/>)}
+                    {status === "OK" && data.map(({ place_id, description }) => <ComboboxOption key={place_id} value={description} />)}
                 </ComboboxList>
             </ComboboxPopover>
         </Combobox>
@@ -116,32 +110,32 @@ const top100Films = [
     { title: "Schindler's List", year: 1993 },
     { title: 'Pulp Fiction', year: 1994 },
     {
-      title: 'The Lord of the Rings: The Return of the King',
-      year: 2003,
+        title: 'The Lord of the Rings: The Return of the King',
+        year: 2003,
     },
     { title: 'The Good, the Bad and the Ugly', year: 1966 },
     { title: 'Fight Club', year: 1999 },
     {
-      title: 'The Lord of the Rings: The Fellowship of the Ring',
-      year: 2001,
+        title: 'The Lord of the Rings: The Fellowship of the Ring',
+        year: 2001,
     },
     {
-      title: 'Star Wars: Episode V - The Empire Strikes Back',
-      year: 1980,
+        title: 'Star Wars: Episode V - The Empire Strikes Back',
+        year: 1980,
     },
     { title: 'Forrest Gump', year: 1994 },
     { title: 'Inception', year: 2010 },
     {
-      title: 'The Lord of the Rings: The Two Towers',
-      year: 2002,
+        title: 'The Lord of the Rings: The Two Towers',
+        year: 2002,
     },
     { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
     { title: 'Goodfellas', year: 1990 },
     { title: 'The Matrix', year: 1999 },
     { title: 'Seven Samurai', year: 1954 },
     {
-      title: 'Star Wars: Episode IV - A New Hope',
-      year: 1977,
+        title: 'Star Wars: Episode IV - A New Hope',
+        year: 1977,
     },
     { title: 'City of God', year: 2002 },
     { title: 'Se7en', year: 1995 },
@@ -176,8 +170,8 @@ const top100Films = [
     { title: 'Alien', year: 1979 },
     { title: 'Sunset Boulevard', year: 1950 },
     {
-      title: 'Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb',
-      year: 1964,
+        title: 'Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb',
+        year: 1964,
     },
     { title: 'The Great Dictator', year: 1940 },
     { title: 'Cinema Paradiso', year: 1988 },
@@ -199,8 +193,8 @@ const top100Films = [
     { title: 'North by Northwest', year: 1959 },
     { title: 'Vertigo', year: 1958 },
     {
-      title: 'Star Wars: Episode VI - Return of the Jedi',
-      year: 1983,
+        title: 'Star Wars: Episode VI - Return of the Jedi',
+        year: 1983,
     },
     { title: 'Reservoir Dogs', year: 1992 },
     { title: 'Braveheart', year: 1995 },
@@ -213,8 +207,8 @@ const top100Films = [
     { title: 'Lawrence of Arabia', year: 1962 },
     { title: 'Double Indemnity', year: 1944 },
     {
-      title: 'Eternal Sunshine of the Spotless Mind',
-      year: 2004,
+        title: 'Eternal Sunshine of the Spotless Mind',
+        year: 2004,
     },
     { title: 'Amadeus', year: 1984 },
     { title: 'To Kill a Mockingbird', year: 1962 },
@@ -232,4 +226,4 @@ const top100Films = [
     { title: 'Snatch', year: 2000 },
     { title: '3 Idiots', year: 2009 },
     { title: 'Monty Python and the Holy Grail', year: 1975 },
-  ];
+];
