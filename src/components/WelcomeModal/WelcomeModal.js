@@ -20,15 +20,20 @@ const ContainerStyle = {
 };
 
 
-export const WelcomeModal = () => {
+export const WelcomeModal = ({setShow}) => {
     const [open, setOpen] = useState(true)
+    const handleClose = ()=>{
+        setOpen(false)
+        console.log("modal is closed")
+        setShow(false)
 
+    }
     return ReactDOM.createPortal(<>
         <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
             open={open}
-            onClose={() => setOpen(false)}
+            onClose={() => {handleClose()}}
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{

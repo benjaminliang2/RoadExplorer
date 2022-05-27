@@ -2,9 +2,16 @@ import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocom
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption, } from "@reach/combobox"
 import "@reach/combobox/styles.css";
 import { useDispatch } from "react-redux";
-
-import TextField from '@mui/material/TextField';
+import { setOrigin, setDestination } from '../../Slices/originDestinationSlice'
+import { Grid, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
+import { useSelector } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+
+
 
 
 export const StartPlaces = ({setPlace, placeholder, label}) => {
@@ -19,7 +26,7 @@ export const StartPlaces = ({setPlace, placeholder, label}) => {
         console.log(results[0])
 
         const { lat, lng } = await getLatLng(results[0])
-        
+
         dispatch(setPlace({
             coordinates: { lat, lng },
             name: val
@@ -96,6 +103,43 @@ export const SearchBox = ({ panTo, getCustomResults }) => {
             </ComboboxPopover>
         </Combobox>
     </>
+
+}
+
+
+export const TripTitle = ({ setShowModal }) => {
+
+    const start = useSelector((randomname) =>
+        randomname.originDestination.origin
+    )
+    const end = useSelector((configureStore) =>
+        configureStore.originDestination.destination
+    )
+    return (<>
+        <Grid container>
+
+            <Grid item>
+                <h4>{start.name}</h4>
+            </Grid>
+            <Grid item>
+                <ArrowRightAltIcon />
+            </Grid>
+            <Grid item>
+                <h4>{end.name}</h4>
+            </Grid>
+            <Grid item>
+                <IconButton color="primary" aria-label="Edit Trip"
+                    onClick={() => {
+                        console.log("edit trip")
+                        setShowModal(true)
+                    }}
+                >
+                    <EditIcon />
+                </IconButton>
+            </Grid>
+        </Grid>
+    </>)
+    //display origin, arrow l-r, destination, edit button.
 
 }
 

@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
-import { StartPlaces, EndPlaces, SearchBox } from "./components/TripView/Places"
+import { StartPlaces, EndPlaces, SearchBox, TripTitle } from "./components/TripView/Places"
 import { Businesses } from "./components/BusinessesView/businesses"
 import { TripView } from "./components/TripView/Trip_View"
 import { InfoModal } from "./components/InfoModal/InfoModal"
@@ -32,13 +32,14 @@ export const MapComponent = () => {
     mapRef.current = map;
   }, [])
 
-  const start = useSelector((randomname) => 
+  const start = useSelector((randomname) =>
     randomname.originDestination.origin
   )
-  const end = useSelector((configureStore) => 
+  const end = useSelector((configureStore) =>
     configureStore.originDestination.destination
   )
-  
+
+  const [showEditTripModal, setShowEditTripModal] = useState(false)
   const [directions, setDirections] = useState(null)
   const [searchCategory, setSearchCategory] = useState('tourist')
   const [yelpSearchPoints, setYelpSearchPoints] = useState([])
@@ -257,13 +258,14 @@ export const MapComponent = () => {
     )}
 
 
-    {isLoaded && <WelcomeModal/>}
+    {isLoaded && <WelcomeModal />}
+    {showEditTripModal && <WelcomeModal setShow={setShowEditTripModal} />}
+
 
     <div className="container">
       <div className="controls">
-        <h1>Route Controls</h1>
-        <StartPlaces/>
-        <EndPlaces/>
+        <TripTitle setShowModal={setShowEditTripModal}/>
+
         <div>
           <input type="text" />
         </div>
@@ -297,7 +299,7 @@ export const MapComponent = () => {
 
 
       <div className="map">
-        <SearchBox panTo={panTo} getCustomResults={getCustomResults}/>
+        <SearchBox panTo={panTo} getCustomResults={getCustomResults} />
         <GoogleMap
           zoom={10}
           center={center}
