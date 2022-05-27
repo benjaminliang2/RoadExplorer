@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { StartPlaces, EndPlaces } from "../TripView/Places";
 import ReactDOM from 'react-dom';
 import { Backdrop, Box, Modal } from '@mui/material';
+import { setOrigin, setDestination } from '../../Slices/originDestinationSlice'
 
 const ContainerStyle = {
     position: 'absolute',
@@ -35,8 +36,11 @@ export const WelcomeModal = () => {
             }}
         >
             <Box sx={ContainerStyle} >
-                <StartPlaces />
-                <EndPlaces />
+                <StartPlaces setPlace={setOrigin} placeholder="e.g. Los Angeles" label="Origin"/>
+                <StartPlaces setPlace={setDestination} placeholder="e.g. Houston, Texas" label="Destination"/>
+
+
+                {/* <EndPlaces /> */}
             </Box>
         </Modal>
     </>, document.getElementById("portal"))
