@@ -2,7 +2,6 @@ import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocom
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption, } from "@reach/combobox"
 import "@reach/combobox/styles.css";
 import { useDispatch } from "react-redux";
-import { setOrigin, setDestination } from '../../Slices/originDestinationSlice'
 import { Grid, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useSelector } from "react-redux";
@@ -14,7 +13,7 @@ import IconButton from '@mui/material/IconButton';
 
 
 
-export const StartPlaces = ({setPlace, placeholder, label}) => {
+export const SearchTextField = ({ setPlace, placeholder, label }) => {
     const dispatch = useDispatch()
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
 
@@ -34,50 +33,51 @@ export const StartPlaces = ({setPlace, placeholder, label}) => {
 
     }
     return <>
-        <h4>Enter Origin</h4>
         <Autocomplete
             id="free-solo-demo"
             freeSolo
             options={data.map(({ description }) => description)}
             onChange={(event, value) => handleSelect(value)}
-            renderInput={(params) => <TextField {...params} label={label} onChange={(e) => handleSelect(e.target.value)} placeholder={placeholder} />}
+            renderInput={(params) =>
+                <TextField {...params} label={label} onChange={(e) => handleSelect(e.target.value)} placeholder={placeholder} variant="standard" required={true}/>
+            }
             sx={{ width: 300 }}
         />
     </>
 }
-export const EndPlaces = (set) => {
-    const dispatch = useDispatch()
-    const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
+// export const EndPlaces = (set) => {
+//     const dispatch = useDispatch()
+//     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
 
-    const handleSelect = async (val) => {
+//     const handleSelect = async (val) => {
 
-        setValue(val, false);
-        clearSuggestions();
-        const results = await getGeocode({ address: val });
-        console.log(results[0])
-        const { lat, lng } = await getLatLng(results[0])
-        console.log(lat, lng)
-        dispatch(set({
-            coordinates: { lat, lng },
-            name: val
+//         setValue(val, false);
+//         clearSuggestions();
+//         const results = await getGeocode({ address: val });
+//         console.log(results[0])
+//         const { lat, lng } = await getLatLng(results[0])
+//         console.log(lat, lng)
+//         dispatch(set({
+//             coordinates: { lat, lng },
+//             name: val
 
-        }))
+//         }))
 
-    }
+//     }
 
-    return <>
-        <h4>Enter Destination</h4>
+//     return <>
+//         <h4>Enter Destination</h4>
 
-        <Combobox onSelect={handleSelect}>
-            <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Los Angeles, California" disabled={!ready} />
-            <ComboboxPopover>
-                <ComboboxList>
-                    {status === "OK" && data.map(({ place_id, description }) => <ComboboxOption key={place_id} value={description} />)}
-                </ComboboxList>
-            </ComboboxPopover>
-        </Combobox>
-    </>
-}
+//         <Combobox onSelect={handleSelect}>
+//             <ComboboxInput value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Los Angeles, California" disabled={!ready} />
+//             <ComboboxPopover>
+//                 <ComboboxList>
+//                     {status === "OK" && data.map(({ place_id, description }) => <ComboboxOption key={place_id} value={description} />)}
+//                 </ComboboxList>
+//             </ComboboxPopover>
+//         </Combobox>
+//     </>
+// }
 
 export const SearchBox = ({ panTo, getCustomResults }) => {
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
@@ -87,9 +87,10 @@ export const SearchBox = ({ panTo, getCustomResults }) => {
         const results = await getGeocode({ address: val });
         const name = val.substr(0, val.indexOf(','));
         const { lat, lng } = await getLatLng(results[0])
-
-        panTo({ lat, lng })
+        console.log("searchbos is being used")
         getCustomResults(name, lat, lng)
+        panTo({ lat, lng })
+        
 
     }
 

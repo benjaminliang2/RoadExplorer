@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import { StartPlaces, EndPlaces } from "../TripView/Places";
+import { SearchTextField } from "../TripView/Places";
 import ReactDOM from 'react-dom';
-import { Backdrop, Box, Modal } from '@mui/material';
+import { Backdrop, Box, Button, Modal } from '@mui/material';
 import { setOrigin, setDestination } from '../../Slices/originDestinationSlice'
+import { useSelector } from "react-redux";
+
+
 
 const ContainerStyle = {
     position: 'absolute',
@@ -20,20 +23,27 @@ const ContainerStyle = {
 };
 
 
-export const WelcomeModal = ({setShow}) => {
+export const WelcomeModal = ({ setShow }) => {
     const [open, setOpen] = useState(true)
-    const handleClose = ()=>{
-        setOpen(false)
-        console.log("modal is closed")
+    const handleClose = () => {
+        if (start && end){
+            setOpen(false)
+        }
         setShow(false)
 
     }
+    const start = useSelector((randomname) =>
+        randomname.originDestination.origin
+    )
+    const end = useSelector((configureStore) =>
+        configureStore.originDestination.destination
+    )
     return ReactDOM.createPortal(<>
         <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
             open={open}
-            onClose={() => {handleClose()}}
+            onClose={() => { handleClose() }}
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
@@ -41,12 +51,11 @@ export const WelcomeModal = ({setShow}) => {
             }}
         >
             <Box sx={ContainerStyle} >
-                <StartPlaces setPlace={setOrigin} placeholder="e.g. Los Angeles" label="Origin"/>
-                <StartPlaces setPlace={setDestination} placeholder="e.g. Houston, Texas" label="Destination"/>
-
-
-                {/* <EndPlaces /> */}
+                <SearchTextField setPlace={setOrigin} placeholder={start.name || "e.g. San Diego"} label="Origin" />
+                <SearchTextField setPlace={setDestination} placeholder={end.name || "e.g. Las Vegas"} label="Destination" />
+                <Button variant='contained' onClick={() => handleClose()}>Plan Trip</Button>
             </Box>
+
         </Modal>
     </>, document.getElementById("portal"))
 }

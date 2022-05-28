@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
-import { StartPlaces, EndPlaces, SearchBox, TripTitle } from "./components/TripView/Places"
+import { SearchBox, TripTitle } from "./components/TripView/Places"
 import { Businesses } from "./components/BusinessesView/businesses"
 import { TripView } from "./components/TripView/Trip_View"
 import { InfoModal } from "./components/InfoModal/InfoModal"
@@ -156,6 +156,7 @@ export const MapComponent = () => {
   }
 
   const getCustomResults = async (name, lat, lng) => {
+    console.log("getting custom search results")
     const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + name)
     const result = await response.json();
     setMiddleman([...result.businesses])
@@ -258,17 +259,13 @@ export const MapComponent = () => {
     )}
 
 
-    {isLoaded && <WelcomeModal />}
+    {isLoaded && <WelcomeModal setShow={setShowEditTripModal} />}
     {showEditTripModal && <WelcomeModal setShow={setShowEditTripModal} />}
 
 
     <div className="container">
       <div className="controls">
         <TripTitle setShowModal={setShowEditTripModal}/>
-
-        <div>
-          <input type="text" />
-        </div>
 
         {(directions &&
           <>
@@ -291,15 +288,12 @@ export const MapComponent = () => {
           addToTrip={addToTrip}
           setSearchCategory={setSearchCategory}
           setActiveMarker={setActiveMarker}
+          panTo={panTo} 
+          getCustomResults={getCustomResults}
         />
       )}
 
-
-
-
-
       <div className="map">
-        <SearchBox panTo={panTo} getCustomResults={getCustomResults} />
         <GoogleMap
           zoom={10}
           center={center}
