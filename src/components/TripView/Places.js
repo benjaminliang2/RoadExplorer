@@ -18,12 +18,7 @@ export const SearchTextField = ({ setPlace, placeholder, label }) => {
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
 
     const handleSelect = async (val) => {
-        console.log(val)
-        setValue(val, true);
-        // clearSuggestions();
         const results = await getGeocode({ address: val });
-        console.log(results[0])
-
         const { lat, lng } = await getLatLng(results[0])
 
         dispatch(setPlace({
@@ -39,7 +34,7 @@ export const SearchTextField = ({ setPlace, placeholder, label }) => {
             options={data.map(({ description }) => description)}
             onChange={(event, value) => handleSelect(value)}
             renderInput={(params) =>
-                <TextField {...params} label={label} onChange={(e) => handleSelect(e.target.value)} placeholder={placeholder} variant="standard" required={true}/>
+                <TextField {...params} label={label} onChange={(e) => setValue(e.target.value, true)} placeholder={placeholder} variant="standard" required={true}/>
             }
             sx={{ width: 300 }}
         />

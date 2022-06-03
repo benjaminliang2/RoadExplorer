@@ -9,7 +9,6 @@ app.use(express.json());
 app.use(cors());
 app.get('/', (req,res)=>{res.send("Server is Running OK")})
 app.get("/category/:lat/:lng/:searchCategory", (req, res) => {
-  console.log("fetching all businesses")
     const searchCategory = req.params.searchCategory
     // const searchCategory = 'sup noodle bar'
 

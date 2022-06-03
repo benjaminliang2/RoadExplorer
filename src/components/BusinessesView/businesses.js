@@ -35,8 +35,9 @@ export const Businesses = (props) => {
                         <CircularProgress />
                     </Box>
                 ) : (
-                    hikes.map(hike => (
+                    hikes.map((hike, index) => (
                         <BusinessCard
+                            index= {index}
                             img={hike.image_url}
                             name={hike.name}
                             location={hike.location.address1}

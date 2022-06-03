@@ -52,7 +52,7 @@ export const MapComponent = () => {
   const [selectedMarker, setSelectedMarker] = useState(false)
   const isMounted = useRef(false)
 
-
+  let markerIndex = 1
 
   useEffect(() => {
     if (isMounted.current) {
@@ -121,19 +121,6 @@ export const MapComponent = () => {
   useEffect(() => {
     isMounted.current = true;
   }, [])
-  // useEffect(()=>{
-  //   console.log("markers length = " + markers.length)
-  // }, [markers])
-
-  // const onMapClick = useCallback((event)=>{
-  //   setMarkers((prevState) => [...prevState, 
-  //     {
-  //       lat: event.latLng.lat(),
-  //       lng: event.latLng.lng(),
-  //       time: new Date()
-  //     }
-  //   ])
-  // },[])
 
 
   const panTo = (position) => {
@@ -319,17 +306,17 @@ export const MapComponent = () => {
           )}
 
           {hikes && (
-            hikes.map(hike =>
+            hikes.map((hike, index) =>
               <Marker
 
                 position={{ lat: hike.coordinates.latitude, lng: hike.coordinates.longitude }}
                 icon={
                   {
-                    url: "https://static.thenounproject.com/png/29961-200.png",
-                    scaledSize: new google.maps.Size(50, 50)
+                    // url: "https://static.thenounproject.com/png/29961-200.png",
+                    // scaledSize: new google.maps.Size(50, 50)
                   }
                 }
-
+                label = {(index+1).toString()}
                 animation={
                   (activeMarker.id === hike.id
                     ? 1 : undefined)

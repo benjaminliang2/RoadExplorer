@@ -1,7 +1,6 @@
 import { Avatar, Grid, Typography } from '@mui/material';
 
 export const Review = ({ review }) => {
-    console.log(review)
     const { user, rating, text, image_url } = review;
     return (<>
         <Grid container marginTop={2.7}>

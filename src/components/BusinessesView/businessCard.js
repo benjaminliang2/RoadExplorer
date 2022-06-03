@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import './businessCard.css'
 export const BusinessCard = (props)=>{
 
-    const {img, name, location, description, star, reviewCount, addToTrip, setActiveMarker,  coordinates, yelpID} = props;
+    const {img, index, name, location, description, star, reviewCount, addToTrip, setActiveMarker,  coordinates, yelpID} = props;
         
     // const [isChecked, setIsChecked] = useState(false);
     // const isMounted = useRef(false)
@@ -38,7 +38,7 @@ export const BusinessCard = (props)=>{
 
                 <div className='searchResult__info'>
                     <div className="searchResult__infoTop">
-                        <h3>{name}</h3>
+                        <h3>{index + 1}. {name}</h3>
                         <p>{description}</p>
                         <p>{location}</p>                    
 
@@ -48,7 +48,7 @@ export const BusinessCard = (props)=>{
                         <div className="searchResult__stars">
                             {/* <StarIcon className="searchResult__star" /> */}
                             <p>
-                                {star} <StarRateIcon sx={{'vertical-align': 'bottom'}}/>
+                                {star} <StarRateIcon sx={{'verticalAlign': 'bottom'}}/>
                                 {reviewCount} + Reviews
                             </p>
                         </div>
