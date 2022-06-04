@@ -21,6 +21,7 @@ export const MapComponent = () => {
   })
   const center = useMemo(() => ({ lat: 44, lng: -80 }), []);
   const mapRef = useRef();
+  const controller = useRef()
   const waypoint_order = useRef();
   const options = useMemo(() => ({
     mapId: 'e9159de94dc8cc93',
@@ -84,9 +85,9 @@ export const MapComponent = () => {
     }
   }, [middleman])
 
-  useEffect(() => {
-    console.log(hikes)
-  }, [hikes])
+  // useEffect(() => {
+  //   // console.log(hikes)
+  // }, [hikes])
 
   useEffect(() => {
     if (isMounted.current) {
@@ -120,6 +121,7 @@ export const MapComponent = () => {
 
   useEffect(() => {
     isMounted.current = true;
+    controller.current = new AbortController();
   }, [])
 
 
@@ -129,17 +131,21 @@ export const MapComponent = () => {
   }
 
 
-
-
-  const getNearbyHikes = (points) => {
-    points.forEach(async (point) => {
+  const getNearbyHikes = async (points) => {
+    controller.current.abort();
+    // points.forEach(async (point) => {
+    controller.current = new AbortController()
+    let signal = controller.current.signal;
+    console.log("fetching hikes")
+    for (let point of points) {
       if (point) {
         const { lat, lng } = point.coordinates
-        const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + searchCategory)
+        const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + searchCategory, { signal })
         const result = await response.json();
         setMiddleman((prevState) => [...prevState, ...result.businesses])
+        // controller.abort()
       }
-    })
+    }
   }
 
   const getCustomResults = async (name, lat, lng) => {
@@ -252,7 +258,7 @@ export const MapComponent = () => {
 
     <div className="container">
       <div className="controls">
-        <TripTitle setShowModal={setShowEditTripModal}/>
+        <TripTitle setShowModal={setShowEditTripModal} />
 
         {(directions &&
           <>
@@ -275,7 +281,7 @@ export const MapComponent = () => {
           addToTrip={addToTrip}
           setSearchCategory={setSearchCategory}
           setActiveMarker={setActiveMarker}
-          panTo={panTo} 
+          panTo={panTo}
           getCustomResults={getCustomResults}
         />
       )}
@@ -310,13 +316,13 @@ export const MapComponent = () => {
               <Marker
 
                 position={{ lat: hike.coordinates.latitude, lng: hike.coordinates.longitude }}
-                icon={
-                  {
-                    // url: "https://static.thenounproject.com/png/29961-200.png",
-                    // scaledSize: new google.maps.Size(50, 50)
-                  }
-                }
-                label = {(index+1).toString()}
+                // icon={
+                //   {
+                //     url: "https://static.thenounproject.com/png/29961-200.png",
+                //     scaledSize: new google.maps.Size(50, 50)
+                //   }
+                // }
+                label={(index + 1).toString()}
                 animation={
                   (activeMarker.id === hike.id
                     ? 1 : undefined)
