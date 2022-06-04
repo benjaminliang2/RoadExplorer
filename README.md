@@ -14,7 +14,7 @@ I created this App after my recent trip to L.A. During my trip, I took many day 
 
 After cloning Repository, initialize project by running 
 
-`npm init` and `npm install`
+`npm install`
 
 to install all required node_modules.
 
