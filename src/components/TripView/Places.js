@@ -36,7 +36,7 @@ export const SearchTextField = ({ setPlace, placeholder, label }) => {
             renderInput={(params) =>
                 <TextField {...params} label={label} onChange={(e) => setValue(e.target.value, true)} placeholder={placeholder} variant="standard" required={true}/>
             }
-            sx={{ width: 300 }}
+            sx={{margin:'0px 10px 0px 10px' }}
         />
     </>
 }

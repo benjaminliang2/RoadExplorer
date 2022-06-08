@@ -1,12 +1,25 @@
 import { MapComponent } from "./map"
-import { Header } from "./Header"
+import { Navbar } from "./Navbar"
+import { Home } from './home'
+
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from "@mui/material";
+import {theme} from './theme'
 
 function App() {
 
   return (<>
-    <Header />
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route exact path='/' element={<Home />} />
+          <Route path='/plan' element={<MapComponent />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
 
-    <MapComponent />
   </>
   );
 }

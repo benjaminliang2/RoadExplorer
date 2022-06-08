@@ -52,9 +52,7 @@ export const MapComponent = () => {
   const [activeMarker, setActiveMarker] = useState({ id: 'none' })
   const [selectedMarker, setSelectedMarker] = useState(false)
   const isMounted = useRef(false)
-
-  let markerIndex = 1
-
+  
   useEffect(() => {
     if (isMounted.current) {
       getNearbyHikes(yelpSearchPoints)
