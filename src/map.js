@@ -88,9 +88,10 @@ export const MapComponent = () => {
   // }, [hikes])
 
   useEffect(() => {
-    if (isMounted.current) {
-      fetchDirections()
-    }
+    // if (isMounted.current) {
+    //   fetchDirections()
+    // }
+    fetchDirections();
   }, [googleWaypoints])
 
   useEffect(() => {

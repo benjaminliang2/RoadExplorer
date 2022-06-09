@@ -7,11 +7,12 @@ import Grid from '@mui/material/Grid';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Autocomplete, Typography } from '@mui/material';
 import { Button } from '@mui/material';
-import { css, keyframes } from '@emotion/react'
 
-import { useSelector } from "react-redux";
-import { setOrigin, setDestination} from './Slices/originDestinationSlice'
-import { useLoadScript} from "@react-google-maps/api";
+import {DayTripsSection} from './components/DayTrips/DayTripsSection'
+
+import { css, keyframes } from '@emotion/react'
+import { setOrigin, setDestination } from './Slices/originDestinationSlice'
+import { useLoadScript } from "@react-google-maps/api";
 
 
 const styles = {
@@ -20,7 +21,9 @@ const styles = {
         backgroundRepeat: 'no-repeat',
         height: '100vh',
         backgroundSize: '800px',
-        backgroundPosition: 'right 30%',
+        backgroundPosition: 'right 20%',
+        margin: '25px',
+
     },
     placeSearchBox: {
         position: 'absolute',
@@ -34,7 +37,7 @@ const styles = {
         border: '1px solid #000',
         boxShadow: 24,
         borderRadius: '12px',
-        margin: 0,
+        marginLeft: '20%',
         padding: '10px',
     },
     planTripButton: {
@@ -54,8 +57,14 @@ const styles = {
         fontFamily: 'Roboto',
         fontWeight: 500,
     },
-    startContainer: {
-        paddingTop: '15vh'
+    main: {
+        paddingTop: '12vh',
+        marginLeft: '20%',
+        marginRight: '20%'
+    },
+    intro: {
+        maxWidth: 'md',
+        marginBottom: '300px'
     }
 }
 const carouselTextStyles = {
@@ -129,12 +138,6 @@ export const Home = () => {
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries
     })
-    const origin = useSelector((randomname) =>
-        randomname.originDestination.origin
-    )
-    const destination = useSelector((configureStore) =>
-        configureStore.originDestination.destination
-    )
 
 
     const spin = keyframes`
@@ -167,22 +170,24 @@ export const Home = () => {
     return (<>
         <CssBaseline />
         <Paper sx={styles.paperContainer}>
-            <Container maxWidth='md' sx={styles.startContainer}>
-
-                <Typography sx={{ fontWeight: 800 }} variant='h4'> Start your next road trip with RoadExplorer</Typography>
-                <Typography variant='h6'> Explore the best attractions along the way!</Typography>
-                <Grid container>
-                    <Grid item sx={styles.gridItem} sm={12} md={5}>
-                        <SearchTextField setPlace={setOrigin} placeholder="Enter Origin" />
+            <Box sx={styles.main} >
+                <Box sx={styles.intro}>
+                    <Typography sx={{ fontWeight: 800, paddingBottom: '25px' }} variant='h2'> Start your next road trip with RoadExplorer</Typography>
+                    <Typography sx={{ fontWeight: 600, paddingBottom: '25px' }} variant='h5'> Explore the best attractions along the way!</Typography>
+                    <Grid container>
+                        <Grid item sx={styles.gridItem} sm={12} md={5}>
+                            <SearchTextField setPlace={setOrigin} placeholder="Enter Origin" />
+                        </Grid>
+                        <Grid item sx={styles.gridItem} sm={12} md={5}>
+                            <SearchTextField setPlace={setDestination} placeholder="Destination" />
+                        </Grid>
+                        <Grid item sm={12} md={2}>
+                            <Button variant='contained' color='primary' sx={styles.planTripButton} onClick={() => handlePlanTrip()}>Plan Trip</Button>
+                        </Grid>
                     </Grid>
-                    <Grid item sx={styles.gridItem} sm={12} md={5}>
-                        <SearchTextField setPlace={setDestination} placeholder="Destination" />
-                    </Grid>
-                    <Grid item sm={12} md={2}>
-                        <Button variant='contained' color='primary' sx={styles.planTripButton} onClick={() => handlePlanTrip()}>Plan Trip</Button>
-                    </Grid>
-                </Grid>
-            </Container>
+                </Box>
+                <DayTripsSection/>
+            </Box>
 
             {/* <Box sx={carouselTextStyles.container}>
                 <Box sx={carouselTextStyles.box}>
