@@ -6,6 +6,7 @@ import { Home } from './home'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from "@mui/material";
 import {theme} from './theme'
+import { withCookies } from 'react-cookie'
 
 function App() {
 
@@ -24,4 +25,4 @@ function App() {
   );
 }
 
-export default App;
+export default withCookies(App);

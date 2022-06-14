@@ -1,6 +1,5 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
-import { SearchBox, TripTitle } from "./components/TripView/Places"
 import { Businesses } from "./components/BusinessesView/businesses"
 import { TripView } from "./components/TripView/Trip_View"
 import { InfoModal } from "./components/InfoModal/InfoModal"
@@ -9,11 +8,24 @@ import "./styles.css"
 import { Category } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
+
+import { Cookies, useCookies } from "react-cookie";
+import { Box, Stack } from "@mui/material";
+import { Sidebar } from "./components/Sidebar/Sidebar";
 /*global google*/
 const libraries = ["places"]
 
 
 export const MapComponent = () => {
+
+  const [cookies, setCookie] = useCookies(['cookie-name'])
+
+  const handleCookie = () => {
+    console.log(document.cookie)
+    console.log(cookies.origin)
+  }
+
+
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -52,7 +64,7 @@ export const MapComponent = () => {
   const [activeMarker, setActiveMarker] = useState({ id: 'none' })
   const [selectedMarker, setSelectedMarker] = useState(false)
   const isMounted = useRef(false)
-  
+
   useEffect(() => {
     if (isMounted.current) {
       getNearbyHikes(yelpSearchPoints)
@@ -251,17 +263,17 @@ export const MapComponent = () => {
     )}
 
 
-    {isLoaded && <WelcomeModal setShow={setShowEditTripModal} />}
+    {!directions && <WelcomeModal setShow={setShowEditTripModal} />}
     {showEditTripModal && <WelcomeModal setShow={setShowEditTripModal} />}
 
 
-    <div className="container">
-      <div className="controls">
-        <TripTitle setShowModal={setShowEditTripModal} />
+    <Stack direction='row'>
 
+      <Sidebar setSearchCategory={setSearchCategory}/>
+
+      <Box sm={12} md={4}>
         {(directions &&
           <>
-            <h4>Trip Summary</h4>
             <TripView
               start={start}
               end={end}
@@ -269,10 +281,12 @@ export const MapComponent = () => {
               directions={directions}
               removeFromTrip={removeFromTrip}
               hikes={hikes}
+              setShowModal={setShowEditTripModal}
 
             />
           </>)}
-      </div>
+      </Box>
+
 
       {hikes && (
         <Businesses
@@ -335,7 +349,7 @@ export const MapComponent = () => {
 
         </GoogleMap>
       </div>
-    </div>
+    </Stack>
 
   </>
 }

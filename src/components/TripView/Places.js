@@ -4,27 +4,45 @@ import "@reach/combobox/styles.css";
 import { useDispatch } from "react-redux";
 import { Grid, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useSelector } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
-import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
+
+import { useEffect } from "react";
+import { Cookies, useCookies } from "react-cookie";
+import { setOrigin, setDestination } from '../../Slices/originDestinationSlice'
 
 
 
 
-export const SearchTextField = ({ setPlace, placeholder, label }) => {
+export const SearchOrigin = ({ placeholder, label }) => {
     const dispatch = useDispatch()
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
+    const [cookies, setCookie] = useCookies()
+
+    // useEffect(() => {
+    //     if(document.cookie){
+    //         setCookie('origin', "home", {
+    //             path: '/'
+    //         });
+    //         setCookie('destination', "office", {
+    //             path: '/'
+    //         });
+    //         console.log(document.cookie)
+    //         console.log(cookies.origin)
+    //     }
+    // }, [])
+
 
     const handleSelect = async (val) => {
         const results = await getGeocode({ address: val });
         const { lat, lng } = await getLatLng(results[0])
 
-        dispatch(setPlace({
+        dispatch(setOrigin({
             coordinates: { lat, lng },
             name: val
         }))
+
+        setCookie('origin', {coordinates: {lat, lng}, name: val}, {
+            path: '/'
+        })
 
     }
     return <>
@@ -34,9 +52,42 @@ export const SearchTextField = ({ setPlace, placeholder, label }) => {
             options={data.map(({ description }) => description)}
             onChange={(event, value) => handleSelect(value)}
             renderInput={(params) =>
-                <TextField {...params} label={label} onChange={(e) => setValue(e.target.value, true)} placeholder={placeholder} variant="standard" required={true}/>
+                <TextField {...params} label={label} onChange={(e) => setValue(e.target.value, true)} placeholder={placeholder} variant="standard" required={true} />
             }
-            sx={{margin:'0px 10px 0px 10px' }}
+            sx={{ margin: '0px 10px 0px 10px' }}
+        />
+    </>
+}
+export const SearchDestination = ({ placeholder, label }) => {
+    const dispatch = useDispatch()
+    const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
+    const [cookies, setCookie] = useCookies()
+
+
+    const handleSelect = async (val) => {
+        const results = await getGeocode({ address: val });
+        const { lat, lng } = await getLatLng(results[0])
+
+        dispatch(setDestination({
+            coordinates: { lat, lng },
+            name: val
+        }))
+
+        setCookie('destination', {coordinates: {lat, lng}, name: val}, {
+            path: '/'
+        })
+
+    }
+    return <>
+        <Autocomplete
+            id="free-solo-demo"
+            freeSolo
+            options={data.map(({ description }) => description)}
+            onChange={(event, value) => handleSelect(value)}
+            renderInput={(params) =>
+                <TextField {...params} label={label} onChange={(e) => setValue(e.target.value, true)} placeholder={placeholder} variant="standard" required={true} />
+            }
+            sx={{ margin: '0px 10px 0px 10px' }}
         />
     </>
 }
@@ -85,7 +136,7 @@ export const SearchBox = ({ panTo, getCustomResults }) => {
         console.log("searchbos is being used")
         getCustomResults(name, lat, lng)
         panTo({ lat, lng })
-        
+
 
     }
 
@@ -103,39 +154,5 @@ export const SearchBox = ({ panTo, getCustomResults }) => {
 }
 
 
-export const TripTitle = ({ setShowModal }) => {
 
-    const start = useSelector((randomname) =>
-        randomname.originDestination.origin
-    )
-    const end = useSelector((configureStore) =>
-        configureStore.originDestination.destination
-    )
-    return (<>
-        <Grid container>
-
-            <Grid item>
-                <h4>{start.name}</h4>
-            </Grid>
-            <Grid item>
-                <ArrowRightAltIcon />
-            </Grid>
-            <Grid item>
-                <h4>{end.name}</h4>
-            </Grid>
-            <Grid item>
-                <IconButton color="primary" aria-label="Edit Trip"
-                    onClick={() => {
-                        console.log("edit trip")
-                        setShowModal(true)
-                    }}
-                >
-                    <EditIcon />
-                </IconButton>
-            </Grid>
-        </Grid>
-    </>)
-    //display origin, arrow l-r, destination, edit button.
-
-}
 

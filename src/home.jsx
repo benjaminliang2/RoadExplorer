@@ -1,6 +1,6 @@
 import travelGlobeImage from './images/travelGlobe.png'
 import Paper from '@mui/material/Paper';
-import { SearchTextField } from './components/TripView/Places';
+import { SearchDestination, SearchOrigin} from './components/TripView/Places';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -13,7 +13,7 @@ import {DayTripsSection} from './components/DayTrips/DayTripsSection'
 import { css, keyframes } from '@emotion/react'
 import { setOrigin, setDestination } from './Slices/originDestinationSlice'
 import { useLoadScript } from "@react-google-maps/api";
-
+ 
 
 const styles = {
     paperContainer: {
@@ -176,10 +176,10 @@ export const Home = () => {
                     <Typography sx={{ fontWeight: 600, paddingBottom: '25px' }} variant='h5'> Explore the best attractions along the way!</Typography>
                     <Grid container>
                         <Grid item sx={styles.gridItem} sm={12} md={5}>
-                            <SearchTextField setPlace={setOrigin} placeholder="Enter Origin" />
+                            <SearchOrigin placeholder="Enter Origin" />
                         </Grid>
                         <Grid item sx={styles.gridItem} sm={12} md={5}>
-                            <SearchTextField setPlace={setDestination} placeholder="Destination" />
+                            <SearchDestination placeholder="Destination" />
                         </Grid>
                         <Grid item sm={12} md={2}>
                             <Button variant='contained' color='primary' sx={styles.planTripButton} onClick={() => handlePlanTrip()}>Plan Trip</Button>

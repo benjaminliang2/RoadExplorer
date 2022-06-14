@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { SearchTextField } from "../TripView/Places";
+import { SearchOrigin, SearchDestination } from "../TripView/Places";
 import ReactDOM from 'react-dom';
 import { Backdrop, Box, Button, Modal } from '@mui/material';
-import { setOrigin, setDestination } from '../../Slices/originDestinationSlice'
 import { useSelector } from "react-redux";
 
 
@@ -51,8 +50,8 @@ export const WelcomeModal = ({ setShow }) => {
             }}
         >
             <Box sx={ContainerStyle} >
-                <SearchTextField setPlace={setOrigin} placeholder={start.name || "e.g. San Diego"} label="Origin" />
-                <SearchTextField setPlace={setDestination} placeholder={end.name || "e.g. Las Vegas"} label="Destination" />
+                <SearchOrigin placeholder={start.name || "e.g. San Diego"} label="Origin" />
+                <SearchDestination placeholder={end.name || "e.g. Las Vegas"} label="Destination" />
                 <Button variant='contained' onClick={() => handleClose()}>Plan Trip</Button>
             </Box>
 
