@@ -1,10 +1,9 @@
 import { BusinessCard } from "./businessCard"
-import "./businesses.css"
 import { SearchFilter } from "./SearchFilter"
 import { Stack, IconButton } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import { SearchBox as SearchField } from "../TripView/Places"
+import { SearchBox as SearchField } from "../Places"
 import { useState } from "react";
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -18,17 +17,8 @@ export const Businesses = (props) => {
     const [showSearchField, setShowSearchField] = useState(false)
 
     return (<>
-        <Stack>
 
-            <SearchFilter setSearchCategory={setSearchCategory} />
-            <IconButton sx={{ color: 'black' }} color="secondary" onClick={() => { setShowSearchField((prevState) => !prevState)}}>
-                <SearchIcon />
-            </IconButton>
-
-            {showSearchField &&
-                <SearchField panTo={panTo} getCustomResults={getCustomResults} />
-            }
-            <Stack sx={{ 'overflow-y': 'scroll' }}>
+            <Stack sx={{ overflowY: 'scroll', height: '80%' }}>
 
                 {hikes.length === 0 ? (
                     <Box sx={{ display: 'flex' }}>
@@ -54,7 +44,7 @@ export const Businesses = (props) => {
 
             </Stack>
 
-        </Stack>
+        {/* </Stack> */}
 
 
     </>)

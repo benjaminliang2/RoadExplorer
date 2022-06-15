@@ -1,4 +1,3 @@
-import "./Leg.css"
 import { Grid, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PinDropIcon from '@mui/icons-material/PinDrop';
@@ -6,8 +5,6 @@ import PinDropIcon from '@mui/icons-material/PinDrop';
 export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, id }) => {
 
     if (directions) {
-        //This resolves the problem where tripView and Legs get rerendered as soon as directions state change
-        //but it depends on the waypoints state too, but it renders before waypoints state update
         if (index >= directions.routes[0].legs.length) {
             return null;
         }
@@ -25,7 +22,7 @@ export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, 
             <Grid container columnSpacing={4} rowSpacing={3} alignItems="center" >
                 <Grid item xs={4} sx={{ 'align-self': 'center', 'text-align': 'center' }}>
                     {imgURL 
-                        ? <img style={{ 'object-fit': 'cover', 'height': '100%', 'width': '100%' }} alt="complex" src={imgURL} />
+                        ? <img sx={{ 'object-fit': 'cover', 'height': '100%', 'width': '100%' }} alt="complex" src={imgURL} />
                         : <PinDropIcon />
                     }
                 </Grid>

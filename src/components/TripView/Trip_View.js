@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Leg } from "./Leg"
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -6,16 +7,22 @@ import { Box, Container, Divider, Grid, IconButton, Stack, Typography } from "@m
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
+
 import { configureStore } from "@reduxjs/toolkit";
+import { SearchBox } from "./Places";
+import { Businesses } from "./BusinessesView/businesses";
 
 export const TripView = (props) => {
-    const { waypoints, directions, removeFromTrip, setShowModal } = props;
+    const { waypoints, directions, removeFromTrip, setShowModal,
+        businesses, addToTrip, setSearchCategory, setActiveMarker, panTo, getCustomResults, showTripDetails, setShowTripDetails, showSearch } = props;
+
     const start = useSelector((randomname) =>
         randomname.originDestination.origin
     )
     const end = useSelector((configureStore) =>
         configureStore.originDestination.destination
     )
+
 
 
     let totalDistance = 0;
@@ -31,16 +38,33 @@ export const TripView = (props) => {
 
     return (
         <>
-            <TripSummary setShowModal={setShowModal} totalDistance={totalDistance} totalDuration={totalDuration} />
+            <Stack >
+                <TripSummary setShowModal={setShowModal} totalDistance={totalDistance} totalDuration={totalDuration} />
 
-            <div className="legs">
-                <Leg name={start.name} directions={directions} index={0} />
-                {waypoints?.map((waypoint, index) =>
-                    <Leg name={waypoint.name} imgURL={waypoint.imgURL} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.yelp_id} />
-                )}
-                <Leg name={end.name} />
-            </div>
+                <Box sx={showSearch ? null : styles.show}>
+                    <SearchBox panTo={panTo} getCustomResults={getCustomResults} setShowTripDetails={setShowTripDetails} />
+                </Box>
 
+                <Box sx={showTripDetails ? null : styles.show}>
+                    <Leg name={start.name} directions={directions} index={0} />
+                    {waypoints?.map((waypoint, index) =>
+                        <Leg name={waypoint.name} imgURL={waypoint.imgURL} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.yelp_id} />
+                    )}
+                    <Leg name={end.name} />
+                </Box>
+                {businesses &&
+                    <Box sx={!showTripDetails ? null : styles.show}>
+                        <Businesses
+                            hikes={businesses}
+                            addToTrip={addToTrip}
+                            setSearchCategory={setSearchCategory}
+                            setActiveMarker={setActiveMarker}
+                            panTo={panTo}
+                            getCustomResults={getCustomResults}
+                        />
+                    </Box>
+                }
+            </Stack>
         </>
 
 
@@ -77,16 +101,19 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
                     <EditIcon />
                 </IconButton>
             </Box> */}
-            <Stack direction="row" spacing={1} divider={<Divider orientation="vertical" flexItem />} justifyContent='flex-end'>
-                <Box align='left'>
+            <Stack direction="row" spacing={1} justifyContent='space-between'>
+                <Box>
                     <Typography>Summary</Typography>
                 </Box>
-                <Box>
-                    <Typography sx={{ verticalAlign: 'middle', display: 'inline-flex' }}><DirectionsCarIcon /> {Math.round(totalDistance * 0.000621371192 * 10) / 10} Miles</Typography>
-                </Box>
-                <Box>
-                    <Typography sx={{ verticalAlign: 'middle', display: 'inline-flex' }}><AccessTimeIcon /> {totalDuration}</Typography>
-                </Box>
+                <Stack direction="row" justifyContent="flex-end" spacing={1}>
+
+                    <Box>
+                        <Typography sx={{ verticalAlign: 'middle', display: 'inline-flex' }}><DirectionsCarIcon /> {Math.round(totalDistance * 0.000621371192 * 10) / 10} Miles</Typography>
+                    </Box>
+                    <Box>
+                        <Typography sx={{ verticalAlign: 'middle', display: 'inline-flex' }}><AccessTimeIcon /> {totalDuration}</Typography>
+                    </Box>
+                </Stack>
             </Stack>
         </Stack>
     </>)
@@ -99,5 +126,8 @@ const styles = {
         height: '10vh',
         justifyContent: 'center',
         align: 'right',
+    },
+    show: {
+        display: 'none'
     }
 }

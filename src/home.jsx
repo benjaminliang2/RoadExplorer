@@ -1,6 +1,6 @@
 import travelGlobeImage from './images/travelGlobe.png'
 import Paper from '@mui/material/Paper';
-import { SearchDestination, SearchOrigin} from './components/TripView/Places';
+import { SearchDestination, SearchOrigin } from './components/TripView/Places';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -8,12 +8,13 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Autocomplete, Typography } from '@mui/material';
 import { Button } from '@mui/material';
 
-import {DayTripsSection} from './components/DayTrips/DayTripsSection'
+import { DayTripsSection } from './components/DayTrips/DayTripsSection'
 
 import { css, keyframes } from '@emotion/react'
 import { setOrigin, setDestination } from './Slices/originDestinationSlice'
 import { useLoadScript } from "@react-google-maps/api";
- 
+import { Link } from 'react-router-dom';
+
 
 const styles = {
     paperContainer: {
@@ -182,11 +183,14 @@ export const Home = () => {
                             <SearchDestination placeholder="Destination" />
                         </Grid>
                         <Grid item sm={12} md={2}>
-                            <Button variant='contained' color='primary' sx={styles.planTripButton} onClick={() => handlePlanTrip()}>Plan Trip</Button>
+
+                            <Button variant='contained' color='primary' sx={styles.planTripButton} onClick={() => handlePlanTrip()}>
+                                <Link to="/plan"> Plan Trip </Link>
+                            </Button>
                         </Grid>
                     </Grid>
                 </Box>
-                <DayTripsSection/>
+                <DayTripsSection />
             </Box>
 
             {/* <Box sx={carouselTextStyles.container}>

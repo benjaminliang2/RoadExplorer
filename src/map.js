@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
-import { Businesses } from "./components/BusinessesView/businesses"
+import { Businesses } from "./components/TripView/BusinessesView/businesses"
 import { TripView } from "./components/TripView/Trip_View"
 import { InfoModal } from "./components/InfoModal/InfoModal"
 import { WelcomeModal } from "./components/WelcomeModal/WelcomeModal";
@@ -13,7 +13,6 @@ import { Cookies, useCookies } from "react-cookie";
 import { Box, Stack } from "@mui/material";
 import { Sidebar } from "./components/Sidebar/Sidebar";
 /*global google*/
-const libraries = ["places"]
 
 
 export const MapComponent = () => {
@@ -26,6 +25,7 @@ export const MapComponent = () => {
   }
 
 
+  const libraries = useState(["places"]);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -57,42 +57,39 @@ export const MapComponent = () => {
   const [searchCategory, setSearchCategory] = useState('tourist')
   const [yelpSearchPoints, setYelpSearchPoints] = useState([])
   const [middleman, setMiddleman] = useState([]);
-  const [hikes, setHikes] = useState(null)
+  const [businesses, setBusinesses] = useState(null)
   const [waypoints, setWaypoints] = useState();
   const [waypointsSelected, setWaypointsSelected] = useState([])
   const [googleWaypoints, setGoogleWaypoints] = useState([])
   const [activeMarker, setActiveMarker] = useState({ id: 'none' })
   const [selectedMarker, setSelectedMarker] = useState(false)
   const isMounted = useRef(false)
+  const [showTripDetails, setShowTripDetails] = useState(false)
+  const [showSearch, setShowSearch] = useState(false)
 
   useEffect(() => {
-    if (isMounted.current) {
-      getNearbyHikes(yelpSearchPoints)
-    }
+    getNearbyBusinesses(yelpSearchPoints)
+
   }, [yelpSearchPoints])
 
   useEffect(() => {
     //if user changes origin or destination, then reset everything. 
-    if (isMounted.current) {
-      setYelpSearchPoints([start, end])
-      setMiddleman([])
-      setWaypointsSelected([])
-      setGoogleWaypoints([])
-    }
+    setYelpSearchPoints([start, end])
+    setMiddleman([])
+    setWaypointsSelected([])
+    setGoogleWaypoints([])
+
   }, [start, end])
 
   useEffect(() => {
-    if (isMounted.current) {
-      generateCoordinatesBetweenStartEnd()
-    }
+    generateCoordinatesBetweenStartEnd()
   }, [directions])
 
   useEffect(() => {
-    if (isMounted.current) {
-      const dataMap = new Map();
-      middleman.forEach((res) => dataMap.set(res.id, res));
-      setHikes(Array.from(dataMap.values()));
-    }
+    const dataMap = new Map();
+    middleman.forEach((res) => dataMap.set(res.id, res));
+    setBusinesses(Array.from(dataMap.values()));
+
   }, [middleman])
 
   // useEffect(() => {
@@ -126,7 +123,7 @@ export const MapComponent = () => {
     if (isMounted.current) {
       console.log(searchCategory)
       setMiddleman([])
-      getNearbyHikes(yelpSearchPoints)
+      getNearbyBusinesses(yelpSearchPoints)
     }
   }, [searchCategory])
 
@@ -142,7 +139,7 @@ export const MapComponent = () => {
   }
 
 
-  const getNearbyHikes = async (points) => {
+  const getNearbyBusinesses = async (points) => {
     controller.current.abort();
     // points.forEach(async (point) => {
     controller.current = new AbortController()
@@ -269,9 +266,11 @@ export const MapComponent = () => {
 
     <Stack direction='row'>
 
-      <Sidebar setSearchCategory={setSearchCategory}/>
+      <Box>
+        <Sidebar setSearchCategory={setSearchCategory} setShowTripDetails={setShowTripDetails} setShowSearch={setShowSearch} />
+      </Box>
 
-      <Box sm={12} md={4}>
+      <Box sx={{width: {sm: '100%', md:'auto'}, height: '100vh'}}>
         {(directions &&
           <>
             <TripView
@@ -280,26 +279,24 @@ export const MapComponent = () => {
               waypoints={waypoints}
               directions={directions}
               removeFromTrip={removeFromTrip}
-              hikes={hikes}
+              businesses={businesses}
               setShowModal={setShowEditTripModal}
+
+              addToTrip={addToTrip}
+              setSearchCategory={setSearchCategory}
+              setActiveMarker={setActiveMarker}
+              panTo={panTo}
+              getCustomResults={getCustomResults}
+
+              showTripDetails={showTripDetails}
+              setShowTripDetails={setShowTripDetails}
+              showSearch={showSearch}
 
             />
           </>)}
       </Box>
+      <Box sx={{ height: 'auto', width: '100%', display: { sm: 'none', md: 'block' } }}>
 
-
-      {hikes && (
-        <Businesses
-          hikes={hikes}
-          addToTrip={addToTrip}
-          setSearchCategory={setSearchCategory}
-          setActiveMarker={setActiveMarker}
-          panTo={panTo}
-          getCustomResults={getCustomResults}
-        />
-      )}
-
-      <div className="map">
         <GoogleMap
           zoom={10}
           center={center}
@@ -324,8 +321,8 @@ export const MapComponent = () => {
             </>
           )}
 
-          {hikes && (
-            hikes.map((hike, index) =>
+          {businesses && (
+            businesses.map((hike, index) =>
               <Marker
 
                 position={{ lat: hike.coordinates.latitude, lng: hike.coordinates.longitude }}
@@ -348,7 +345,8 @@ export const MapComponent = () => {
           )}
 
         </GoogleMap>
-      </div>
+
+      </Box>
     </Stack>
 
   </>
