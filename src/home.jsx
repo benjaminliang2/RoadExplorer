@@ -183,7 +183,6 @@ export const Home = () => {
                             <SearchDestination placeholder="Destination" />
                         </Grid>
                         <Grid item sm={12} md={2}>
-
                             <Button variant='contained' color='primary' sx={styles.planTripButton} onClick={() => handlePlanTrip()}>
                                 <Link to="/plan"> Plan Trip </Link>
                             </Button>
@@ -192,6 +191,7 @@ export const Home = () => {
                 </Box>
                 <DayTripsSection />
             </Box>
+        </Paper>
 
             {/* <Box sx={carouselTextStyles.container}>
                 <Box sx={carouselTextStyles.box}>
@@ -212,6 +212,5 @@ export const Home = () => {
             </Box> */}
 
 
-        </Paper>
     </>)
 }

@@ -3,7 +3,7 @@ import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, Direction
 import { Businesses } from "./components/TripView/BusinessesView/businesses"
 import { TripView } from "./components/TripView/Trip_View"
 import { InfoModal } from "./components/InfoModal/InfoModal"
-import { WelcomeModal } from "./components/WelcomeModal/WelcomeModal";
+import { EditOriginDestination } from "./components/EditOriginDestination/EditOriginDestination";
 import "./styles.css"
 import { Category } from "@mui/icons-material";
 import { useSelector } from "react-redux";
@@ -144,7 +144,7 @@ export const MapComponent = () => {
     // points.forEach(async (point) => {
     controller.current = new AbortController()
     let signal = controller.current.signal;
-    console.log("fetching hikes")
+    // console.log("fetching hikes")
     for (let point of points) {
       if (point) {
         const { lat, lng } = point.coordinates
@@ -157,7 +157,7 @@ export const MapComponent = () => {
   }
 
   const getCustomResults = async (name, lat, lng) => {
-    console.log("getting custom search results")
+    // console.log("getting custom search results")
     const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + name)
     const result = await response.json();
     setMiddleman([...result.businesses])
@@ -222,11 +222,6 @@ export const MapComponent = () => {
       if (midpoints.length > 0) {
         setYelpSearchPoints((prevState) => [...prevState, ...midpoints])
       }
-
-
-      // DEBUGGER:set markers below will show the COORD or coordinates of interest between start and end 
-      // setMarkers((prevState) =>[...prevState, ...midpoints])
-      // console.log(midpoints.length)
     }
   }
 
@@ -260,8 +255,8 @@ export const MapComponent = () => {
     )}
 
 
-    {!directions && <WelcomeModal setShow={setShowEditTripModal} />}
-    {showEditTripModal && <WelcomeModal setShow={setShowEditTripModal} />}
+    {!directions && <EditOriginDestination setShow={setShowEditTripModal} />}
+    {showEditTripModal && <EditOriginDestination setShow={setShowEditTripModal} />}
 
 
     <Stack direction='row'>

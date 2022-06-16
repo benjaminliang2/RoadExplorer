@@ -15,13 +15,10 @@ const StyledToolbar = styled(Toolbar)({
 
 export const Navbar = () => {
 
-
-
-
     return (
         <>
             <AppBar position="sticky">
-                <StyledToolbar>
+                <StyledToolbar variant="dense">
                     <IconButton
                         size="large"
                         edge="start"
@@ -32,7 +29,7 @@ export const Navbar = () => {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        RoadExplore
+                        RoadExplorer
                     </Typography>
                     <Link to="/plan"> Road Trip </Link>
                 </StyledToolbar>
