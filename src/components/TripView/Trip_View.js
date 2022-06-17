@@ -41,11 +41,11 @@ export const TripView = (props) => {
             <Stack >
                 <TripSummary setShowModal={setShowModal} totalDistance={totalDistance} totalDuration={totalDuration} />
 
-                <Box sx={showSearch ? null : styles.show}>
+                <Box sx={showSearch ? null : styles.hide}>
                     <SearchBox panTo={panTo} getCustomResults={getCustomResults} setShowTripDetails={setShowTripDetails} />
                 </Box>
 
-                <Box sx={showTripDetails ? null : styles.show}>
+                <Box sx={showTripDetails ? null : styles.hide}>
                     <Leg name={start.name} directions={directions} index={0} />
                     {waypoints?.map((waypoint, index) =>
                         <Leg name={waypoint.name} imgURL={waypoint.imgURL} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.yelp_id} />
@@ -53,7 +53,7 @@ export const TripView = (props) => {
                     <Leg name={end.name} />
                 </Box>
                 {businesses &&
-                    <Box sx={!showTripDetails ? null : styles.show}>
+                    <Box sx={!showTripDetails ? {overflow:'hidden'} : styles.hide}>
                         <Businesses
                             hikes={businesses}
                             addToTrip={addToTrip}
@@ -126,8 +126,12 @@ const styles = {
         height: '10vh',
         justifyContent: 'center',
         align: 'right',
+        borderTopRightRadius: '25px',
+        borderTopLeftRadius: '25px',
+        minWidth: '500px'
+
     },
-    show: {
+    hide: {
         display: 'none'
     }
 }

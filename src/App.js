@@ -13,7 +13,6 @@ function App() {
   return (<>
     <ThemeProvider theme={theme}>
       <Router>
-        <Navbar />
         <Routes>
           <Route exact path='/' element={<Home />} />
           <Route path='/plan' element={<MapComponent />} />

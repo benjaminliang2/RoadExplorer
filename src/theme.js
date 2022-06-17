@@ -3,17 +3,20 @@ import { createTheme } from "@mui/material/styles";
 export const theme = createTheme({
     palette: {
         primary: {
-            main: "#383838",
+            main: "#ffff",
             light: "skyblue"
         },
         secondary: {
-            main: '#ffff'
+            main: '#FF6701'
         },
         otherColor: {
             main: "#999"
         }
     },
     typography: {
+        allVariants:{
+            color: '#4B5D67'
+        },
         fontFamily: [
             'Inter',
         ].join(','),

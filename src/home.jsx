@@ -14,6 +14,7 @@ import { css, keyframes } from '@emotion/react'
 import { setOrigin, setDestination } from './Slices/originDestinationSlice'
 import { useLoadScript } from "@react-google-maps/api";
 import { Link } from 'react-router-dom';
+import { Navbar } from './Navbar';
 
 
 const styles = {
@@ -170,6 +171,7 @@ export const Home = () => {
     if (!isLoaded) return <div> Loading...</div>
     return (<>
         <CssBaseline />
+        <Navbar/>
         <Paper sx={styles.paperContainer}>
             <Box sx={styles.main} >
                 <Box sx={styles.intro}>

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Button from '@mui/material/Button';
-import './businessCard.css'
 import { Box, IconButton, Stack, Typography } from '@mui/material';
 import zerostar from '../../../images/regular_0.png'
 import halfstar from '../../../images/regular_1_half.png'
@@ -54,7 +53,7 @@ export const BusinessCard = (props) => {
 
                     <Stack>
                         <Box>
-                            <Typography variant='subtitle1'> {name} </Typography>
+                            <Typography variant='subtitle1' sx={{fontWeight:800}}> {name} </Typography>
                         </Box>
                         <Box >
                             {renderStars(star)}

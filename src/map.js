@@ -10,10 +10,12 @@ import { useSelector } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 
 import { Cookies, useCookies } from "react-cookie";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { Sidebar } from "./components/Sidebar/Sidebar";
+import { Navbar } from "./Navbar";
 /*global google*/
 
+const libraries = ["places"];
 
 export const MapComponent = () => {
 
@@ -25,7 +27,7 @@ export const MapComponent = () => {
   }
 
 
-  const libraries = useState(["places"]);
+
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -253,96 +255,97 @@ export const MapComponent = () => {
         addToTrip={addToTrip}
       />
     )}
-
-
-    {!directions && <EditOriginDestination setShow={setShowEditTripModal} />}
-    {showEditTripModal && <EditOriginDestination setShow={setShowEditTripModal} />}
-
-
-    <Stack direction='row'>
-
+    {!directions &&
+      <EditOriginDestination setShow={setShowEditTripModal} />
+    }
+    {showEditTripModal &&
+      <EditOriginDestination setShow={setShowEditTripModal} />
+    }
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Box>
-        <Sidebar setSearchCategory={setSearchCategory} setShowTripDetails={setShowTripDetails} setShowSearch={setShowSearch} />
+
+        <Navbar />
       </Box>
+        <Box sx={{ width: '100%', height: '100%', postiion: 'relative' }}>
 
-      <Box sx={{width: {sm: '100%', md:'auto'}, height: '100vh'}}>
-        {(directions &&
-          <>
-            <TripView
-              start={start}
-              end={end}
-              waypoints={waypoints}
-              directions={directions}
-              removeFromTrip={removeFromTrip}
-              businesses={businesses}
-              setShowModal={setShowEditTripModal}
+          <GoogleMap
+            zoom={10}
+            center={center}
+            mapContainerClassName="map-container"
+            options={options}
+            // onClick={onMapClick}
+            onLoad={onMapLoad}
+          >
+            <Box sx={{ position: 'absolute', height: '96%', backgroundColor: 'white', margin: '15px', borderRadius: '25px' }}>
+              <Sidebar setSearchCategory={setSearchCategory} setShowTripDetails={setShowTripDetails} setShowSearch={setShowSearch} />
+              {(directions &&
+                <>
+                  <TripView
+                    start={start}
+                    end={end}
+                    waypoints={waypoints}
+                    directions={directions}
+                    removeFromTrip={removeFromTrip}
+                    businesses={businesses}
+                    setShowModal={setShowEditTripModal}
 
-              addToTrip={addToTrip}
-              setSearchCategory={setSearchCategory}
-              setActiveMarker={setActiveMarker}
-              panTo={panTo}
-              getCustomResults={getCustomResults}
+                    addToTrip={addToTrip}
+                    setSearchCategory={setSearchCategory}
+                    setActiveMarker={setActiveMarker}
+                    panTo={panTo}
+                    getCustomResults={getCustomResults}
 
-              showTripDetails={showTripDetails}
-              setShowTripDetails={setShowTripDetails}
-              showSearch={showSearch}
+                    showTripDetails={showTripDetails}
+                    setShowTripDetails={setShowTripDetails}
+                    showSearch={showSearch}
 
-            />
-          </>)}
-      </Box>
-      <Box sx={{ height: 'auto', width: '100%', display: { sm: 'none', md: 'block' } }}>
-
-        <GoogleMap
-          zoom={10}
-          center={center}
-          mapContainerClassName="map-container"
-          options={options}
-          // onClick={onMapClick}
-          onLoad={onMapLoad}
-        >
-
-          {directions && (
-            <>
-              <DirectionsRenderer
-                directions={directions}
-                options={
-                  {
-                    polylineOptions: {
-                      zIndex: 50
+                  />
+                </>)}
+            </Box>
+            {directions && (
+              <>
+                <DirectionsRenderer
+                  directions={directions}
+                  options={
+                    {
+                      polylineOptions: {
+                        zIndex: 50
+                      }
                     }
                   }
-                }
-              />
-            </>
-          )}
+                />
+              </>
+            )}
 
-          {businesses && (
-            businesses.map((hike, index) =>
-              <Marker
+            {businesses && (
+              businesses.map((hike, index) =>
+                <Marker
 
-                position={{ lat: hike.coordinates.latitude, lng: hike.coordinates.longitude }}
-                // icon={
-                //   {
-                //     url: "https://static.thenounproject.com/png/29961-200.png",
-                //     scaledSize: new google.maps.Size(50, 50)
-                //   }
-                // }
-                label={(index + 1).toString()}
-                animation={
-                  (activeMarker.id === hike.id
-                    ? 1 : undefined)
-                }
-                onClick={() => { setSelectedMarker(hike) }}
-              // onClick={()=>{console.log(hike)}}
+                  position={{ lat: hike.coordinates.latitude, lng: hike.coordinates.longitude }}
+                  // icon={
+                  //   {
+                  //     url: "https://static.thenounproject.com/png/29961-200.png",
+                  //     scaledSize: new google.maps.Size(50, 50)
+                  //   }
+                  // }
+                  label={(index + 1).toString()}
+                  animation={
+                    (activeMarker.id === hike.id
+                      ? 1 : undefined)
+                  }
+                  onClick={() => { setSelectedMarker(hike) }}
+                // onClick={()=>{console.log(hike)}}
 
-              />
-            )
-          )}
+                />
+              )
+            )}
 
-        </GoogleMap>
+          </GoogleMap>
+
 
       </Box>
-    </Stack>
+    </Box>
+
 
   </>
 }
