@@ -263,7 +263,6 @@ export const MapComponent = () => {
     }
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Box>
-
         <Navbar />
       </Box>
         <Box sx={{ width: '100%', height: '100%', postiion: 'relative' }}>
@@ -276,7 +275,7 @@ export const MapComponent = () => {
             // onClick={onMapClick}
             onLoad={onMapLoad}
           >
-            <Box sx={{ position: 'absolute', height: '96%', backgroundColor: 'white', margin: '15px', borderRadius: '25px' }}>
+            <Box sx={{ position: 'absolute', height: '96%', margin: '15px', borderRadius: '25px' }}>
               <Sidebar setSearchCategory={setSearchCategory} setShowTripDetails={setShowTripDetails} setShowSearch={setShowSearch} />
               {(directions &&
                 <>

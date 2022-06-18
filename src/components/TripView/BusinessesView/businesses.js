@@ -18,7 +18,7 @@ export const Businesses = (props) => {
 
     return (<>
 
-            <Stack sx={{maxHeight: '100%'}}>
+            <Stack sx={{maxHeight: '100%', overflowY: 'auto'}}>
 
                 {hikes.length === 0 ? (
                     <Box sx={{ display: 'flex' }}>

@@ -24,7 +24,7 @@ export const Sidebar = ({ setSearchCategory, setShowTripDetails, setShowSearch }
         setSearchCategory(category)
     }
     return (
-        <Box width='min-content'>
+        <Box width='min-content' sx={{margin: '10px', backgroundColor: 'white', borderRadius: '20px'}}>
             <Stack sx={show ? styles : null} spacing={2} direction='row'>
                 <Tooltip title="My Trip" placement='right'>
                     <IconButton color="secondary" onClick={() => { setShowTripDetails(true) }}>
