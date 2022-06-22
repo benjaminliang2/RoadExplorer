@@ -95,21 +95,30 @@ export const SearchDestination = ({ placeholder, label }) => {
 export const SearchBox = ({ panTo, getCustomResults, setShowTripDetails }) => {
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
     const handleSelect = async (val) => {
-        setValue(val, false);
-        clearSuggestions();
+        // setValue(val, false);
+        // clearSuggestions();
         const results = await getGeocode({ address: val });
         const name = val.substr(0, val.indexOf(','));
         const { lat, lng } = await getLatLng(results[0])
-        console.log("searchbox is being used")
         
         setShowTripDetails(false)
         getCustomResults(name, lat, lng)
         panTo({ lat, lng })
-
-
     }
 
     return <>
+
+        <Autocomplete
+            id='custom-search-box'
+            freeSolo
+            options={data.map(({description}) => description)}
+            onChange={(event,value) => handleSelect(value)}
+            renderInput={(params) =>
+                <TextField {...params}  onChange={(e) => setValue(e.target.value, true)} placeholder='e.g. Yellowstone National Park...' variant="standard" required={true} />
+            }
+        />
+
+{/* 
         <Combobox onSelect={handleSelect}>
             <ComboboxInput autoFocus value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Places..." disabled={!ready} />
             <ComboboxPopover>
@@ -117,7 +126,7 @@ export const SearchBox = ({ panTo, getCustomResults, setShowTripDetails }) => {
                     {status === "OK" && data.map(({ place_id, description }) => <ComboboxOption key={place_id} value={description} />)}
                 </ComboboxList>
             </ComboboxPopover>
-        </Combobox>
+        </Combobox> */}
     </>
 
 }

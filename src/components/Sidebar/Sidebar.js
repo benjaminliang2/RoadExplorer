@@ -26,37 +26,37 @@ export const Sidebar = ({ setSearchCategory, setShowTripDetails, setShowSearch }
     return (
         <Box width='min-content' sx={{margin: '10px', backgroundColor: 'white', borderRadius: '20px'}}>
             <Stack sx={show ? styles : null} spacing={2} direction='row'>
-                <Tooltip title="My Trip" placement='right'>
+                <Tooltip title="My Trip" placement='bottom'>
                     <IconButton color="secondary" onClick={() => { setShowTripDetails(true) }}>
                         <DirectionsCarIcon fontSize='medium' />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Search" placement='right'>
+                <Tooltip title="Search" placement='bottom'>
                     <IconButton color="secondary" onClick={() => { setShowSearch(true) }}>
                         <SearchIcon fontSize='medium' />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Recommended" placement='right'>
-                    <IconButton color="secondary" onClick={() => { handleIcon("tourist") }}>
+                <Tooltip title="Recommended" placement='bottom'>
+                    <IconButton color="secondary" onClick={() => { handleIcon("Tourist") }}>
                         <StarIcon fontSize='medium' />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Attractions" placement='right'>
+                <Tooltip title="Attractions" placement='bottom'>
                     <IconButton color="secondary" onClick={() => { handleIcon("attractions") }}>
                         <FlagIcon fontSize='medium' />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Food" placement='right'>
+                <Tooltip title="Food" placement='bottom'>
                     <IconButton color="secondary" onClick={() => { handleIcon("restaurants") }}>
                         <RestaurantMenuIcon fontSize='medium' />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Shopping" placement='right'>
+                <Tooltip title="Shopping" placement='bottom'>
                     <IconButton color="secondary" onClick={() => { handleIcon("shopping") }}>
                         <ShoppingBagIcon fontSize='medium' />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Parks" placement='right'>
+                <Tooltip title="Parks" placement='bottom'>
                     <IconButton color="secondary" onClick={() => { handleIcon("parks") }}>
                         <ForestIcon fontSize='medium' />
                     </IconButton>

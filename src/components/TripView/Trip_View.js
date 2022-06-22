@@ -40,10 +40,9 @@ export const TripView = (props) => {
         <>
             <Stack sx={styles.tripViewBox}>
                 <TripSummary setShowModal={setShowModal} totalDistance={totalDistance} totalDuration={totalDuration} />
-
-                <Box sx={showSearch ? null : styles.hide}>
+                {showSearch &&
                     <SearchBox panTo={panTo} getCustomResults={getCustomResults} setShowTripDetails={setShowTripDetails} />
-                </Box>
+                }
 
                 <Box sx={showTripDetails ? null : styles.hide}>
                     <Leg name={start.name} directions={directions} index={0} />
@@ -53,7 +52,7 @@ export const TripView = (props) => {
                     <Leg name={end.name} />
                 </Box>
                 {businesses &&
-                    <Box sx = {!showTripDetails ? {display: 'contents'} : styles.hide}>
+                    <Box sx={!showTripDetails ? { display: 'contents' } : styles.hide}>
                         <Businesses
                             hikes={businesses}
                             addToTrip={addToTrip}
@@ -124,6 +123,7 @@ const styles = {
     tripViewBox: {
         backgroundColor: 'white',
         height: '90%',
+        borderRadius: 'inherit'
     },
     tripTitle: {
         backgroundImage: `url("https://static.vecteezy.com/system/resources/thumbnails/000/207/539/small_2x/Road_Trip_Sunset.jpg")`,

@@ -123,9 +123,10 @@ export const MapComponent = () => {
   }, [waypointsSelected])
   useEffect(() => {
     if (isMounted.current) {
-      console.log(searchCategory)
-      setMiddleman([])
-      getNearbyBusinesses(yelpSearchPoints)
+      if (searchCategory) {
+        setMiddleman([])
+        getNearbyBusinesses(yelpSearchPoints)
+      }
     }
   }, [searchCategory])
 
@@ -265,81 +266,81 @@ export const MapComponent = () => {
       <Box>
         <Navbar />
       </Box>
-        <Box sx={{ width: '100%', height: '100%', postiion: 'relative' }}>
+      <Box sx={{ width: '100%', height: '100%', postiion: 'relative' }}>
 
-          <GoogleMap
-            zoom={10}
-            center={center}
-            mapContainerClassName="map-container"
-            options={options}
-            // onClick={onMapClick}
-            onLoad={onMapLoad}
-          >
-            <Box sx={{ position: 'absolute', height: '96%', margin: '15px', borderRadius: '25px' }}>
-              <Sidebar setSearchCategory={setSearchCategory} setShowTripDetails={setShowTripDetails} setShowSearch={setShowSearch} />
-              {(directions &&
-                <>
-                  <TripView
-                    start={start}
-                    end={end}
-                    waypoints={waypoints}
-                    directions={directions}
-                    removeFromTrip={removeFromTrip}
-                    businesses={businesses}
-                    setShowModal={setShowEditTripModal}
-
-                    addToTrip={addToTrip}
-                    setSearchCategory={setSearchCategory}
-                    setActiveMarker={setActiveMarker}
-                    panTo={panTo}
-                    getCustomResults={getCustomResults}
-
-                    showTripDetails={showTripDetails}
-                    setShowTripDetails={setShowTripDetails}
-                    showSearch={showSearch}
-
-                  />
-                </>)}
-            </Box>
-            {directions && (
+        <GoogleMap
+          zoom={10}
+          center={center}
+          mapContainerClassName="map-container"
+          options={options}
+          // onClick={onMapClick}
+          onLoad={onMapLoad}
+        >
+          <Box sx={{ position: 'absolute', height: '96%', margin: '15px', borderRadius: '25px' }}>
+            <Sidebar setSearchCategory={setSearchCategory} setShowTripDetails={setShowTripDetails} setShowSearch={setShowSearch} />
+            {(directions &&
               <>
-                <DirectionsRenderer
+                <TripView
+                  start={start}
+                  end={end}
+                  waypoints={waypoints}
                   directions={directions}
-                  options={
-                    {
-                      polylineOptions: {
-                        zIndex: 50
-                      }
+                  removeFromTrip={removeFromTrip}
+                  businesses={businesses}
+                  setShowModal={setShowEditTripModal}
+
+                  addToTrip={addToTrip}
+                  setSearchCategory={setSearchCategory}
+                  setActiveMarker={setActiveMarker}
+                  panTo={panTo}
+                  getCustomResults={getCustomResults}
+
+                  showTripDetails={showTripDetails}
+                  setShowTripDetails={setShowTripDetails}
+                  showSearch={showSearch}
+
+                />
+              </>)}
+          </Box>
+          {directions && (
+            <>
+              <DirectionsRenderer
+                directions={directions}
+                options={
+                  {
+                    polylineOptions: {
+                      zIndex: 50
                     }
                   }
-                />
-              </>
-            )}
+                }
+              />
+            </>
+          )}
 
-            {businesses && (
-              businesses.map((hike, index) =>
-                <Marker
+          {businesses && (
+            businesses.map((hike, index) =>
+              <Marker
 
-                  position={{ lat: hike.coordinates.latitude, lng: hike.coordinates.longitude }}
-                  // icon={
-                  //   {
-                  //     url: "https://static.thenounproject.com/png/29961-200.png",
-                  //     scaledSize: new google.maps.Size(50, 50)
-                  //   }
-                  // }
-                  label={(index + 1).toString()}
-                  animation={
-                    (activeMarker.id === hike.id
-                      ? 1 : undefined)
-                  }
-                  onClick={() => { setSelectedMarker(hike) }}
-                // onClick={()=>{console.log(hike)}}
+                position={{ lat: hike.coordinates.latitude, lng: hike.coordinates.longitude }}
+                // icon={
+                //   {
+                //     url: "https://static.thenounproject.com/png/29961-200.png",
+                //     scaledSize: new google.maps.Size(50, 50)
+                //   }
+                // }
+                label={(index + 1).toString()}
+                animation={
+                  (activeMarker.id === hike.id
+                    ? 1 : undefined)
+                }
+                onClick={() => { setSelectedMarker(hike) }}
+              // onClick={()=>{console.log(hike)}}
 
-                />
-              )
-            )}
+              />
+            )
+          )}
 
-          </GoogleMap>
+        </GoogleMap>
 
 
       </Box>
