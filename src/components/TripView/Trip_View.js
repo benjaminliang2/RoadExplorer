@@ -1,16 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import ReactDOM from 'react-dom';
 import { Leg } from "./Leg"
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useSelector } from "react-redux";
-import { Box, Container, Divider, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { Backdrop, Box, Button, Container, Divider, Grid, IconButton, InputBase, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Stack, TextField, Typography } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 
 import { configureStore } from "@reduxjs/toolkit";
 import { SearchBox } from "./Places";
 import { Businesses } from "./BusinessesView/businesses";
+import { ConstructionOutlined, RestartAlt } from "@mui/icons-material";
 
 export const TripView = (props) => {
     const { waypoints, directions, removeFromTrip, setShowModal,
@@ -82,24 +87,58 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
     let origin = originTemp.substr(0, originTemp.indexOf(','))
     let destination = destinationTemp.substr(0, destinationTemp.indexOf(','))
 
+    const [title, setTitle] = useState(destination + ' Trip')
+    const [editTitleModal, setEditTitleModal] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
 
     return (<>
         <Stack >
-            <Box sx={styles.tripTitle} component={Stack}>
+            <Box sx={styles.tripTitle} component={Stack} position='relative'>
                 {/* insert background photo  */}
-                <Typography variant="h5" align='center'>{destination} Trip</Typography>
-            </Box>
+                <Typography variant="h5" align='center'>{title}</Typography>
+                <Box position='absolute' sx={{ right: 0, top: 0, margin: '10px' }}>
+                    <IconButton
+                        onClick={handleClick}
+                        size="small"
+                        sx={{ ml: 2 }}
+                        aria-controls={open ? 'more-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                    >
+                        <MoreHorizIcon />
+                    </IconButton>
+                    <Menu
+                        anchorEl={anchorEl}
+                        id="account-menu"
+                        open={open}
+                        onClose={handleClose}
+                        onClick={handleClose}
 
-            {/* <Box>
-                <IconButton color="primary" aria-label="Edit Trip"
-                    onClick={() => {
-                        console.log("edit trip")
-                        setShowModal(true)
-                    }}
-                >
-                    <EditIcon />
-                </IconButton>
-            </Box> */}
+                    >
+
+                        <MenuItem onClick={() => setEditTitleModal(true)}>
+                            <ListItemIcon>
+                                <DriveFileRenameOutlineIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Rename' />
+                        </MenuItem>
+                        <MenuItem >
+                            <ListItemIcon>
+                                <RestartAltIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Reset Trip' />
+                        </MenuItem>
+                    </Menu>
+                </Box>
+            </Box>
             <Stack direction="row" spacing={1} justifyContent='space-between'>
                 <Box>
                     <Typography>Summary</Typography>
@@ -115,8 +154,58 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
                 </Stack>
             </Stack>
         </Stack>
+
+        {editTitleModal &&
+            <EditTitleModal setOpen={setEditTitleModal} setTitle={setTitle} title={title} />
+        }
     </>)
 
+}
+
+const EditTitleModal = ({ setOpen, setTitle, title }) => {
+    const [name, setName] = useState(title)
+
+    const handleClose = () => {
+        setOpen(false)
+    }
+    return ReactDOM.createPortal(<>
+        <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            open={true}
+            onClose={() => { handleClose() }}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+                timeout: 500,
+            }}
+        >
+            <Box sx={styles.modalBox}>
+                <TextField variant='standard' label='Trip Name' value={name} required onChange={(e) => setName(e.target.value)} sx={{ display: 'block' }} inputRef={input => input && input.focus()} />
+                <Stack direction='row' justifyContent='flex-end'>
+
+                    <Button
+                        variant="text"
+                        color='secondary'
+                        onClick={() => setOpen(false)}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            setTitle(name)
+                            setOpen(false)
+                        }}
+                    >
+                        Save
+                    </Button>
+
+                </Stack>
+            </Box>
+
+        </Modal>
+    </>, document.getElementById("portal"))
 }
 
 const styles = {
@@ -137,5 +226,17 @@ const styles = {
     },
     hide: {
         display: 'none'
+    },
+    modalBox: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+
     }
 }
