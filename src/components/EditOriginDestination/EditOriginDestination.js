@@ -21,13 +21,13 @@ const ContainerStyle = {
 };
 
 
-export const EditOriginDestination = ({ setShow }) => {
-    const [open, setOpen] = useState(true)
+export const EditOriginDestination = ({ setOpen }) => {
     const handleClose = () => {
-        if (start && end) {
-            setOpen(false)
-        }
-        setShow(false)
+        // check if user entered origin or destination
+        // if (start && end) {
+        //     setOpen(false)
+        // }
+        setOpen(false)
 
     }
     const start = useSelector((randomname) =>
@@ -40,8 +40,8 @@ export const EditOriginDestination = ({ setShow }) => {
         <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
-            open={open}
-            onClose={() => { handleClose() }}
+            open={true}
+            onClose={() => handleClose() }
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{

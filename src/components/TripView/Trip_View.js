@@ -1,21 +1,22 @@
-import { useState, useEffect, useRef } from "react";
 import ReactDOM from 'react-dom';
+import { useState, useEffect, useRef } from "react";
+import { configureStore } from "@reduxjs/toolkit";
+
 import { Leg } from "./Leg"
+import { useSelector } from "react-redux";
+import { SearchBox } from "./Places";
+import { Businesses } from "./BusinessesView/businesses";
+import { EditOriginDestination } from '../EditOriginDestination/EditOriginDestination';
+
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { useSelector } from "react-redux";
 import { Backdrop, Box, Button, Container, Divider, Grid, IconButton, InputBase, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Stack, TextField, Typography } from "@mui/material";
-import EditIcon from '@mui/icons-material/Edit';
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 
-import { configureStore } from "@reduxjs/toolkit";
-import { SearchBox } from "./Places";
-import { Businesses } from "./BusinessesView/businesses";
-import { ConstructionOutlined, RestartAlt } from "@mui/icons-material";
+
 
 export const TripView = (props) => {
     const { waypoints, directions, removeFromTrip, setShowModal,
@@ -50,11 +51,11 @@ export const TripView = (props) => {
                 }
 
                 <Box sx={showTripDetails ? null : styles.hide}>
-                    <Leg name={start.name} directions={directions} index={0} />
+                    <Leg name={start.name} directions={directions} index={0} origin={true} destination={false}/>
                     {waypoints?.map((waypoint, index) =>
                         <Leg name={waypoint.name} imgURL={waypoint.imgURL} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.yelp_id} />
                     )}
-                    <Leg name={end.name} />
+                    <Leg name={end.name} origin={false} destination={true} />
                 </Box>
                 {businesses &&
                     <Box sx={!showTripDetails ? { display: 'contents' } : styles.hide}>
@@ -87,9 +88,20 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
     let origin = originTemp.substr(0, originTemp.indexOf(','))
     let destination = destinationTemp.substr(0, destinationTemp.indexOf(','))
 
+
     const [title, setTitle] = useState(destination + ' Trip')
     const [editTitleModal, setEditTitleModal] = useState(false)
+    const [resetTripModal, setResetTripModal] = useState(false)
+    const [userEditedTitle, setUserEditedTitle] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
+
+    useEffect(() => {
+        if (userEditedTitle === false) {
+            setTitle(destination + " Trip")
+        }
+    }, [destination])
+
+
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -97,8 +109,10 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
-
+    const handleResetTrip = () => {
+        setResetTripModal(true)
+        setUserEditedTitle(false)
+    }
     return (<>
         <Stack >
             <Box sx={styles.tripTitle} component={Stack} position='relative'>
@@ -130,7 +144,7 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
                             </ListItemIcon>
                             <ListItemText primary='Rename' />
                         </MenuItem>
-                        <MenuItem >
+                        <MenuItem onClick={() => handleResetTrip()}>
                             <ListItemIcon>
                                 <RestartAltIcon />
                             </ListItemIcon>
@@ -157,6 +171,10 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
 
         {editTitleModal &&
             <EditTitleModal setOpen={setEditTitleModal} setTitle={setTitle} title={title} />
+        }
+
+        {resetTripModal &&
+            <EditOriginDestination setOpen={setResetTripModal} />
         }
     </>)
 

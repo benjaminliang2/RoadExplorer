@@ -164,10 +164,6 @@ export const Home = () => {
         animation: ${spin} 7s ease-in-out infinite 
     `
 
-    const handlePlanTrip = () => {
-
-    }
-
     if (!isLoaded) return <div> Loading...</div>
     return (<>
         <CssBaseline />
@@ -185,7 +181,7 @@ export const Home = () => {
                             <SearchDestination placeholder="Destination" />
                         </Grid>
                         <Grid item sm={12} md={2}>
-                            <Button variant='contained' color='primary' sx={styles.planTripButton} onClick={() => handlePlanTrip()}>
+                            <Button variant='contained' color='primary' sx={styles.planTripButton} >
                                 <Link to="/plan"> Plan Trip </Link>
                             </Button>
                         </Grid>
