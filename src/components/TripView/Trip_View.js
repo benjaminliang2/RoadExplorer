@@ -4,7 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import { Leg } from "./Leg"
 import { useSelector } from "react-redux";
-import { SearchBox } from "./Places";
+import { SearchBox, SearchOrigin, SearchDestination } from "./Places";
 import { Businesses } from "./BusinessesView/businesses";
 import { EditOriginDestination } from '../EditOriginDestination/EditOriginDestination';
 
@@ -29,7 +29,8 @@ export const TripView = (props) => {
         configureStore.originDestination.destination
     )
 
-
+    const [editOrigin, setEditOrigin] = useState(false)
+    const [editDestination, setEditDestination] = useState(false)
 
     let totalDistance = 0;
     let seconds = 0;
@@ -51,11 +52,11 @@ export const TripView = (props) => {
                 }
 
                 <Box sx={showTripDetails ? null : styles.hide}>
-                    <Leg name={start.name} directions={directions} index={0} origin={true} destination={false}/>
+                    <Leg name={start.name} directions={directions} index={0} setEdit={setEditOrigin} />
                     {waypoints?.map((waypoint, index) =>
                         <Leg name={waypoint.name} imgURL={waypoint.imgURL} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.yelp_id} />
                     )}
-                    <Leg name={end.name} origin={false} destination={true} />
+                    <Leg name={end.name} setEdit={setEditDestination} />
                 </Box>
                 {businesses &&
                     <Box sx={!showTripDetails ? { display: 'contents' } : styles.hide}>
@@ -70,8 +71,72 @@ export const TripView = (props) => {
                     </Box>
                 }
             </Stack>
-        </>
 
+            {editOrigin &&
+                ReactDOM.createPortal(
+                    <>
+                        <Modal
+                            aria-labelledby="transition-modal-title"
+                            aria-describedby="transition-modal-description"
+                            open={true}
+                            onClose={() => {setEditOrigin(false) }}
+                            closeAfterTransition
+                            BackdropComponent={Backdrop}
+                            BackdropProps={{
+                                timeout: 500,
+                            }}
+                        >
+                            <Box sx={styles.modalBox}>
+                                <Stack direction='row' justifyContent='flex-end'>
+                                    <Button
+                                        variant="text"
+                                        color='secondary'
+                                        onClick={() => setEditOrigin(false)}
+                                    >
+                                        Back 
+                                    </Button>                           
+                                </Stack>
+                                <SearchOrigin label="Enter New Origin"/>
+                            </Box>
+
+                        </Modal>
+
+                    </>
+                    , document.getElementById("portal"))
+            }
+            {editDestination &&
+                ReactDOM.createPortal(
+                    <>
+                        <Modal
+                            aria-labelledby="transition-modal-title"
+                            aria-describedby="transition-modal-description"
+                            open={true}
+                            onClose={() => {setEditDestination(false) }}
+                            closeAfterTransition
+                            BackdropComponent={Backdrop}
+                            BackdropProps={{
+                                timeout: 500,
+                            }}
+                        >
+                            <Box sx={styles.modalBox}>
+                                <Stack direction='row' justifyContent='flex-end'>
+                                    <Button
+                                        variant="text"
+                                        color='secondary'
+                                        onClick={() => setEditDestination(false)}
+                                    >
+                                        Back 
+                                    </Button>                           
+                                </Stack>
+                                <SearchDestination label="Enter New Destination"/>
+                            </Box>
+
+                        </Modal>
+
+                    </>
+                    , document.getElementById("portal"))
+            }
+        </>
 
 
     )
@@ -170,7 +235,7 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
         </Stack>
 
         {editTitleModal &&
-            <EditTitleModal setOpen={setEditTitleModal} setTitle={setTitle} title={title} />
+            <EditTitleModal setOpen={setEditTitleModal} setTitle={setTitle} title={title} setUserEditedTitle={setUserEditedTitle} />
         }
 
         {resetTripModal &&
@@ -180,7 +245,7 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
 
 }
 
-const EditTitleModal = ({ setOpen, setTitle, title }) => {
+const EditTitleModal = ({ setOpen, setTitle, title, setUserEditedTitle }) => {
     const [name, setName] = useState(title)
 
     const handleClose = () => {
@@ -213,6 +278,7 @@ const EditTitleModal = ({ setOpen, setTitle, title }) => {
                         variant="contained"
                         onClick={() => {
                             setTitle(name)
+                            setUserEditedTitle(true)
                             setOpen(false)
                         }}
                     >
@@ -250,7 +316,7 @@ const styles = {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-
+        minWidth:'400px',
         bgcolor: 'background.paper',
         border: '2px solid #000',
         boxShadow: 24,

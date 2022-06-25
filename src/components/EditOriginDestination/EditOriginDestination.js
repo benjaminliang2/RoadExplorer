@@ -17,7 +17,7 @@ const ContainerStyle = {
     boxShadow: 24,
     borderRadius: '12px',
     margin: 0,
-    width: '70%'
+    width: '70%',
 };
 
 

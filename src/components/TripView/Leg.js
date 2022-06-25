@@ -2,17 +2,15 @@ import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { SearchOrigin, SearchDestination } from './Places';
 
-import { Box, Grid, IconButton, Stack, Typography } from '@mui/material';
+import { Backdrop, Box, Grid, IconButton, Modal, Stack, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 import EditIcon from '@mui/icons-material/Edit';
 
 
 
-export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, id, origin, destination }) => {
+export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, id, setEdit }) => {
 
-    const [editOrigin, setEditOrigin] = useState(false)
-    const [editDestination, setEditDestination] = useState(false)
 
     if (directions) {
         if (index >= directions.routes[0].legs.length) {
@@ -34,20 +32,7 @@ export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, 
         }
         var duration = toTimeString(seconds)
     }
-
-    const handleEditButton = () => {
-        if (origin === true) {
-            setEditOrigin(true)
-        }
-
-    }
-
-    if (editOrigin === true) {
-        return ReactDOM.createPortal(<>
-            <SearchOrigin/>
-        </>, document.getElementById("portal"))
-    }
-
+    
     return (
         <>
             <Grid container spacing={1} sx={{ marginTop: '5px' }}>
@@ -61,10 +46,10 @@ export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, 
                     <Stack direction='row' justifyContent='space-between'>
                         <Typography variant='subtitle1' sx={{ fontWeight: 800 }}> {name} </Typography>
                         {imgURL
-                            ? <IconButton onClick={() => handleEditButton()}>
+                            ? <IconButton onClick={() => { removeFromTrip(id) }}>
                                 <DeleteIcon sx={{ alignSelf: 'flex-start' }} />
                             </IconButton>
-                            : <IconButton onClick={() => { removeFromTrip(id) }}>
+                            : <IconButton onClick={() => setEdit(true)}>
                                 <EditIcon sx={{ alignSelf: 'flex-start' }} />
                             </IconButton>
                         }
@@ -81,6 +66,7 @@ export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, 
                     </Grid>
                 )}
             </Grid>
+
         </>
 
     )
