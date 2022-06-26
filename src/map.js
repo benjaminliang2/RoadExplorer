@@ -276,7 +276,11 @@ export const MapComponent = () => {
           // onClick={onMapClick}
           onLoad={onMapLoad}
         >
-          <Box sx={{ position: 'absolute', height: '96%', margin: '15px', borderRadius: '25px' }}>
+          <Box sx={{ position: 'absolute', height: '100%', margin: '15px', borderRadius: '25px',
+          ['@media screen and (max-width: 767.9)']: { // eslint-disable-line no-useless-computed-key
+            position: 'relative'
+          }
+        }}>
             <Sidebar setSearchCategory={setSearchCategory} setShowTripDetails={setShowTripDetails} setShowSearch={setShowSearch} />
             {(directions &&
               <>

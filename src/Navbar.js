@@ -18,7 +18,7 @@ export const Navbar = () => {
     return (
         <>
             <AppBar position="sticky">
-                <StyledToolbar variant="dense">
+                <StyledToolbar variant="dense" spacing={2}>
                     <IconButton
                         size="large"
                         edge="start"
@@ -28,10 +28,12 @@ export const Navbar = () => {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'white' }}>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: '#FF6701' }}>
                         RoadExplorer
                     </Typography>
-                    <Link to="/plan"> Road Trip </Link>
+                    {/* <Link to="/plan"> Road Trip </Link> */}
+                    <Button variant='contained' color='secondary'> Log In </Button>
+                    <Button  variant='outlined'color='secondary'> Sign Up </Button> 
                 </StyledToolbar>
             </AppBar>
         </>

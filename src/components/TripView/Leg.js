@@ -36,13 +36,13 @@ export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, 
     return (
         <>
             <Grid container spacing={1} sx={{ marginTop: '5px' }}>
-                <Grid item sm={3} sx={{ textAlign: 'center' }}>
+                <Grid item xs={3} sx={{ textAlign: 'center' }}>
                     {imgURL
                         ? <Box component='img' sx={{ 'object-fit': 'cover', width: '80px', height: '80px' }} src={imgURL} />
                         : <PinDropIcon />
                     }
                 </Grid>
-                <Grid item sm={9}>
+                <Grid item xs={9}>
                     <Stack direction='row' justifyContent='space-between'>
                         <Typography variant='subtitle1' sx={{ fontWeight: 800 }}> {name} </Typography>
                         {imgURL
@@ -59,7 +59,7 @@ export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, 
                     </Stack>
                 </Grid>
                 {directions && (
-                    <Grid item sm={12} sx={{ textAlign: 'center', width: '100%' }}>
+                    <Grid item xs={12} sx={{ textAlign: 'center', width: '100%' }}>
                         <Typography variant='p' >
                             {Math.round(distance * 0.000621371192 * 10) / 10} mi --- {duration}
                         </Typography>

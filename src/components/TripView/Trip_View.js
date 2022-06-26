@@ -10,7 +10,7 @@ import { EditOriginDestination } from '../EditOriginDestination/EditOriginDestin
 
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { Backdrop, Box, Button, Container, Divider, Grid, IconButton, InputBase, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Stack, TextField, Typography } from "@mui/material";
+import { Backdrop, Box, Button, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Stack, TextField, Typography } from "@mui/material";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -296,7 +296,7 @@ const styles = {
     tripViewBox: {
         backgroundColor: 'white',
         height: '90%',
-        borderRadius: 'inherit'
+        borderRadius: '25px'
     },
     tripTitle: {
         backgroundImage: `url("https://static.vecteezy.com/system/resources/thumbnails/000/207/539/small_2x/Road_Trip_Sunset.jpg")`,
@@ -305,7 +305,8 @@ const styles = {
         align: 'right',
         borderTopRightRadius: '25px',
         borderTopLeftRadius: '25px',
-        minWidth: '500px'
+        // overflow: 'auto',
+        minWidth: '500px',
 
     },
     hide: {
