@@ -7,6 +7,10 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from "@mui/material";
+import { useState } from "react";
+import ReactDOM from 'react-dom';
+import { LoginModal } from "./components/Login/LoginModal";
+
 
 const StyledToolbar = styled(Toolbar)({
     display: 'flex',
@@ -15,10 +19,13 @@ const StyledToolbar = styled(Toolbar)({
 
 export const Navbar = () => {
 
+    const [loginModal, setLoginModal] = useState(false)
+    const [mode, setMode] = useState(null)
+
     return (
         <>
             <AppBar position="sticky">
-                <StyledToolbar variant="dense" spacing={2}>
+                <StyledToolbar variant="dense">
                     <IconButton
                         size="large"
                         edge="start"
@@ -28,17 +35,39 @@ export const Navbar = () => {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: '#FF6701' }}>
+
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'primary' }}>
                         RoadExplorer
                     </Typography>
                     {/* <Link to="/plan"> Road Trip </Link> */}
-                    <Button variant='contained' color='secondary'> Log In </Button>
-                    <Button  variant='outlined'color='secondary'> Sign Up </Button> 
+                    <Button variant='contained' color='secondary'
+                        onClick={() => {
+                            setLoginModal(true)
+                            setMode("login")
+                        }}
+
+                    >
+                        Log In
+                    </Button>
+                    <Button variant='outlined' color='secondary'
+                        onClick={() => {
+                            setLoginModal(true)
+                            setMode("signup")
+                        }}
+                    >
+                        Sign Up
+                    </Button>
                 </StyledToolbar>
             </AppBar>
+
+            {loginModal &&
+                ReactDOM.createPortal(<>
+                    <LoginModal setOpen={setLoginModal} mode={mode} setMode={setMode} />
+                </>
+                    , document.getElementById("portal"))
+
+            }
         </>
-
-
 
     );
 }

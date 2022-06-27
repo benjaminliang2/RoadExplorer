@@ -1,8 +1,5 @@
 import { MapComponent } from "./map"
-import { Navbar } from "./Navbar"
 import { Home } from './home'
-
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from "@mui/material";
 import {theme} from './theme'
