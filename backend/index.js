@@ -5,18 +5,43 @@ const cors = require("cors");
 const axios = require('axios');
 const mongoose = require("mongoose")
 const User = require('./models/user')
+const session = require('express-session')
 const bcrypt = require('bcrypt')
+const MongoStore = require('connect-mongo')
 const saltRounds = 6
 
 
 mongoose.connect(process.env.ATLAS_URI)
-// For backend and express init
+// console.log(mongoose.rsconnection)
+
 app.use(express.json());
-app.use(cors());
-app.get('/', (req, res) => { res.send("Server is Running OK") })
+app.use(cors({
+  origin: ["http://localhost:3000"],
+  methods: ["GET", "POST"],
+  credentials: true
+}))
+// app.use(express.urlencoded())
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false },
+  store: MongoStore.create({ 
+    mongoUrl: process.env.ATLAS_URI ,
+    // collectionName: 'users'
+  }) 
+}))
+
+// not used or relevant 
+// app.get('/', (req, res) => {
+//   res.send("Server is Running OK")
+//   console.log(req.session.id)
+
+// })
 app.get("/category/:lat/:lng/:searchCategory", (req, res) => {
   const searchCategory = req.params.searchCategory
-  // const searchCategory = 'sup noodle bar'
+  console.log(req.session.id)
 
   const lat = req.params.lat
   const lng = req.params.lng
@@ -68,12 +93,12 @@ app.post('/signup', (req, res) => {
   const plainTextPassword = req.body.password;
 
   //check if user already exists 
-  User.find({ name: email }, (err, existingUser) => {
+  User.find({ email: email }, (err, existingUser) => {
     if (existingUser.length === 0) {
       bcrypt.hash(plainTextPassword, saltRounds, async (err, hash) => {
         try {
           const user = new User({
-            name: email,
+            email: email,
             password: hash
           });
           let result = await user.save();
@@ -94,30 +119,47 @@ app.post('/signup', (req, res) => {
 
 })
 
+app.get('/login', (req, res) => {
+  // console.log(req.session + ' ' + req.session.id)
+  if (req.session.user) {
+    console.log('already authenticated')
+    // console.log(req.session.id)
+    res.send({loggedIn: true})
+  } else {
+    res.send({loggedIn: false})
+  }
+
+})
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => {
+    console.log("session has been deleted")
+    res.send({loggedIn: false})
+  })
+})
+
 app.post('/login', (req, res) => {
+  // let sess;
   const email = req.body.email;
   const plainTextPassword = req.body.password;
-  console.log("logging in ")
-  User.find({name: email}).limit(1).exec(function(err, existingUser){
-    if(existingUser.length === 0){
+  User.find({ email: email }).limit(1).exec(function (err, existingUser) {
+    if (existingUser.length === 0) {
       //tell user that account doesnt exist
       console.log("account doesnt exist")
-    }else{
+    } else {
       console.log(existingUser[0])
-      bcrypt.compare(plainTextPassword, existingUser[0].password, function (err, response){
-        if(response === true){
+      bcrypt.compare(plainTextPassword, existingUser[0].password, function (err, response) {
+        if (response === true) {
           console.log('successfully logged in ')
+          req.session.user = existingUser[0]._id
+          res.json( req.session.user)
         } else {
           console.log("incorrect password ")
         }
       })
     }
   }
-)
+  )
 })
-
-
-
 
 
 let port = process.env.PORT;

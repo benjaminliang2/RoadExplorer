@@ -1,22 +1,24 @@
 import { Backdrop, Button, Grid, Modal, Stack, TextField, Typography } from "@mui/material"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import Axios from 'axios'
 
 
 
-export const LoginModal = ({ setOpen, mode, setMode }) => {
+export const LoginModal = ({ setOpen, mode, setMode, setIsAuth }) => {
 
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const [passwordConfirm, setPasswordConfirm] = useState(null)
 
+
     const [error, setError] = useState('none')
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if(mode === 'signup'){
+        if (mode === 'signup') {
             handleSignup();
         }
-        if(mode === 'login'){
+        if (mode === 'login') {
             handleLogin();
         }
 
@@ -25,23 +27,51 @@ export const LoginModal = ({ setOpen, mode, setMode }) => {
     const handleLogin = () => {
         fetch(
             'http://localhost:5000/login', {
+            mode: 'cors',
+            credentials: 'include',
             method: "post",
             body: JSON.stringify({ email, password }),
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+
         }
         )
         .then(res => res.json())
-        .then(res => console.log(res))
+        .then(response =>{
+            console.log(response)
+            verifyAuth()
+        })
+    }
+
+    const verifyAuth = () => {
+        fetch(
+            'http://localhost:5000/login', {
+            mode: 'cors',
+            credentials: 'include',
+            method: "get",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(res => res.json())
+        .then(response =>{
+            console.log(response)
+            if(response.loggedIn === true){
+                setOpen(false)
+                setIsAuth(response.loggedIn)
+            }
+        })
     }
     const handleSignup = () => {
-        if(password !== passwordConfirm){
+        if (password !== passwordConfirm) {
             setError("passwordMismatch")
         }
         if (password === passwordConfirm) {
             fetch(
                 'http://localhost:5000/signup', {
+                mode: 'cors',
+                credentials: 'include',
                 method: "post",
                 body: JSON.stringify({ email, password }),
                 headers: {
@@ -49,11 +79,26 @@ export const LoginModal = ({ setOpen, mode, setMode }) => {
                 }
             }
             )
-            .then(res => res.json())
-            .then(res => console.log(res))
+                .then(res => res.json())
+                .then(res => console.log(res))
         }
     }
 
+    const logout = () => {
+        fetch(
+            'http://localhost:5000/logout', {
+            mode: 'cors',
+            credentials: 'include',
+            method: "get",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(res => res.json())
+        .then(response =>{
+            console.log(response)
+        })
+    }
 
     return (<>
         <Modal
@@ -71,6 +116,8 @@ export const LoginModal = ({ setOpen, mode, setMode }) => {
             <Grid container sx={styles.modalBox} spacing={1}>
 
                 <form onSubmit={(event) => handleSubmit(event)}>
+                    <Button variant="outlined" color="secondary" onClick={() => verifyAuth()}>Verify</Button>
+                    <Button variant="outlined" color="secondary" onClick={() => logout()}>Logout</Button>
 
                     <Grid item xs={12}>
                         {mode === 'login' &&

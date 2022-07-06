@@ -40,9 +40,9 @@ export const SearchOrigin = ({ placeholder, label }) => {
             name: val
         }))
 
-        setCookie('origin', {coordinates: {lat, lng}, name: val}, {
-            path: '/'
-        })
+        // setCookie('origin', {coordinates: {lat, lng}, name: val}, {
+        //     path: '/'
+        // })
 
     }
     return <>
@@ -73,9 +73,9 @@ export const SearchDestination = ({ placeholder, label }) => {
             name: val
         }))
 
-        setCookie('destination', {coordinates: {lat, lng}, name: val}, {
-            path: '/'
-        })
+        // setCookie('destination', {coordinates: {lat, lng}, name: val}, {
+        //     path: '/'
+        // })
 
     }
     return <>
