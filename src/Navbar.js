@@ -16,6 +16,10 @@ import Menu from '@mui/material/Menu';
 import Person from '@mui/icons-material/Person';
 import Logout from '@mui/icons-material/Logout';
 
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setUserAuthStatus } from './Slices/userAuthSlice';
+
 
 
 const StyledToolbar = styled(Toolbar)({
@@ -24,10 +28,14 @@ const StyledToolbar = styled(Toolbar)({
 })
 
 export const Navbar = () => {
+    const dispatch = useDispatch()
 
     const [loginModal, setLoginModal] = useState(false)
     const [mode, setMode] = useState(null)
-    const [isAuth, setIsAuth] = useState(false)
+
+    const isAuth = useSelector((configureStore) =>
+        configureStore.userAuth.status.isAuth
+    )
 
     useEffect(() => {
         const verifyAuth = () => {
@@ -45,7 +53,12 @@ export const Navbar = () => {
                     console.log(response)
                     if (response.loggedIn == true) {
                         console.log("user is already authenticated")
-                        setIsAuth(response.loggedIn)
+                        // setIsAuth(response.loggedIn)
+                        dispatch(setUserAuthStatus({
+                            isAuth: true
+                        }))
+                        console.log(isAuth)
+
                     }
                 })
         }
@@ -66,7 +79,10 @@ export const Navbar = () => {
             .then(response => {
                 console.log(response)
                 console.log('logged out')
-                setIsAuth(false)
+                dispatch(setUserAuthStatus({
+                    isAuth: false
+                }))
+                console.log(isAuth)
             })
     }
     return (
@@ -89,7 +105,7 @@ export const Navbar = () => {
                     {/* <Link to="/plan"> Road Trip </Link> */}
                     {isAuth
 
-                        ? <AccountMenu handleLogout={handleLogout}/>
+                        ? <AccountMenu handleLogout={handleLogout} />
                         : <>
                             <Button variant='contained' color='secondary'
                                 onClick={() => {
@@ -115,7 +131,7 @@ export const Navbar = () => {
 
             {loginModal &&
                 ReactDOM.createPortal(<>
-                    <LoginModal setOpen={setLoginModal} mode={mode} setMode={setMode} setIsAuth={setIsAuth} />
+                    <LoginModal setOpen={setLoginModal} mode={mode} setMode={setMode} />
                 </>
                     , document.getElementById("portal"))
 
@@ -125,7 +141,7 @@ export const Navbar = () => {
     );
 }
 
-const AccountMenu = ({handleLogout}) => {
+const AccountMenu = ({ handleLogout }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {

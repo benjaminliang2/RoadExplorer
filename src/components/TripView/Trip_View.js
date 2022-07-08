@@ -1,10 +1,10 @@
 import ReactDOM from 'react-dom';
 import { useState, useEffect, useRef } from "react";
-import { configureStore } from "@reduxjs/toolkit";
-
-import { Leg } from "./Leg"
+// import { configureStore } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
+
 import { SearchBox, SearchOrigin, SearchDestination } from "./Places";
+import { Leg } from "./Leg"
 import { Businesses } from "./BusinessesView/businesses";
 import { EditOriginDestination } from '../EditOriginDestination/EditOriginDestination';
 

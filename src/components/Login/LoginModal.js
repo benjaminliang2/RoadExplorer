@@ -1,14 +1,19 @@
 import { Backdrop, Button, Grid, Modal, Stack, TextField, Typography } from "@mui/material"
 import { useState, useEffect } from "react"
 import Axios from 'axios'
+import { useDispatch } from "react-redux";
+import { setUserAuthStatus } from '../../Slices/userAuthSlice'
 
 
 
-export const LoginModal = ({ setOpen, mode, setMode, setIsAuth }) => {
+
+
+export const LoginModal = ({ setOpen, mode, setMode }) => {
 
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const [passwordConfirm, setPasswordConfirm] = useState(null)
+    const dispatch = useDispatch()
 
 
     const [error, setError] = useState('none')
@@ -59,7 +64,9 @@ export const LoginModal = ({ setOpen, mode, setMode, setIsAuth }) => {
             console.log(response)
             if(response.loggedIn === true){
                 setOpen(false)
-                setIsAuth(response.loggedIn)
+                dispatch(setUserAuthStatus({
+                    isAuth: true
+                }))
             }
         })
     }
@@ -116,8 +123,6 @@ export const LoginModal = ({ setOpen, mode, setMode, setIsAuth }) => {
             <Grid container sx={styles.modalBox} spacing={1}>
 
                 <form onSubmit={(event) => handleSubmit(event)}>
-                    <Button variant="outlined" color="secondary" onClick={() => verifyAuth()}>Verify</Button>
-                    <Button variant="outlined" color="secondary" onClick={() => logout()}>Logout</Button>
 
                     <Grid item xs={12}>
                         {mode === 'login' &&

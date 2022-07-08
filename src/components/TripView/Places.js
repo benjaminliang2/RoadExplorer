@@ -2,17 +2,20 @@ import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocom
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption, } from "@reach/combobox"
 import "@reach/combobox/styles.css";
 import { useDispatch } from "react-redux";
-import { Grid, TextField } from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
-
 import { useEffect } from "react";
 import { Cookies, useCookies } from "react-cookie";
+import { useSelector } from "react-redux";
 import { setOrigin, setDestination } from '../../Slices/originDestinationSlice'
 
+import { Grid, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 
 
 
 export const SearchOrigin = ({ placeholder, label }) => {
+    const isAuth = useSelector((auth) => 
+        auth.userAuth
+    )
     const dispatch = useDispatch()
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
     const [cookies, setCookie] = useCookies()
@@ -40,6 +43,7 @@ export const SearchOrigin = ({ placeholder, label }) => {
             name: val
         }))
 
+    
         // setCookie('origin', {coordinates: {lat, lng}, name: val}, {
         //     path: '/'
         // })
