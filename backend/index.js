@@ -184,7 +184,6 @@ app.post('/savetrip', async (req, res) => {
     }
 
   } else {
-    //bug? if i edit an existing trip, it deletes all the other trips 
     try {
       let exisitingTrip = await User.findOneAndUpdate(
         { '_id': req.session.user, 'trips._id': trip._id },

@@ -13,28 +13,23 @@ const initialState = {
 
 export const saveTrip = createAsyncThunk(
     'trip/saveTrip',
-    debounce(async (payload, thunkAPI) => {
+    async (payload, thunkAPI) => {
         const trip = thunkAPI.getState().trip
-        try {
-            fetch(
-                'http://localhost:5000/savetrip', {
-                mode: 'cors',
-                credentials: 'include',
-                method: "post",
-                body: JSON.stringify({trip}),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then(res => res.json())
-            .then(response => {
-                console.log(response)
-                thunkAPI.dispatch(setMongoID(response))
-            })
-        } catch (error) {
-            console.log(error);
-        }
-    }, 2000)
+
+        const result = await fetch(
+            'http://localhost:5000/savetrip', {
+            mode: 'cors',
+            credentials: 'include',
+            method: "post",
+            body: JSON.stringify({trip}),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const response = await result.json()
+        console.log(response)
+        return response
+    }
 )
 
 const tripSlice = createSlice({
@@ -47,23 +42,28 @@ const tripSlice = createSlice({
         setDestination: (state, { payload }) => {
             state.destination = payload
         },
-        setMongoID: (state, {payload}) => {
-            state._id = payload
-        }
+        setTitle:(state, {payload}) => {
+            state.title = payload
+        },
+        // setMongoID: (state, {payload}) => {
+        //     state._id = payload
+        // }
     },
     extraReducers:{
         [saveTrip.pending]: (state) =>{
             state.isLoading = true
         },
         [saveTrip.fulfilled]: (state, action) =>{
+            state._id = action.payload
             state.isLoading = false
         },
         [saveTrip.rejected]: (state) =>{
             state.isLoading = false
+            console.log("save trip failed")
         }
     }
 })
 
 
-export const { setOrigin, setDestination, setMongoID } = tripSlice.actions;
+export const { setOrigin, setDestination, setTitle } = tripSlice.actions;
 export default tripSlice.reducer

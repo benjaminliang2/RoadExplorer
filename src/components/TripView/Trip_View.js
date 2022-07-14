@@ -1,7 +1,8 @@
 import ReactDOM from 'react-dom';
 import { useState, useEffect, useRef } from "react";
-// import { configureStore } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setTitle } from '../../Features/tripSlice'
 
 import { SearchBox, SearchOrigin, SearchDestination } from "./Places";
 import { Leg } from "./Leg"
@@ -29,6 +30,7 @@ export const TripView = (props) => {
         store.trip.destination
     )
 
+    //open/close modal that allows origin/dest editing. 
     const [editOrigin, setEditOrigin] = useState(false)
     const [editDestination, setEditDestination] = useState(false)
 
@@ -143,7 +145,10 @@ export const TripView = (props) => {
 }
 
 const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
-
+    const dispatch = useDispatch()
+    const title = useSelector((store) => 
+        store.trip.title
+    )
     const originTemp = useSelector((store) =>
         store.trip.origin.name
     )
@@ -154,7 +159,7 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
     let destination = destinationTemp.substr(0, destinationTemp.indexOf(','))
 
 
-    const [title, setTitle] = useState(destination + ' Trip')
+    // const [title, setTitle] = useState(destination + ' Trip')
     const [editTitleModal, setEditTitleModal] = useState(false)
     const [resetTripModal, setResetTripModal] = useState(false)
     const [userEditedTitle, setUserEditedTitle] = useState(false)
@@ -162,7 +167,8 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
 
     useEffect(() => {
         if (userEditedTitle === false) {
-            setTitle(destination + " Trip")
+            // setTitle(destination + " Trip")
+            dispatch(setTitle(destination + " Trip"))
         }
     }, [destination])
 
@@ -235,7 +241,7 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
         </Stack>
 
         {editTitleModal &&
-            <EditTitleModal setOpen={setEditTitleModal} setTitle={setTitle} title={title} setUserEditedTitle={setUserEditedTitle} />
+            <EditTitleModal setOpen={setEditTitleModal} setUserEditedTitle={setUserEditedTitle} />
         }
 
         {resetTripModal &&
@@ -245,7 +251,11 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
 
 }
 
-const EditTitleModal = ({ setOpen, setTitle, title, setUserEditedTitle }) => {
+const EditTitleModal = ({ setOpen, setUserEditedTitle }) => {
+    const dispatch = useDispatch()
+    const title = useSelector((store) => 
+        store.trip.title
+    )
     const [name, setName] = useState(title)
 
     const handleClose = () => {
@@ -277,7 +287,7 @@ const EditTitleModal = ({ setOpen, setTitle, title, setUserEditedTitle }) => {
                     <Button
                         variant="contained"
                         onClick={() => {
-                            setTitle(name)
+                            dispatch(setTitle(name))
                             setUserEditedTitle(true)
                             setOpen(false)
                         }}

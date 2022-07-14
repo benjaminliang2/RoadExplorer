@@ -1,10 +1,10 @@
 import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete"
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption, } from "@reach/combobox"
 import "@reach/combobox/styles.css";
-import { useDispatch } from "react-redux";
-import { Cookies, useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setOrigin, setDestination } from '../../Features/tripSlice'
+import { Cookies, useCookies } from "react-cookie";
 
 import { Grid, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
