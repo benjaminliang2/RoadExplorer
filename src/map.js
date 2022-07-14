@@ -13,6 +13,8 @@ import { Cookies, useCookies } from "react-cookie";
 import { Box, Stack, Typography } from "@mui/material";
 import { Sidebar } from "./components/Sidebar/Sidebar";
 import { Navbar } from "./Navbar";
+
+import { useSave } from "./components/Functions/save";
 /*global google*/
 
 const libraries = ["places"];
@@ -47,11 +49,11 @@ export const MapComponent = () => {
     mapRef.current = map;
   }, [])
 
-  const start = useSelector((randomname) =>
-    randomname.originDestination.origin
+  const start = useSelector((store) =>
+    store.trip.origin
   )
-  const end = useSelector((configureStore) =>
-    configureStore.originDestination.destination
+  const end = useSelector((store) =>
+    store.trip.destination
   )
 
   const [showEditTripModal, setShowEditTripModal] = useState(false)
@@ -69,6 +71,7 @@ export const MapComponent = () => {
   const [showTripDetails, setShowTripDetails] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
 
+  // useSave()
   useEffect(() => {
     getNearbyBusinesses(yelpSearchPoints)
 

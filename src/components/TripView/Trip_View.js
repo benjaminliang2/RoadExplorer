@@ -22,11 +22,11 @@ export const TripView = (props) => {
     const { waypoints, directions, removeFromTrip, setShowModal,
         businesses, addToTrip, setSearchCategory, setActiveMarker, panTo, getCustomResults, showTripDetails, setShowTripDetails, showSearch } = props;
 
-    const start = useSelector((randomname) =>
-        randomname.originDestination.origin
+    const start = useSelector((store) =>
+        store.trip.origin
     )
-    const end = useSelector((configureStore) =>
-        configureStore.originDestination.destination
+    const end = useSelector((store) =>
+        store.trip.destination
     )
 
     const [editOrigin, setEditOrigin] = useState(false)
@@ -42,7 +42,7 @@ export const TripView = (props) => {
         return (new Date(seconds * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
     }
     var totalDuration = toTimeString(seconds)
-
+    console.log("trip view")
     return (
         <>
             <Stack sx={styles.tripViewBox}>
@@ -144,11 +144,11 @@ export const TripView = (props) => {
 
 const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
 
-    const originTemp = useSelector((randomname) =>
-        randomname.originDestination.origin.name
+    const originTemp = useSelector((store) =>
+        store.trip.origin.name
     )
-    const destinationTemp = useSelector((configureStore) =>
-        configureStore.originDestination.destination.name
+    const destinationTemp = useSelector((store) =>
+        store.trip.destination.name
     )
     let origin = originTemp.substr(0, originTemp.indexOf(','))
     let destination = destinationTemp.substr(0, destinationTemp.indexOf(','))

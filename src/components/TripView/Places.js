@@ -2,10 +2,9 @@ import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocom
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption, } from "@reach/combobox"
 import "@reach/combobox/styles.css";
 import { useDispatch } from "react-redux";
-import { useEffect } from "react";
 import { Cookies, useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
-import { setOrigin, setDestination } from '../../Slices/originDestinationSlice'
+import { setOrigin, setDestination } from '../../Features/tripSlice'
 
 import { Grid, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -32,22 +31,16 @@ export const SearchOrigin = ({ placeholder, label }) => {
     //         console.log(cookies.origin)
     //     }
     // }, [])
-
-
     const handleSelect = async (val) => {
         const results = await getGeocode({ address: val });
         const { lat, lng } = await getLatLng(results[0])
-
         dispatch(setOrigin({
             coordinates: { lat, lng },
             name: val
         }))
-
-    
         // setCookie('origin', {coordinates: {lat, lng}, name: val}, {
         //     path: '/'
         // })
-
     }
     return <>
         <Autocomplete

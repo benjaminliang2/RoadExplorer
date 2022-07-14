@@ -18,7 +18,7 @@ import Logout from '@mui/icons-material/Logout';
 
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setUserAuthStatus } from './Slices/userAuthSlice';
+import { setUserAuthStatus } from './Features/userAuthSlice';
 
 
 

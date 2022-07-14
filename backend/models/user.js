@@ -1,8 +1,9 @@
+// import {Trip} from './trip.js'
 const mongoose = require("mongoose")
 // import mongoose from "mongoose";
 
 
-const trip =  {
+const Trip = {
     title: String,
     origin: {
         name: String,
@@ -19,9 +20,10 @@ const trip =  {
 const UserSchema = new mongoose.Schema({
     email: String,
     password: String,
-    trips:[trip]
+    trips: [Trip],
 })
 
 const User = mongoose.model('users', UserSchema);
 
 module.exports = User;
+// export {User, Trip}

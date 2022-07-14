@@ -30,11 +30,11 @@ export const EditOriginDestination = ({ setOpen }) => {
         setOpen(false)
 
     }
-    const start = useSelector((randomname) =>
-        randomname.originDestination.origin
+    const start = useSelector((store) =>
+        store.trip.origin
     )
-    const end = useSelector((configureStore) =>
-        configureStore.originDestination.destination
+    const end = useSelector((store) =>
+        store.trip.destination
     )
     return ReactDOM.createPortal(<>
         <Modal

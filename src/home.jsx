@@ -11,7 +11,7 @@ import { Button } from '@mui/material';
 import { DayTripsSection } from './components/DayTrips/DayTripsSection'
 
 import { css, keyframes } from '@emotion/react'
-import { setOrigin, setDestination } from './Slices/originDestinationSlice'
+// import { setOrigin, setDestination } from './Features/tripSlice'
 import { useLoadScript } from "@react-google-maps/api";
 import { Link } from 'react-router-dom';
 import { Navbar } from './Navbar';

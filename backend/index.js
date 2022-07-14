@@ -27,10 +27,10 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false },
-  store: MongoStore.create({ 
-    mongoUrl: process.env.ATLAS_URI ,
+  store: MongoStore.create({
+    mongoUrl: process.env.ATLAS_URI,
     // collectionName: 'users'
-  }) 
+  })
 }))
 
 // not used or relevant 
@@ -119,22 +119,17 @@ app.post('/signup', (req, res) => {
 
 })
 
+//verify if user is ALREADY auth'd
 app.get('/login', (req, res) => {
   // console.log(req.session + ' ' + req.session.id)
   if (req.session.user) {
     console.log('already authenticated')
     // console.log(req.session.id)
-    res.send({loggedIn: true})
+    res.send({ loggedIn: true })
   } else {
-    res.send({loggedIn: false})
+    res.send({ loggedIn: false })
   }
 
-})
-app.get('/logout', (req, res) => {
-  req.session.destroy(() => {
-    console.log("session has been deleted")
-    res.send({loggedIn: false})
-  })
 })
 
 app.post('/login', (req, res) => {
@@ -151,7 +146,7 @@ app.post('/login', (req, res) => {
         if (response === true) {
           console.log('successfully logged in ')
           req.session.user = existingUser[0]._id
-          res.json( req.session.user)
+          res.json(req.session.user)
         } else {
           console.log("incorrect password ")
         }
@@ -161,9 +156,72 @@ app.post('/login', (req, res) => {
   )
 })
 
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => {
+    console.log("session has been deleted")
+    res.send({ loggedIn: false })
+  })
+})
+
+app.post('/savetrip', async (req, res) => {
+  const trip = req.body.trip
+  //need to check if trip exists already and update it instead of pushing a new trip.
+  //check againt trip._id
+  console.log()
+  if (!trip._id) {
+    trip._id = new mongoose.Types.ObjectId()
+    try {
+      let result = await User.findOneAndUpdate(
+        { _id: req.session.user, },
+        { $push: { trips: trip } },
+        { new: true }
+      )
+      if (result) {
+        res.send(trip._id)
+      }
+    } catch (error) {
+      console.log("Error adding new trip to user trips array. Code: \n " + error)
+      res.send(error)
+    }
+
+  } else {
+    try {
+      let exisitingTrip = await User.findOneAndUpdate(
+        { _id: req.session.user, 'trips._id': trip._id },
+        { $set: { trips: trip } },
+        { new: true }
+      )
+      console.log(exisitingTrip)
+      if (exisitingTrip) {
+        console.log(trip._id)
+        res.send(trip._id)
+      }
+    } catch (error) {
+      console.log("Error updating existing trip. Code: \n " + error)
+      res.send(error)
+    }
+  }
+})
 
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 5000;
 }
 app.listen(port);
+
+//"WmmH1D7noN3srSQ628YkuI3MblFJU3JM"
+// const updateTask = async (req, res) => {
+//   try {
+//     const { listid: listID, taskid: taskID } = req.params;
+//     let result = await List.findOneAndUpdate(
+//       { "_id": listID, "items._id": taskID },
+//       {
+//         $set:
+//           { "items.$.sort": req.body.sort }
+//       })
+//     res.json(result)
+
+//   } catch (error) {
+
+//   }
+// }
