@@ -167,7 +167,6 @@ app.post('/savetrip', async (req, res) => {
   const trip = req.body.trip
   //need to check if trip exists already and update it instead of pushing a new trip.
   //check againt trip._id
-  console.log()
   if (!trip._id) {
     trip._id = new mongoose.Types.ObjectId()
     try {
@@ -185,16 +184,16 @@ app.post('/savetrip', async (req, res) => {
     }
 
   } else {
+    //bug? if i edit an existing trip, it deletes all the other trips 
     try {
       let exisitingTrip = await User.findOneAndUpdate(
-        { _id: req.session.user, 'trips._id': trip._id },
-        { $set: { trips: trip } },
+        { '_id': req.session.user, 'trips._id': trip._id },
+        { $set: { 'trips.$': trip } },
         { new: true }
       )
-      console.log(exisitingTrip)
       if (exisitingTrip) {
-        console.log(trip._id)
-        res.send(trip._id)
+        // console.log(trip._id)
+        // res.send(trip._id)
       }
     } catch (error) {
       console.log("Error updating existing trip. Code: \n " + error)
@@ -209,19 +208,19 @@ if (port == null || port == "") {
 }
 app.listen(port);
 
-//"WmmH1D7noN3srSQ628YkuI3MblFJU3JM"
-// const updateTask = async (req, res) => {
+// const updateTask = async (req,res)=>{
 //   try {
-//     const { listid: listID, taskid: taskID } = req.params;
-//     let result = await List.findOneAndUpdate(
-//       { "_id": listID, "items._id": taskID },
-//       {
-//         $set:
-//           { "items.$.sort": req.body.sort }
-//       })
-//     res.json(result)
+//       const {listid: listID, taskid: taskID} = req.params;
+//       let result = await List.findOneAndUpdate(
+//           {"_id": listID, "items._id":taskID}, 
+//           {$set: 
+//               {"items.$.sort": req.body.sort}
+//           })
+//       res.json(result)
 
 //   } catch (error) {
-
+      
 //   }
+
+
 // }
