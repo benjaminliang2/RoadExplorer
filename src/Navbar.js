@@ -33,8 +33,8 @@ export const Navbar = () => {
     const [loginModal, setLoginModal] = useState(false)
     const [mode, setMode] = useState(null)
 
-    const isAuth = useSelector((configureStore) =>
-        configureStore.userAuth.status.isAuth
+    const isAuth = useSelector((store) =>
+        store.userAuth.status
     )
 
     useEffect(() => {
@@ -50,15 +50,11 @@ export const Navbar = () => {
             })
                 .then(res => res.json())
                 .then(response => {
-                    console.log(response)
+                    // console.log(response)
                     if (response.loggedIn == true) {
-                        console.log("user is already authenticated")
+                        // console.log("user is already authenticated")
                         // setIsAuth(response.loggedIn)
-                        dispatch(setUserAuthStatus({
-                            isAuth: true
-                        }))
-                        console.log(isAuth)
-
+                        dispatch(setUserAuthStatus(true))
                     }
                 })
         }
@@ -79,10 +75,7 @@ export const Navbar = () => {
             .then(response => {
                 console.log(response)
                 console.log('logged out')
-                dispatch(setUserAuthStatus({
-                    isAuth: false
-                }))
-                console.log(isAuth)
+                dispatch(setUserAuthStatus(false))
             })
     }
     return (
@@ -205,8 +198,12 @@ const AccountMenu = ({ handleLogout }) => {
                 <MenuItem>
                     <Avatar /> Profile
                 </MenuItem>
-                <MenuItem>
-                    <Avatar /> My account
+            
+                <MenuItem onClick={() => handleLogout()}>
+                    <ListItemIcon>
+                        <Logout fontSize="small" />
+                    </ListItemIcon>
+                    My Trips
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={() => handleLogout()}>
@@ -220,3 +217,4 @@ const AccountMenu = ({ handleLogout }) => {
         </>
     );
 }
+

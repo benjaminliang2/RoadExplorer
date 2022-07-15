@@ -141,7 +141,7 @@ app.post('/login', (req, res) => {
       //tell user that account doesnt exist
       console.log("account doesnt exist")
     } else {
-      console.log(existingUser[0])
+      // console.log(existingUser[0])
       bcrypt.compare(plainTextPassword, existingUser[0].password, function (err, response) {
         if (response === true) {
           console.log('successfully logged in ')
@@ -164,9 +164,8 @@ app.get('/logout', (req, res) => {
 })
 
 app.post('/savetrip', async (req, res) => {
+  console.log("saving trip ")
   const trip = req.body.trip
-  //need to check if trip exists already and update it instead of pushing a new trip.
-  //check againt trip._id
   if (!trip._id) {
     trip._id = new mongoose.Types.ObjectId()
     try {
@@ -176,7 +175,7 @@ app.post('/savetrip', async (req, res) => {
         { new: true }
       )
       if (result) {
-        res.send(trip._id)
+        res.json(trip._id)
       }
     } catch (error) {
       console.log("Error adding new trip to user trips array. Code: \n " + error)
@@ -192,7 +191,7 @@ app.post('/savetrip', async (req, res) => {
       )
       if (exisitingTrip) {
         // console.log(trip._id)
-        // res.send(trip._id)
+        res.json(trip._id)
       }
     } catch (error) {
       console.log("Error updating existing trip. Code: \n " + error)

@@ -11,17 +11,18 @@ const initialState = {
     _id: undefined,
 }
 
+//FIXME: debounce is not used as intended. it somehow fixes the issue of my promises getting rejected after the first one is fulfilled. 
 export const saveTrip = createAsyncThunk(
     'trip/saveTrip',
     async (payload, thunkAPI) => {
+        console.log("saving trip");
         const trip = thunkAPI.getState().trip
-
         const result = await fetch(
             'http://localhost:5000/savetrip', {
             mode: 'cors',
             credentials: 'include',
             method: "post",
-            body: JSON.stringify({trip}),
+            body: JSON.stringify({ trip }),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -42,22 +43,22 @@ const tripSlice = createSlice({
         setDestination: (state, { payload }) => {
             state.destination = payload
         },
-        setTitle:(state, {payload}) => {
+        setTitle: (state, { payload }) => {
             state.title = payload
         },
-        // setMongoID: (state, {payload}) => {
-        //     state._id = payload
-        // }
+        setWaypoints: (state, { payload }) => {
+            state.waypoints = payload
+        }
     },
-    extraReducers:{
-        [saveTrip.pending]: (state) =>{
+    extraReducers: {
+        [saveTrip.pending]: (state) => {
             state.isLoading = true
         },
-        [saveTrip.fulfilled]: (state, action) =>{
+        [saveTrip.fulfilled]: (state, action) => {
             state._id = action.payload
             state.isLoading = false
         },
-        [saveTrip.rejected]: (state) =>{
+        [saveTrip.rejected]: (state) => {
             state.isLoading = false
             console.log("save trip failed")
         }
@@ -65,5 +66,5 @@ const tripSlice = createSlice({
 })
 
 
-export const { setOrigin, setDestination, setTitle } = tripSlice.actions;
+export const { setOrigin, setDestination, setTitle, setWaypoints } = tripSlice.actions;
 export default tripSlice.reducer

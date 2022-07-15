@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setTitle } from '../../Features/tripSlice'
@@ -20,7 +20,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 
 export const TripView = (props) => {
-    const { waypoints, directions, removeFromTrip, setShowModal,
+    const { directions, removeFromTrip, setShowModal,
         businesses, addToTrip, setSearchCategory, setActiveMarker, panTo, getCustomResults, showTripDetails, setShowTripDetails, showSearch } = props;
 
     const start = useSelector((store) =>
@@ -28,6 +28,9 @@ export const TripView = (props) => {
     )
     const end = useSelector((store) =>
         store.trip.destination
+    )
+    const waypoints = useSelector((store) => 
+        store.trip.waypoints    
     )
 
     //open/close modal that allows origin/dest editing. 
@@ -44,7 +47,6 @@ export const TripView = (props) => {
         return (new Date(seconds * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
     }
     var totalDuration = toTimeString(seconds)
-    console.log("trip view")
     return (
         <>
             <Stack sx={styles.tripViewBox}>

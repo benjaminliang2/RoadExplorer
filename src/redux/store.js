@@ -1,18 +1,20 @@
 import { configureStore, createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
-import tripReducer, {saveTrip, setDestination, setOrigin, setTitle} from "../Features/tripSlice";
+import tripReducer, {saveTrip, setDestination, setOrigin, setTitle, setWaypoints} from "../Features/tripSlice";
 import userAuthReducer from '../Features/userAuthSlice'
+
 
 const listenerMiddleWare = createListenerMiddleware()
 
 listenerMiddleWare.startListening({
-    matcher: isAnyOf(setOrigin, setDestination, setTitle) ,
+    matcher: isAnyOf( setDestination, setTitle, setWaypoints),
     effect: async(action, listenerAPI) => {
         listenerAPI.cancelActiveListeners();
-        // await listenerAPI.delay(1000)
+        await listenerAPI.delay(1000)
         listenerAPI.dispatch(saveTrip(action.payload))
 
     }
 })
+
 
 export default configureStore({
     reducer: {

@@ -64,9 +64,7 @@ export const LoginModal = ({ setOpen, mode, setMode }) => {
             console.log(response)
             if(response.loggedIn === true){
                 setOpen(false)
-                dispatch(setUserAuthStatus({
-                    isAuth: true
-                }))
+                dispatch(setUserAuthStatus(true))
             }
         })
     }
