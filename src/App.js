@@ -12,7 +12,7 @@ function App() {
       <Router>
         <Routes>
           <Route exact path='/' element={<Home />} />
-          <Route path='/plan' element={<MapComponent />} />
+          <Route path='/trip' element={<MapComponent />} />
         </Routes>
       </Router>
     </ThemeProvider>

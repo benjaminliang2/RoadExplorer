@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useRef, useEffect, useDebugValue } from "react";
+import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setWaypoints } from "./Features/tripSlice";
@@ -81,8 +81,8 @@ export const MapComponent = () => {
     //if user changes origin or destination, then reset everything. 
     setYelpSearchPoints([start, end])
     setMiddleman([])
-    setBusinessesSelected([])
-    setGoogleWaypoints([])
+    // setBusinessesSelected([])
+    fetchDirections();
 
   }, [start, end])
 
@@ -97,14 +97,7 @@ export const MapComponent = () => {
 
   }, [middleman])
 
-  // useEffect(() => {
-  //   // console.log(hikes)
-  // }, [hikes])
-
   useEffect(() => {
-    // if (isMounted.current) {
-    //   fetchDirections()
-    // }
     fetchDirections();
   }, [googleWaypoints])
 

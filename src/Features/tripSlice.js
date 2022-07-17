@@ -11,14 +11,13 @@ const initialState = {
     _id: undefined,
 }
 
-//FIXME: debounce is not used as intended. it somehow fixes the issue of my promises getting rejected after the first one is fulfilled. 
 export const saveTrip = createAsyncThunk(
     'trip/saveTrip',
     async (payload, thunkAPI) => {
         console.log("saving trip");
         const trip = thunkAPI.getState().trip
         const result = await fetch(
-            'http://localhost:5000/savetrip', {
+            'http://localhost:5000/user/savetrip', {
             mode: 'cors',
             credentials: 'include',
             method: "post",
@@ -32,6 +31,7 @@ export const saveTrip = createAsyncThunk(
         return response
     }
 )
+
 
 const tripSlice = createSlice({
     name: 'trip',
@@ -61,7 +61,8 @@ const tripSlice = createSlice({
         [saveTrip.rejected]: (state) => {
             state.isLoading = false
             console.log("save trip failed")
-        }
+        },
+
     }
 })
 

@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
 import { SearchOrigin, SearchDestination } from "../TripView/Places";
 import ReactDOM from 'react-dom';
-import { Backdrop, Box, Button, Grid, Modal } from '@mui/material';
+import { Backdrop, Button, Grid, Modal } from '@mui/material';
 import { useSelector } from "react-redux";
 
 

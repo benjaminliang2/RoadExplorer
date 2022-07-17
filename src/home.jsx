@@ -182,7 +182,7 @@ export const Home = () => {
                         </Grid>
                         <Grid item sm={12} md={2}>
                             <Button variant='contained' color='primary' sx={styles.planTripButton} >
-                                <Link to="/plan"> Plan Trip </Link>
+                                <Link to="/trip"> Plan Trip </Link>
                             </Button>
                         </Grid>
                     </Grid>

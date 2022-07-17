@@ -163,7 +163,7 @@ app.get('/logout', (req, res) => {
   })
 })
 
-app.post('/savetrip', async (req, res) => {
+app.post('/user/savetrip', async (req, res) => {
   console.log("saving trip ")
   const trip = req.body.trip
   if (!trip._id) {
@@ -200,25 +200,21 @@ app.post('/savetrip', async (req, res) => {
   }
 })
 
+app.get('/user/trips', async (req, res) => {
+  try {
+    const result = await User.find({_id: req.session.user},
+      { "trips.title": 1, "trips._id": 1}
+    )
+    res.json(result)
+  } catch (error) {
+    console.log("Fetching trips failed. error code: " + error)
+  }
+
+})
+
+
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 5000;
 }
 app.listen(port);
-
-// const updateTask = async (req,res)=>{
-//   try {
-//       const {listid: listID, taskid: taskID} = req.params;
-//       let result = await List.findOneAndUpdate(
-//           {"_id": listID, "items._id":taskID}, 
-//           {$set: 
-//               {"items.$.sort": req.body.sort}
-//           })
-//       res.json(result)
-
-//   } catch (error) {
-      
-//   }
-
-
-// }
