@@ -1,20 +1,10 @@
 import { BusinessCard } from "./businessCard"
-import { SearchFilter } from "./SearchFilter"
-import { Stack, IconButton } from '@mui/material';
+import { Stack } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import { SearchBox as SearchField } from "../Places"
-import { useState } from "react";
-import SearchIcon from '@mui/icons-material/Search';
-
-
-
-
 
 export const Businesses = (props) => {
-    const { hikes, addToTrip, setActiveMarker, setSearchCategory, panTo, getCustomResults } = props
-
-    const [showSearchField, setShowSearchField] = useState(false)
+    const { hikes, addToTrip, setActiveMarker} = props
 
     return (<>
 

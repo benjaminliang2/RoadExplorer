@@ -3,13 +3,13 @@ import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption,
 import "@reach/combobox/styles.css";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setOrigin, setDestination } from '../../Features/tripSlice'
+import { setOrigin, setDestination } from '../../../Features/tripSlice'
 import { Cookies, useCookies } from "react-cookie";
 
 import { Grid, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 
-
+import { useTrip } from "../useTrip";
 
 export const SearchOrigin = ({ placeholder, label }) => {
     const isAuth = useSelector((auth) => 
@@ -18,6 +18,7 @@ export const SearchOrigin = ({ placeholder, label }) => {
     const dispatch = useDispatch()
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
     const [cookies, setCookie] = useCookies()
+    
 
     // useEffect(() => {
     //     if(document.cookie){
@@ -89,8 +90,9 @@ export const SearchDestination = ({ placeholder, label }) => {
     </>
 }
 
-export const SearchBox = ({ panTo, getCustomResults, setShowTripDetails }) => {
+export const SearchBox = ({ panTo, setShowTripDetails }) => {
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
+    const {getCustomBusinesses} = useTrip()
     const handleSelect = async (val) => {
         // setValue(val, false);
         // clearSuggestions();
@@ -99,7 +101,7 @@ export const SearchBox = ({ panTo, getCustomResults, setShowTripDetails }) => {
         const { lat, lng } = await getLatLng(results[0])
         
         setShowTripDetails(false)
-        getCustomResults(name, lat, lng)
+        getCustomBusinesses(name, lat, lng)
         panTo({ lat, lng })
     }
 

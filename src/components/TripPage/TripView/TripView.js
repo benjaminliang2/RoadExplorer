@@ -2,12 +2,12 @@ import ReactDOM from 'react-dom';
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setTitle } from '../../Features/tripSlice'
+import { setTitle } from '../../../Features/tripSlice'
 
 import { SearchBox, SearchOrigin, SearchDestination } from "./Places";
 import { Leg } from "./Leg"
-import { Businesses } from "./BusinessesView/businesses";
-import { EditOriginDestination } from '../EditOriginDestination/EditOriginDestination';
+import { Businesses } from "../../TripPage/Businesses/businesses";
+import { EditOriginDestination } from '../../EditOriginDestination/EditOriginDestination';
 
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -16,13 +16,13 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
-
+import { useTrip } from '../useTrip'
 
 
 export const TripView = (props) => {
-    const { directions, removeFromTrip, setShowModal,
-        businesses, addToTrip, setSearchCategory, setActiveMarker, panTo, getCustomResults, showTripDetails, setShowTripDetails, showSearch } = props;
+    const { directions, setShowModal, setSearchCategory, setActiveMarker, panTo, showTripDetails, setShowTripDetails, showSearch } = props;
 
+    const {businesses, removeFromTrip, addToTrip} = useTrip()
     const start = useSelector((store) =>
         store.trip.origin
     )
@@ -52,7 +52,7 @@ export const TripView = (props) => {
             <Stack sx={styles.tripViewBox}>
                 <TripSummary setShowModal={setShowModal} totalDistance={totalDistance} totalDuration={totalDuration} />
                 {showSearch &&
-                    <SearchBox panTo={panTo} getCustomResults={getCustomResults} setShowTripDetails={setShowTripDetails} />
+                    <SearchBox panTo={panTo} setShowTripDetails={setShowTripDetails} />
                 }
 
                 <Box sx={showTripDetails ? null : styles.hide}>
@@ -70,7 +70,6 @@ export const TripView = (props) => {
                             setSearchCategory={setSearchCategory}
                             setActiveMarker={setActiveMarker}
                             panTo={panTo}
-                            getCustomResults={getCustomResults}
                         />
                     </Box>
                 }

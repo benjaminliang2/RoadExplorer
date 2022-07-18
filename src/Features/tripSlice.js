@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import debounce from 'lodash.debounce'
 // const axios = require('axios')
 
+//_id is the trip's specific id
 const initialState = {
     title: "untitled",
     origin: false,
