@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useEffect } from 'react';
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setUserAuthStatus } from './Features/userAuthSlice';
+import { setUserAuthStatus } from '../Features/userAuthSlice';
 
-import { LoginModal } from "./components/Login/LoginModal";
-import { CustomModal } from "./CustomModal"
+import { LoginModal } from "./Login/LoginModal";
+import { CustomModal } from "../styles/CustomModal"
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -20,6 +20,7 @@ import Menu from '@mui/material/Menu';
 import Person from '@mui/icons-material/Person';
 import Logout from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Link } from 'react-router-dom';
 
 
 
@@ -141,12 +142,12 @@ const AccountMenu = ({ handleLogout }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [showTripList, setShowTripList] = useState(false)
     const [trips, setTrips] = useState(null)
-    
-    useEffect(()=>{
-        if(showTripList == false){
+
+    useEffect(() => {
+        if (showTripList == false) {
             setTrips(null)
         }
-    },[showTripList])
+    }, [showTripList])
 
     const open = Boolean(anchorEl);
     const isAuth = useSelector((store) =>
@@ -158,7 +159,7 @@ const AccountMenu = ({ handleLogout }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    
+
 
     const fetchTrips = () => {
         fetch(
@@ -258,7 +259,7 @@ const AccountMenu = ({ handleLogout }) => {
                         <Stack direction='column-reverse' height='100%'>
                             <Button><Typography>Create New Trip</Typography></Button>
                             <List>
-                                {trips && trips.length>0 &&
+                                {trips && trips.length > 0 &&
                                     trips.map((trip, index) => {
                                         return (
                                             <ListItem
@@ -270,9 +271,11 @@ const AccountMenu = ({ handleLogout }) => {
                                                 }
                                                 disablePadding
                                             >
-                                                <ListItemButton>
-                                                    <ListItemText id={trip._id} primary={trip.title} />
-                                                </ListItemButton>
+                                                <Link to={`/trip/${trip._id}`} >
+                                                    <ListItemButton>
+                                                        <ListItemText id={trip._id} primary={trip.title} />
+                                                    </ListItemButton>
+                                                </Link>
                                             </ListItem>
                                         )
                                     })

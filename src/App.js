@@ -1,8 +1,8 @@
-import { MapComponent } from "./map"
-import { Home } from './home'
+import { MapComponent } from "./components/TripPage/map"
+import { Home } from './components/HomePage/home'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from "@mui/material";
-import {theme} from './theme'
+import {theme} from './styles/theme'
 import { withCookies } from 'react-cookie'
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
       <Router>
         <Routes>
           <Route exact path='/' element={<Home />} />
-          <Route path='/trip' element={<MapComponent />} />
+          <Route path='/trip/:tripId' element={<MapComponent />} />
         </Routes>
       </Router>
     </ThemeProvider>

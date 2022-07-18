@@ -1,19 +1,21 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setWaypoints } from "./Features/tripSlice";
+import { setWaypoints } from "../../Features/tripSlice";
 import { Cookies, useCookies } from "react-cookie";
-import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
+import { useParams } from 'react-router-dom';
+import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer } from "@react-google-maps/api";
+import { useTrip } from './useTrip'
 
-import { TripView } from "./components/TripView/Trip_View"
-import { InfoModal } from "./components/InfoModal/InfoModal"
-import { EditOriginDestination } from "./components/EditOriginDestination/EditOriginDestination";
-import { Sidebar } from "./components/Sidebar/Sidebar";
-import { Navbar } from "./Navbar";
+import { TripView } from "./TripView/TripView"
+import { InfoModal } from "./InfoModal/InfoModal"
+import { EditOriginDestination } from "../EditOriginDestination/EditOriginDestination";
+import { Sidebar } from "./Sidebar/Sidebar";
+import { Navbar } from "../Navbar";
 //styles.css required for google map rendering. 
-import "./styles.css"
-import { Box } from "@mui/material";
+import "../../styles/styles.css"
 /*global google*/
+import { Box } from "@mui/material";
 
 const libraries = ["places"];
 
@@ -21,10 +23,13 @@ export const MapComponent = () => {
   const dispatch = useDispatch()
   const [cookies, setCookie] = useCookies(['cookie-name'])
 
-  const handleCookie = () => {
-    console.log(document.cookie)
-    console.log(cookies.origin)
-  }
+  // const handleCookie = () => {
+  //   console.log(document.cookie)
+  //   console.log(cookies.origin)
+  // }
+
+  let { tripId } = useParams();
+  const { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, businessesSelected, businesses, middleman, zeroMiddleman } = useTrip();
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -55,16 +60,12 @@ export const MapComponent = () => {
   const [directions, setDirections] = useState(null)
   const [searchCategory, setSearchCategory] = useState('tourist')
   const [yelpSearchPoints, setYelpSearchPoints] = useState([])
-  const [middleman, setMiddleman] = useState([]);
-  const [businesses, setBusinesses] = useState(null)
 
   //businessesSelected are selected POIs that users want to add to their trip.
-  const [businessesSelected, setBusinessesSelected] = useState([])
-  //googlewaypoint are waypoints/locations that i pass into Directions API. this is extrapolated properties of `businessesSelected`. it will return the order of the waypoints that yield the optimize route
+  // const [businessesSelected, setBusinessesSelected] = useState([])
+  //googlewaypoint are waypoints/locations that i pass into Directions API.
   const [googleWaypoints, setGoogleWaypoints] = useState([])
-  //waypoints is a sorted version of `businessesSelected`.  Trip View component uses this to render its `Leg` components in order. 
-  // const [waypoints, setWaypoints] = useState();
-  
+
   const [activeMarker, setActiveMarker] = useState({ id: 'none' })
   const [selectedMarker, setSelectedMarker] = useState(false)
   const isMounted = useRef(false)
@@ -73,29 +74,25 @@ export const MapComponent = () => {
 
   // useSave()
   useEffect(() => {
-    getNearbyBusinesses(yelpSearchPoints)
+    getNearbyBusinesses(yelpSearchPoints, searchCategory)
 
   }, [yelpSearchPoints])
 
   useEffect(() => {
     //if user changes origin or destination, then reset everything. 
     setYelpSearchPoints([start, end])
-    setMiddleman([])
+    zeroMiddleman([])
     // setBusinessesSelected([])
     fetchDirections();
 
   }, [start, end])
 
   useEffect(() => {
-    generateCoordinatesBetweenStartEnd()
+    const midpoints = getMidpoints(directions)
+    if (midpoints.length > 0) {
+      setYelpSearchPoints((prevState) => [...prevState, ...midpoints])
+    }
   }, [directions])
-
-  useEffect(() => {
-    const dataMap = new Map();
-    middleman.forEach((res) => dataMap.set(res.id, res));
-    setBusinesses(Array.from(dataMap.values()));
-
-  }, [middleman])
 
   useEffect(() => {
     fetchDirections();
@@ -120,8 +117,8 @@ export const MapComponent = () => {
   useEffect(() => {
     if (isMounted.current) {
       if (searchCategory) {
-        setMiddleman([])
-        getNearbyBusinesses(yelpSearchPoints)
+        zeroMiddleman([])
+        getNearbyBusinesses(yelpSearchPoints, searchCategory)
       }
     }
   }, [searchCategory])
@@ -131,39 +128,12 @@ export const MapComponent = () => {
     controller.current = new AbortController();
   }, [])
 
+  // setMidpoints(useGenerateCoordinates(directions))
 
   const panTo = (position) => {
     mapRef.current.panTo(position)
     mapRef.current.setZoom(15)
   }
-
-
-  const getNearbyBusinesses = async (points) => {
-    controller.current.abort();
-    // points.forEach(async (point) => {
-    controller.current = new AbortController()
-    let signal = controller.current.signal;
-    // console.log("fetching hikes")
-    for (let point of points) {
-      if (point) {
-        const { lat, lng } = point.coordinates
-        const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + searchCategory, { signal })
-        const result = await response.json();
-        setMiddleman((prevState) => [...prevState, ...result.businesses])
-        // controller.abort()
-      }
-    }
-  }
-
-  const getCustomResults = async (name, lat, lng) => {
-    // console.log("getting custom search results")
-    const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + name)
-    const result = await response.json();
-    setMiddleman([...result.businesses])
-
-  }
-
-
 
   const fetchDirections = () => {
     if (!start || !end) return
@@ -192,52 +162,6 @@ export const MapComponent = () => {
     dispatch(setWaypoints(optimizedRoute))
   }
 
-  const generateCoordinatesBetweenStartEnd = () => {
-    if (directions) {
-      let miles = 0
-      let midpoints = []
-      //70000meters < 50 miles. 
-      const diameter = 70000
-      const steps = directions.routes[0].legs[0].steps
-
-
-      for (let i = 0; i < steps.length; i += 1) {
-        miles += steps[i].distance.value;
-        let count = 1;
-        const temp = miles
-        while (miles > diameter) {
-
-          let currentStepMiles = steps[i].distance.value;
-          let prevRemainingStepMiles = temp - currentStepMiles;
-          let factor = (diameter * count - prevRemainingStepMiles) / currentStepMiles;
-          let pathIndex = steps[i].path.length * factor;
-
-          midpoints.push({ coordinates: steps[i].path[Math.floor(pathIndex)].toJSON() })
-          miles -= diameter;
-          count += 1
-        }
-        count = 1;
-      }
-      if (midpoints.length > 0) {
-        setYelpSearchPoints((prevState) => [...prevState, ...midpoints])
-      }
-    }
-  }
-
-  const addToTrip = (coordinates, title, yelpID, image) => {
-    //check if the place is already added to waypoints
-    if (businessesSelected.some(waypoint => waypoint.yelp_id === yelpID)) {
-    } else {
-      setBusinessesSelected((selectedWaypoints) => [...selectedWaypoints, { name: title, yelp_id: yelpID, coordinates: coordinates, imgURL: image }])
-
-    }
-  }
-  const removeFromTrip = (yelpID) => {
-    console.log(businessesSelected)
-    const updatedBusSelected = businessesSelected.filter((waypoint) => waypoint.yelp_id !== yelpID)
-    setBusinessesSelected(updatedBusSelected)
-
-  }
 
 
 
@@ -271,11 +195,12 @@ export const MapComponent = () => {
           // onClick={onMapClick}
           onLoad={onMapLoad}
         >
-          <Box sx={{ position: 'absolute', height: '100%', margin: '15px', borderRadius: '25px',
-          ['@media screen and (max-width: 767.9)']: { // eslint-disable-line no-useless-computed-key
-            position: 'relative'
-          }
-        }}>
+          <Box sx={{
+            position: 'absolute', height: '100%', margin: '15px', borderRadius: '25px',
+            ['@media screen and (max-width: 767.9)']: { // eslint-disable-line no-useless-computed-key
+              position: 'relative'
+            }
+          }}>
             <Sidebar setSearchCategory={setSearchCategory} setShowTripDetails={setShowTripDetails} setShowSearch={setShowSearch} />
             {(directions &&
               <>
@@ -285,15 +210,13 @@ export const MapComponent = () => {
                   // waypoints={waypoints}
                   directions={directions}
                   removeFromTrip={removeFromTrip}
-                  businesses={businesses}
+                  // businesses={businesses}
                   setShowModal={setShowEditTripModal}
 
                   addToTrip={addToTrip}
                   setSearchCategory={setSearchCategory}
                   setActiveMarker={setActiveMarker}
                   panTo={panTo}
-                  getCustomResults={getCustomResults}
-
                   showTripDetails={showTripDetails}
                   setShowTripDetails={setShowTripDetails}
                   showSearch={showSearch}

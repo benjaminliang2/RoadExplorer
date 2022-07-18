@@ -1,20 +1,19 @@
-import travelGlobeImage from './images/travelGlobe.png'
+import { SearchDestination, SearchOrigin } from '../TripPage/TripView/Places';
+import travelGlobeImage from '../../images/travelGlobe.png'
 import Paper from '@mui/material/Paper';
-import { SearchDestination, SearchOrigin } from './components/TripView/Places';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Autocomplete, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Button } from '@mui/material';
 
-import { DayTripsSection } from './components/DayTrips/DayTripsSection'
+import { DayTripsSection } from './DayTrips/DayTripsSection'
 
 import { css, keyframes } from '@emotion/react'
 // import { setOrigin, setDestination } from './Features/tripSlice'
 import { useLoadScript } from "@react-google-maps/api";
 import { Link } from 'react-router-dom';
-import { Navbar } from './Navbar';
+import { Navbar } from '../Navbar';
 
 
 const styles = {
@@ -182,6 +181,7 @@ export const Home = () => {
                         </Grid>
                         <Grid item sm={12} md={2}>
                             <Button variant='contained' color='primary' sx={styles.planTripButton} >
+                            {/* TODO: wait for tripid to return from mongodb, and then send use to '/trip/:tripId */}
                                 <Link to="/trip"> Plan Trip </Link>
                             </Button>
                         </Grid>
