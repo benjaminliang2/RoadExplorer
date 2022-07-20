@@ -15,7 +15,9 @@ export const useTrip = () => {
         setBusinesses(Array.from(dataMap.values()));
 
     }, [middleman])
-
+    useEffect(()=>{
+        console.log(businesses)
+    },[businesses])
     const getMidpoints = (directions) => {
         if (!directions) {
             return []
@@ -85,7 +87,6 @@ export const useTrip = () => {
         const result = await response.json();
         setMiddleman([...result.businesses])
     }
-
 
     return { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, businessesSelected, getCustomBusinesses, businesses, middleman, zeroMiddleman}
 }

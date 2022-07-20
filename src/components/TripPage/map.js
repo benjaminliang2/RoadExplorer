@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setWaypoints } from "../../Features/tripSlice";
+import { setTripId, setWaypoints } from "../../Features/tripSlice";
 import { useParams } from 'react-router-dom';
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer } from "@react-google-maps/api";
 import { useTrip } from './useTrip'
@@ -21,8 +21,13 @@ const libraries = ["places"];
 export const MapComponent = () => {
   const dispatch = useDispatch()
 
+  //tripId should always be defined
   let { tripId } = useParams();
-  const { getMidpoints, addToTrip, getNearbyBusinesses, businessesSelected, businesses, zeroMiddleman } = useTrip();
+  useEffect(() => {
+    dispatch(setTripId(tripId))
+  }, [])
+
+  const { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, businessesSelected, businesses, zeroMiddleman } = useTrip();
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -30,7 +35,7 @@ export const MapComponent = () => {
   })
   const center = useMemo(() => ({ lat: 44, lng: -80 }), []);
   const mapRef = useRef();
-  const controller = useRef()
+  // const controller = useRef()
   const waypoint_order = useRef();
   const options = useMemo(() => ({
     mapId: 'e9159de94dc8cc93',
@@ -118,7 +123,7 @@ export const MapComponent = () => {
 
   useEffect(() => {
     isMounted.current = true;
-    controller.current = new AbortController();
+    // controller.current = new AbortController();
   }, [])
 
   // setMidpoints(useGenerateCoordinates(directions))
@@ -151,7 +156,6 @@ export const MapComponent = () => {
 
   const sortWaypoints = () => {
     const optimizedRoute = waypoint_order.current.map(index => businessesSelected[index])
-    console.log("optimized routing... ", optimizedRoute)
     dispatch(setWaypoints(optimizedRoute))
   }
 
@@ -198,8 +202,11 @@ export const MapComponent = () => {
             {(directions &&
               <>
                 <TripView
+                  addToTrip={addToTrip}
+                  removeFromTrip={removeFromTrip}
                   start={start}
                   end={end}
+                  businesses={businesses}
                   directions={directions}
                   setShowModal={setShowEditTripModal}
                   setSearchCategory={setSearchCategory}
