@@ -1,10 +1,7 @@
 import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete"
-import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption, } from "@reach/combobox"
-import "@reach/combobox/styles.css";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setOrigin, setDestination } from '../../../Features/tripSlice'
-import { Cookies, useCookies } from "react-cookie";
 
 import { Grid, TextField } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -17,21 +14,7 @@ export const SearchOrigin = ({ placeholder, label }) => {
     )
     const dispatch = useDispatch()
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
-    const [cookies, setCookie] = useCookies()
     
-
-    // useEffect(() => {
-    //     if(document.cookie){
-    //         setCookie('origin', "home", {
-    //             path: '/'
-    //         });
-    //         setCookie('destination', "office", {
-    //             path: '/'
-    //         });
-    //         console.log(document.cookie)
-    //         console.log(cookies.origin)
-    //     }
-    // }, [])
     const handleSelect = async (val) => {
         const results = await getGeocode({ address: val });
         const { lat, lng } = await getLatLng(results[0])
@@ -59,7 +42,6 @@ export const SearchOrigin = ({ placeholder, label }) => {
 export const SearchDestination = ({ placeholder, label }) => {
     const dispatch = useDispatch()
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
-    const [cookies, setCookie] = useCookies()
 
 
     const handleSelect = async (val) => {
@@ -70,10 +52,6 @@ export const SearchDestination = ({ placeholder, label }) => {
             coordinates: { lat, lng },
             name: val
         }))
-
-        // setCookie('destination', {coordinates: {lat, lng}, name: val}, {
-        //     path: '/'
-        // })
 
     }
     return <>
@@ -116,16 +94,6 @@ export const SearchBox = ({ panTo, setShowTripDetails }) => {
                 <TextField {...params}  onChange={(e) => setValue(e.target.value, true)} placeholder='e.g. Yellowstone National Park...' variant="standard" required={true} />
             }
         />
-
-{/* 
-        <Combobox onSelect={handleSelect}>
-            <ComboboxInput autoFocus value={value} onChange={(e) => setValue(e.target.value)} className="combobox-input" placeholder="Search Places..." disabled={!ready} />
-            <ComboboxPopover>
-                <ComboboxList>
-                    {status === "OK" && data.map(({ place_id, description }) => <ComboboxOption key={place_id} value={description} />)}
-                </ComboboxList>
-            </ComboboxPopover>
-        </Combobox> */}
     </>
 
 }

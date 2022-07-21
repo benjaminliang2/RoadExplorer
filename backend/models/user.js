@@ -13,7 +13,7 @@ const Trip = {
         name: String,
         coordinates: { lat: Number, lng: Number },
     },
-    waypoints: []
+    businessesSelected: [{id: String}]
 }
 
 

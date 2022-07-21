@@ -29,7 +29,7 @@ export const TripView = (props) => {
     const waypoints = useSelector((store) => 
         store.trip.waypoints    
     )
-    console.log(businesses)
+    // console.log(businesses)
     //open/close modal that allows origin/dest editing. 
     const [editOrigin, setEditOrigin] = useState(false)
     const [editDestination, setEditDestination] = useState(false)
@@ -55,7 +55,7 @@ export const TripView = (props) => {
                 <Box sx={showTripDetails ? null : styles.hide}>
                     <Leg name={start.name} directions={directions} index={0} setEdit={setEditOrigin} />
                     {waypoints?.map((waypoint, index) =>
-                        <Leg name={waypoint.name} imgURL={waypoint.imgURL} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.yelp_id} />
+                        <Leg name={waypoint.name} imgURL={waypoint.image_url} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.id} />
                     )}
                     <Leg name={end.name} setEdit={setEditDestination} />
                 </Box>

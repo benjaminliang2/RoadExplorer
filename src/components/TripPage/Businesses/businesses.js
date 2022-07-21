@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 
 export const Businesses = (props) => {
     const { businesses, addToTrip, setActiveMarker} = props
-    console.log(businesses);
+    // console.log(businesses);
     return (<>
 
             <Stack sx={{maxHeight: '100%', overflowY: 'auto'}}>
@@ -15,17 +15,17 @@ export const Businesses = (props) => {
                         <CircularProgress />
                     </Box>
                 ) : (
-                    businesses.map((hike, index) => (
+                    businesses.map((business, index) => (
                         <BusinessCard
                             index= {index}
-                            img={hike.image_url}
-                            name={hike.name}
-                            location={hike.location.address1}
-                            description={hike.categories[0].title}
-                            star={hike.rating}
-                            reviewCount={hike.review_count}
-                            coordinates={hike.coordinates}
-                            yelpID={hike.id}
+                            img={business.image_url}
+                            name={business.name}
+                            location={business.location.address1}
+                            description={business.categories[0].title}
+                            star={business.rating}
+                            reviewCount={business.review_count}
+                            coordinates={business.coordinates}
+                            yelpID={business.id}
                             addToTrip={addToTrip}
                             setActiveMarker={setActiveMarker}
                         />

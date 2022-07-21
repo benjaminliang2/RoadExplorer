@@ -24,10 +24,11 @@ export const MapComponent = () => {
   //tripId should always be defined
   let { tripId } = useParams();
   useEffect(() => {
+    console.log(tripId)
     dispatch(setTripId(tripId))
   }, [])
 
-  const { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, businessesSelected, businesses, zeroMiddleman } = useTrip();
+  const { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, businesses, zeroMiddleman } = useTrip();
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -54,6 +55,9 @@ export const MapComponent = () => {
     store.trip.destination
   )
 
+  const businessesSelected = useSelector((store) =>
+    store.trip.businessesSelected
+  )
   const [showEditTripModal, setShowEditTripModal] = useState(false)
   const [directions, setDirections] = useState(null)
   const [searchCategory, setSearchCategory] = useState('tourist')
@@ -100,10 +104,9 @@ export const MapComponent = () => {
     if (isMounted.current) {
       if (businessesSelected.length > 0) {
         const temp = []
-        businessesSelected.map((waypoint) => {
-          temp.push({ location: { lat: waypoint.coordinates.latitude, lng: waypoint.coordinates.longitude } })
+        businessesSelected.map((business) => {
+          temp.push({ location: { lat: business.coordinates.latitude, lng: business.coordinates.longitude } })
         })
-        console.log(temp)
         setGoogleWaypoints(temp)
       } else {
         setGoogleWaypoints([])
