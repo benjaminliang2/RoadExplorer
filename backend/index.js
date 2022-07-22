@@ -41,7 +41,7 @@ app.use(session({
 // })
 app.get("/category/:lat/:lng/:searchCategory", (req, res) => {
   const searchCategory = req.params.searchCategory
-  console.log(req.session.id)
+  // console.log(req.session.id)
 
   const lat = req.params.lat
   const lng = req.params.lng
@@ -143,7 +143,7 @@ app.post('/signup', (req, res) => {
 app.get('/login', (req, res) => {
   // console.log(req.session + ' ' + req.session.id)
   if (req.session.user) {
-    console.log('already authenticated')
+    // console.log('already authenticated')
     // console.log(req.session.id)
     res.send({ loggedIn: true })
   } else {
@@ -183,9 +183,10 @@ app.get('/logout', (req, res) => {
   })
 })
 
-app.post('/user/savetrip', async (req, res) => {
-  console.log("saving trip ")
+//save single trip
+app.post('/user/trip', async (req, res) => {
   const trip = req.body.trip
+  console.log(trip._id);
   if (!trip._id) {
     trip._id = new mongoose.Types.ObjectId()
     try {
@@ -210,7 +211,6 @@ app.post('/user/savetrip', async (req, res) => {
         { new: true }
       )
       if (exisitingTrip) {
-        // console.log(trip._id)
         res.json(trip._id)
       }
     } catch (error) {
@@ -220,6 +220,29 @@ app.post('/user/savetrip', async (req, res) => {
   }
 })
 
+//get data of a single trip of user
+app.get('/user/trip/:id', async (req,res) => {
+  let id = req.params.id
+  console.log(id)
+  try {
+    // let result = await User.aggregate([
+    //   {$match: {_id: req.session.user}},
+    //   {$unwind: '$trips'},
+    //   {$match: {"trips._id":id }}
+    // ])
+    let result = await User.findOne({_id: req.session.user},
+      {trips: {$elemMatch: {_id: id}}}
+    )
+
+    res.json(result)
+  } catch (error) {
+    res.send(error)
+    console.log(error)
+  }
+})
+
+
+//get list of user's trips
 app.get('/user/trips', async (req, res) => {
   try {
     const result = await User.find({_id: req.session.user},

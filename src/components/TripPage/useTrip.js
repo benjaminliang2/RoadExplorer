@@ -1,11 +1,19 @@
 import { useEffect } from "react"
 import { useRef, useState } from "react"
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { add, remove } from "../../Features/tripSlice"
+
 
 export const useTrip = () => {
-    const [businessesSelected, setBusinessesSelected] = useState([])
+    const businessesSelected = useSelector((store) =>
+        store.trip.businessesSelected
+    )
     const [middleman, setMiddleman] = useState([])
     const [businesses, setBusinesses] = useState(false)
     const controller = useRef()
+    const dispatch = useDispatch()
+
     useEffect(() => {
         controller.current = new AbortController()
     }, [])
@@ -15,6 +23,10 @@ export const useTrip = () => {
         setBusinesses(Array.from(dataMap.values()));
 
     }, [middleman])
+
+    // useEffect(() => {
+    //     console.log(businesses)
+    // }, [businesses])
 
     const getMidpoints = (directions) => {
         if (!directions) {
@@ -48,15 +60,16 @@ export const useTrip = () => {
         return midpoints
 
     }
-
-    const addToTrip = (coordinates, title, yelpID, image) => {
-        if (businessesSelected.some(waypoint => waypoint.yelp_id === yelpID) === false) {
-            setBusinessesSelected((selectedWaypoints) => [...selectedWaypoints, { name: title, yelp_id: yelpID, coordinates: coordinates, imgURL: image }])
+    //TODO refactor this logic into the tripSlice
+    const addToTrip = (coordinates, name, yelpID, image) => {
+        if (businessesSelected.some(business => business.id === yelpID) === false) {
+            dispatch(add({ name: name, id: yelpID, coordinates: coordinates, image_url: image }))
         }
     }
     const removeFromTrip = (yelpID) => {
-        const updatedBusSelected = businessesSelected.filter((waypoint) => waypoint.yelp_id !== yelpID)
-        setBusinessesSelected(updatedBusSelected)
+        const updatedBusSelected = businessesSelected.filter((business) => business.id !== yelpID)
+        dispatch(remove(updatedBusSelected))
+
 
     }
     //TODO can this be improved? 
@@ -79,7 +92,7 @@ export const useTrip = () => {
     const zeroMiddleman = (value) => {
         setMiddleman(value)
     }
-    
+
     const getCustomBusinesses = async (name, lat, lng) => {
         const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + name)
         const result = await response.json();
@@ -87,5 +100,5 @@ export const useTrip = () => {
     }
 
 
-    return { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, businessesSelected, getCustomBusinesses, businesses, middleman, zeroMiddleman}
+    return { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, getCustomBusinesses, businesses, middleman, zeroMiddleman }
 }

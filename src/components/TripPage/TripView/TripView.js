@@ -16,13 +16,10 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
-import { useTrip } from '../useTrip'
 
 
 export const TripView = (props) => {
-    const { directions, removeFromTrip, setShowModal, addToTrip, setSearchCategory, setActiveMarker, panTo, showTripDetails, setShowTripDetails, showSearch } = props;
-
-    const {businesses} = useTrip()
+    const {businesses, directions, setShowModal, setSearchCategory, setActiveMarker, panTo, showTripDetails, setShowTripDetails, showSearch, addToTrip, removeFromTrip } = props;
     const start = useSelector((store) =>
         store.trip.origin
     )
@@ -32,7 +29,7 @@ export const TripView = (props) => {
     const waypoints = useSelector((store) => 
         store.trip.waypoints    
     )
-
+    // console.log(businesses)
     //open/close modal that allows origin/dest editing. 
     const [editOrigin, setEditOrigin] = useState(false)
     const [editDestination, setEditDestination] = useState(false)
@@ -58,14 +55,14 @@ export const TripView = (props) => {
                 <Box sx={showTripDetails ? null : styles.hide}>
                     <Leg name={start.name} directions={directions} index={0} setEdit={setEditOrigin} />
                     {waypoints?.map((waypoint, index) =>
-                        <Leg name={waypoint.name} imgURL={waypoint.imgURL} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.yelp_id} />
+                        <Leg name={waypoint.name} imgURL={waypoint.image_url} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.id} />
                     )}
                     <Leg name={end.name} setEdit={setEditDestination} />
                 </Box>
                 {businesses &&
                     <Box sx={!showTripDetails ? { display: 'contents' } : styles.hide}>
                         <Businesses
-                            hikes={businesses}
+                            businesses={businesses}
                             addToTrip={addToTrip}
                             setSearchCategory={setSearchCategory}
                             setActiveMarker={setActiveMarker}

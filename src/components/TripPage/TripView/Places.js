@@ -15,7 +15,6 @@ export const SearchOrigin = ({ placeholder, label }) => {
     const dispatch = useDispatch()
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
 
-
     const handleSelect = async (val) => {
         const results = await getGeocode({ address: val });
         const { lat, lng } = await getLatLng(results[0])

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import debounce from 'lodash.debounce'
 // const axios = require('axios')
 
+//_id is the trip's specific id
 const initialState = {
     title: "untitled",
     origin: false,
@@ -18,7 +18,7 @@ export const saveTrip = createAsyncThunk(
         console.log("saving trip");
         const trip = thunkAPI.getState().trip
         const result = await fetch(
-            'http://localhost:5000/user/savetrip', {
+            'http://localhost:5000/user/trip', {
             mode: 'cors',
             credentials: 'include',
             method: "post",
@@ -106,6 +106,9 @@ const tripSlice = createSlice({
         },
         setWaypoints: (state, { payload }) => {
             state.waypoints = payload
+        },
+        setTripId: (state, { payload }) => {
+            state._id = payload
         }
     },
     extraReducers: {
@@ -144,7 +147,6 @@ const tripSlice = createSlice({
 
     }
 })
-
 
 
 export const { setOrigin, setDestination, setTitle, setWaypoints, add, remove, setTripId } = tripSlice.actions;

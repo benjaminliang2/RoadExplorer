@@ -20,7 +20,6 @@ import fivestar from '../../../images/regular_5.png'
 export const BusinessCard = (props) => {
 
     const { img, index, name, location, description, star, reviewCount, addToTrip, setActiveMarker, coordinates, yelpID } = props;
-
     const handleOnClick = () => {
         // setIsChecked(!isChecked);
         addToTrip(coordinates, name, yelpID, img);
