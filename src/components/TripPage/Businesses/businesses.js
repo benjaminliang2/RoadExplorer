@@ -4,28 +4,28 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
 export const Businesses = (props) => {
-    const { hikes, addToTrip, setActiveMarker} = props
-
+    const { businesses, addToTrip, setActiveMarker} = props
+    // console.log(businesses);
     return (<>
 
             <Stack sx={{maxHeight: '100%', overflowY: 'auto'}}>
-
-                {hikes.length === 0 ? (
+                
+                {businesses.length === 0 ? (
                     <Box sx={{ display: 'flex' }}>
                         <CircularProgress />
                     </Box>
                 ) : (
-                    hikes.map((hike, index) => (
+                    businesses.map((business, index) => (
                         <BusinessCard
                             index= {index}
-                            img={hike.image_url}
-                            name={hike.name}
-                            location={hike.location.address1}
-                            description={hike.categories[0].title}
-                            star={hike.rating}
-                            reviewCount={hike.review_count}
-                            coordinates={hike.coordinates}
-                            yelpID={hike.id}
+                            img={business.image_url}
+                            name={business.name}
+                            location={business.location.address1}
+                            description={business.categories[0].title}
+                            star={business.rating}
+                            reviewCount={business.review_count}
+                            coordinates={business.coordinates}
+                            yelpID={business.id}
                             addToTrip={addToTrip}
                             setActiveMarker={setActiveMarker}
                         />

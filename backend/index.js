@@ -88,6 +88,26 @@ app.get('/businesses/:businessID/reviews', (req, res) => {
     })
 })
 
+app.get('/businesses/:businessID', (req, res) => {
+  console.log("fetching deatils for single business")
+  console.log(req.params.businessID)
+  const config = {
+    method: 'get',
+    url: 'https://api.yelp.com/v3/businesses/' + req.params.businessID,
+    headers: {
+      'Authorization': process.env.YELP_API
+    }
+  };
+  axios(config)
+    .then((response) => {
+      res.json(response.data)
+      console.log(response.data)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+})
+
 app.post('/signup', (req, res) => {
   const email = req.body.email
   const plainTextPassword = req.body.password;

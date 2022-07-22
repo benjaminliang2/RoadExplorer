@@ -6,6 +6,7 @@ const initialState = {
     title: "untitled",
     origin: false,
     destination: false,
+    businessesSelected: [],
     waypoints: [],
     isLoading: false,
     _id: undefined,
@@ -33,6 +34,55 @@ export const saveTrip = createAsyncThunk(
 )
 
 
+// export const fetchTrip = createAsyncThunk(
+//     'trip/fetchTrip',
+//     async (payload, thunkAPI) => {
+//         const result = await fetch(
+//             'http://localhost:5000/user/trip/' + payload, {
+//             mode: 'cors',
+//             credentials: 'include',
+//             method: "get",
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//         })
+//         const response = await result.json()
+//         console.log(response)
+//         return response
+//     }
+// )
+
+export const fetchTrip = createAsyncThunk(
+    'trip/fetchTrip',
+    async (payload, thunkAPI) => {
+        const trip = await 
+            fetch(
+                'http://localhost:5000/user/trip/' + payload, {
+                mode: 'cors',
+                credentials: 'include',
+                method: "get",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+        console.log(trip)
+        const businessesSelected = trip.trips[0].businessesSelected
+        const details = await Promise.all(
+            businessesSelected.map((business) =>
+                fetch('http://localhost:5000/businesses/' + business.id)
+                .then((response) => response.json())
+            )
+        )
+        console.log(details)
+        return {...trip, businessesSelected: details}
+    }
+)
+
+
+
+
+
 const tripSlice = createSlice({
     name: 'trip',
     initialState,
@@ -45,6 +95,14 @@ const tripSlice = createSlice({
         },
         setTitle: (state, { payload }) => {
             state.title = payload
+        },
+        add: (state, { payload }) => {
+            console.log(payload)
+            state.businessesSelected.push(payload)
+        },
+        remove: (state, { payload }) => {
+            console.log(payload)
+            state.businessesSelected = payload
         },
         setWaypoints: (state, { payload }) => {
             state.waypoints = payload
@@ -63,9 +121,31 @@ const tripSlice = createSlice({
             console.log("save trip failed")
         },
 
+
+        [fetchTrip.pending]: (state) => {
+            state.isLoading = true
+        },
+        [fetchTrip.fulfilled]: (state, action) => {
+            state.isLoading = false
+            // console.log(action.payload);
+            // console.log(action.payload.trips[0]);
+
+            const trip = action.payload.trips[0]
+            //put fetched data into the redux store
+            state.title = trip.title
+            state.origin = trip.origin
+            state.destination = trip.destination
+            state.businessesSelected = action.payload.businessesSelected
+
+        },
+        [fetchTrip.rejected]: (state) => {
+            state.isLoading = false
+        },
+
     }
 })
 
 
-export const { setOrigin, setDestination, setTitle, setWaypoints } = tripSlice.actions;
+
+export const { setOrigin, setDestination, setTitle, setWaypoints, add, remove, setTripId } = tripSlice.actions;
 export default tripSlice.reducer

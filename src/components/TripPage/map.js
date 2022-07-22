@@ -1,8 +1,7 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setWaypoints } from "../../Features/tripSlice";
-import { Cookies, useCookies } from "react-cookie";
+import { setTripId, setWaypoints } from "../../Features/tripSlice";
 import { useParams } from 'react-router-dom';
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer } from "@react-google-maps/api";
 import { useTrip } from './useTrip'
@@ -21,15 +20,15 @@ const libraries = ["places"];
 
 export const MapComponent = () => {
   const dispatch = useDispatch()
-  const [cookies, setCookie] = useCookies(['cookie-name'])
 
-  // const handleCookie = () => {
-  //   console.log(document.cookie)
-  //   console.log(cookies.origin)
-  // }
-
+  //tripId should always be defined
   let { tripId } = useParams();
-  const { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, businessesSelected, businesses, middleman, zeroMiddleman } = useTrip();
+  useEffect(() => {
+    console.log(tripId)
+    dispatch(setTripId(tripId))
+  }, [])
+
+  const { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, businesses, zeroMiddleman } = useTrip();
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -37,7 +36,7 @@ export const MapComponent = () => {
   })
   const center = useMemo(() => ({ lat: 44, lng: -80 }), []);
   const mapRef = useRef();
-  const controller = useRef()
+  // const controller = useRef()
   const waypoint_order = useRef();
   const options = useMemo(() => ({
     mapId: 'e9159de94dc8cc93',
@@ -56,6 +55,9 @@ export const MapComponent = () => {
     store.trip.destination
   )
 
+  const businessesSelected = useSelector((store) =>
+    store.trip.businessesSelected
+  )
   const [showEditTripModal, setShowEditTripModal] = useState(false)
   const [directions, setDirections] = useState(null)
   const [searchCategory, setSearchCategory] = useState('tourist')
@@ -102,10 +104,9 @@ export const MapComponent = () => {
     if (isMounted.current) {
       if (businessesSelected.length > 0) {
         const temp = []
-        businessesSelected.map((waypoint) => {
-          temp.push({ location: { lat: waypoint.coordinates.latitude, lng: waypoint.coordinates.longitude } })
+        businessesSelected.map((business) => {
+          temp.push({ location: { lat: business.coordinates.latitude, lng: business.coordinates.longitude } })
         })
-        console.log(temp)
         setGoogleWaypoints(temp)
       } else {
         setGoogleWaypoints([])
@@ -125,7 +126,7 @@ export const MapComponent = () => {
 
   useEffect(() => {
     isMounted.current = true;
-    controller.current = new AbortController();
+    // controller.current = new AbortController();
   }, [])
 
   // setMidpoints(useGenerateCoordinates(directions))
@@ -158,7 +159,6 @@ export const MapComponent = () => {
 
   const sortWaypoints = () => {
     const optimizedRoute = waypoint_order.current.map(index => businessesSelected[index])
-    console.log("optimized routing... ", optimizedRoute)
     dispatch(setWaypoints(optimizedRoute))
   }
 
@@ -205,15 +205,13 @@ export const MapComponent = () => {
             {(directions &&
               <>
                 <TripView
+                  addToTrip={addToTrip}
+                  removeFromTrip={removeFromTrip}
                   start={start}
                   end={end}
-                  // waypoints={waypoints}
+                  businesses={businesses}
                   directions={directions}
-                  removeFromTrip={removeFromTrip}
-                  // businesses={businesses}
                   setShowModal={setShowEditTripModal}
-
-                  addToTrip={addToTrip}
                   setSearchCategory={setSearchCategory}
                   setActiveMarker={setActiveMarker}
                   panTo={panTo}
