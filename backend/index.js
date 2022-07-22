@@ -113,7 +113,7 @@ app.post('/signup', (req, res) => {
         }
       })
     } else {
-      //notify user that account exists
+      //notify user that account existss
     }
   })
 
