@@ -175,12 +175,12 @@ export const MapComponent = () => {
         addToTrip={addToTrip}
       />
     )}
-    {!directions &&
+    {!tripId &&
       <EditOriginDestination setShow={setShowEditTripModal} />
     }
-    {showEditTripModal &&
+    {/* {showEditTripModal &&
       <EditOriginDestination setShow={setShowEditTripModal} />
-    }
+    } */}
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Box>
         <Navbar />
@@ -211,7 +211,6 @@ export const MapComponent = () => {
                   end={end}
                   businesses={businesses}
                   directions={directions}
-                  setShowModal={setShowEditTripModal}
                   setSearchCategory={setSearchCategory}
                   setActiveMarker={setActiveMarker}
                   panTo={panTo}

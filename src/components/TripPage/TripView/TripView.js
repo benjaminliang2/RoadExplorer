@@ -19,7 +19,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 
 export const TripView = (props) => {
-    const {businesses, directions, setShowModal, setSearchCategory, setActiveMarker, panTo, showTripDetails, setShowTripDetails, showSearch, addToTrip, removeFromTrip } = props;
+    const {businesses, directions, setSearchCategory, setActiveMarker, panTo, showTripDetails, setShowTripDetails, showSearch, addToTrip, removeFromTrip } = props;
     const start = useSelector((store) =>
         store.trip.origin
     )
@@ -47,7 +47,7 @@ export const TripView = (props) => {
     return (
         <>
             <Stack sx={styles.tripViewBox}>
-                <TripSummary setShowModal={setShowModal} totalDistance={totalDistance} totalDuration={totalDuration} />
+                <TripSummary totalDistance={totalDistance} totalDuration={totalDuration} />
                 {showSearch &&
                     <SearchBox panTo={panTo} setShowTripDetails={setShowTripDetails} />
                 }
@@ -142,33 +142,24 @@ export const TripView = (props) => {
     )
 }
 
-const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
-    const dispatch = useDispatch()
+const TripSummary = ({ totalDistance, totalDuration }) => {
     const title = useSelector((store) => 
         store.trip.title
     )
-    const originTemp = useSelector((store) =>
-        store.trip.origin.name
-    )
-    const destinationTemp = useSelector((store) =>
-        store.trip.destination.name
-    )
-    let origin = originTemp.substr(0, originTemp.indexOf(','))
-    let destination = destinationTemp.substr(0, destinationTemp.indexOf(','))
+    // const originTemp = useSelector((store) =>
+    //     store.trip.origin.name
+    // )
+    // const destinationTemp = useSelector((store) =>
+    //     store.trip.destination.name
+    // )
+    // let origin = originTemp.substr(0, originTemp.indexOf(','))
+    // let destination = destinationTemp.substr(0, destinationTemp.indexOf(','))
 
-
-    // const [title, setTitle] = useState(destination + ' Trip')
     const [editTitleModal, setEditTitleModal] = useState(false)
     const [resetTripModal, setResetTripModal] = useState(false)
-    const [userEditedTitle, setUserEditedTitle] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
 
-    useEffect(() => {
-        if (userEditedTitle === false) {
-            // setTitle(destination + " Trip")
-            dispatch(setTitle(destination + " Trip"))
-        }
-    }, [destination])
+
 
 
     const open = Boolean(anchorEl);
@@ -180,7 +171,7 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
     };
     const handleResetTrip = () => {
         setResetTripModal(true)
-        setUserEditedTitle(false)
+       
     }
     return (<>
         <Stack >
@@ -239,7 +230,7 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
         </Stack>
 
         {editTitleModal &&
-            <EditTitleModal setOpen={setEditTitleModal} setUserEditedTitle={setUserEditedTitle} />
+            <EditTitleModal setOpen={setEditTitleModal} />
         }
 
         {resetTripModal &&
@@ -249,7 +240,7 @@ const TripSummary = ({ setShowModal, totalDistance, totalDuration }) => {
 
 }
 
-const EditTitleModal = ({ setOpen, setUserEditedTitle }) => {
+const EditTitleModal = ({ setOpen }) => {
     const dispatch = useDispatch()
     const title = useSelector((store) => 
         store.trip.title
@@ -286,7 +277,6 @@ const EditTitleModal = ({ setOpen, setUserEditedTitle }) => {
                         variant="contained"
                         onClick={() => {
                             dispatch(setTitle(name))
-                            setUserEditedTitle(true)
                             setOpen(false)
                         }}
                     >
