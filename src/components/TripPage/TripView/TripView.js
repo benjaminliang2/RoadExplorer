@@ -162,6 +162,7 @@ const TripSummary = ({ totalDistance, totalDuration }) => {
 
 
 
+
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);

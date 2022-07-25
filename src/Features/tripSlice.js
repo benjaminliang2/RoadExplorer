@@ -33,25 +33,6 @@ export const saveTrip = createAsyncThunk(
     }
 )
 
-
-// export const fetchTrip = createAsyncThunk(
-//     'trip/fetchTrip',
-//     async (payload, thunkAPI) => {
-//         const result = await fetch(
-//             'http://localhost:5000/user/trip/' + payload, {
-//             mode: 'cors',
-//             credentials: 'include',
-//             method: "get",
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//         })
-//         const response = await result.json()
-//         console.log(response)
-//         return response
-//     }
-// )
-
 export const fetchTrip = createAsyncThunk(
     'trip/fetchTrip',
     async (payload, thunkAPI) => {
@@ -130,9 +111,6 @@ const tripSlice = createSlice({
         },
         [fetchTrip.fulfilled]: (state, action) => {
             state.isLoading = false
-            // console.log(action.payload);
-            // console.log(action.payload.trips[0]);
-
             const trip = action.payload.trips[0]
             //put fetched data into the redux store
             state.title = trip.title

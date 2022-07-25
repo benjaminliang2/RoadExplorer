@@ -23,6 +23,7 @@ export const MapComponent = () => {
 
   //tripId should always be defined
   let { tripId } = useParams();
+  console.log(tripId)
   useEffect(() => {
     console.log(tripId)
     dispatch(setTripId(tripId))
@@ -102,6 +103,7 @@ export const MapComponent = () => {
 
   useEffect(() => {
     if (isMounted.current) {
+      console.log("useeffect")
       if (businessesSelected.length > 0) {
         const temp = []
         businessesSelected.map((business) => {

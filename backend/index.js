@@ -101,7 +101,6 @@ app.get('/businesses/:businessID', (req, res) => {
   axios(config)
     .then((response) => {
       res.json(response.data)
-      console.log(response.data)
     })
     .catch(error => {
       console.log(error)
@@ -141,13 +140,14 @@ app.post('/signup', (req, res) => {
 
 //verify if user is ALREADY auth'd
 app.get('/login', (req, res) => {
+  console.log("testing");
   // console.log(req.session + ' ' + req.session.id)
   if (req.session.user) {
     // console.log('already authenticated')
     // console.log(req.session.id)
-    res.send({ loggedIn: true })
+    res.json({ loggedIn: true })
   } else {
-    res.send({ loggedIn: false })
+    res.json({ loggedIn: false })
   }
 
 })
@@ -166,7 +166,7 @@ app.post('/login', (req, res) => {
         if (response === true) {
           console.log('successfully logged in ')
           req.session.user = existingUser[0]._id
-          res.json(req.session.user)
+          res.json(req.session)
         } else {
           console.log("incorrect password ")
         }

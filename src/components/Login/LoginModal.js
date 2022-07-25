@@ -1,8 +1,8 @@
 import { Backdrop, Button, Grid, Modal, Stack, TextField, Typography } from "@mui/material"
 import { useState, useEffect } from "react"
-// import Axios from 'axios'
+import { login, signup } from "../../Features/userAuthSlice"
 import { useDispatch } from "react-redux";
-import { setUserAuthStatus } from '../../Features/userAuthSlice'
+import { useSelector } from "react-redux";
 
 
 
@@ -14,96 +14,31 @@ export const LoginModal = ({ setOpen, mode, setMode }) => {
     const [password, setPassword] = useState(null)
     const [passwordConfirm, setPasswordConfirm] = useState(null)
     const dispatch = useDispatch()
-
-
     const [error, setError] = useState('none')
-
+    const isAuth = useSelector((store) =>
+        store.userAuth.isAuth
+    )
+    useEffect(()=>{
+        if(isAuth === true){
+            setOpen(false)
+        }
+    },[isAuth])
     const handleSubmit = (event) => {
         event.preventDefault();
         if (mode === 'signup') {
-            handleSignup();
+            if (password !== passwordConfirm) {
+                setError("passwordMismatch")
+            } else {
+                dispatch(signup({ email, password }))
+            }
         }
         if (mode === 'login') {
-            handleLogin();
+            dispatch(login({ email, password }))
         }
 
     }
 
-    const handleLogin = () => {
-        fetch(
-            'http://localhost:5000/login', {
-            mode: 'cors',
-            credentials: 'include',
-            method: "post",
-            body: JSON.stringify({ email, password }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
 
-        }
-        )
-        .then(res => res.json())
-        .then(response =>{
-            console.log(response)
-            verifyAuth()
-        })
-    }
-
-    const verifyAuth = () => {
-        fetch(
-            'http://localhost:5000/login', {
-            mode: 'cors',
-            credentials: 'include',
-            method: "get",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(res => res.json())
-        .then(response =>{
-            console.log(response)
-            if(response.loggedIn === true){
-                setOpen(false)
-                dispatch(setUserAuthStatus(true))
-            }
-        })
-    }
-    const handleSignup = () => {
-        if (password !== passwordConfirm) {
-            setError("passwordMismatch")
-        }
-        if (password === passwordConfirm) {
-            fetch(
-                'http://localhost:5000/signup', {
-                mode: 'cors',
-                credentials: 'include',
-                method: "post",
-                body: JSON.stringify({ email, password }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-            )
-                .then(res => res.json())
-                .then(res => console.log(res))
-        }
-    }
-
-    const logout = () => {
-        fetch(
-            'http://localhost:5000/logout', {
-            mode: 'cors',
-            credentials: 'include',
-            method: "get",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(res => res.json())
-        .then(response =>{
-            console.log(response)
-        })
-    }
 
     return (<>
         <Modal

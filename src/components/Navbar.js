@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useEffect } from 'react';
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setUserAuthStatus } from '../Features/userAuthSlice';
+import { setUserAuthStatus, verify, logout } from '../Features/userAuthSlice';
 
 import { LoginModal } from "./Login/LoginModal";
 import { CustomModal } from "../styles/CustomModal"
@@ -38,31 +38,32 @@ export const Navbar = () => {
     const [mode, setMode] = useState(null)
 
     const isAuth = useSelector((store) =>
-        store.userAuth.status
+        store.userAuth.isAuth
     )
 
     useEffect(() => {
-        const verifyAuth = () => {
-            fetch(
-                'http://localhost:5000/login', {
-                mode: 'cors',
-                credentials: 'include',
-                method: "get",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
-                .then(res => res.json())
-                .then(response => {
-                    // console.log(response)
-                    if (response.loggedIn == true) {
-                        // console.log("user is already authenticated")
-                        // setIsAuth(response.loggedIn)
-                        dispatch(setUserAuthStatus(true))
-                    }
-                })
-        }
-        verifyAuth();
+        // const verifyAuth = () => {
+        //     fetch(
+        //         'http://localhost:5000/login', {
+        //         mode: 'cors',
+        //         credentials: 'include',
+        //         method: "get",
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //     })
+        //         .then(res => res.json())
+        //         .then(response => {
+        //             // console.log(response)
+        //             if (response.loggedIn == true) {
+        //                 // console.log("user is already authenticated")
+        //                 // setIsAuth(response.loggedIn)
+        //                 dispatch(setUserAuthStatus(true))
+        //             }
+        //         })
+        // }
+        // verifyAuth();
+        dispatch(verify())
     }, [])
 
     const handleLogout = () => {
@@ -151,7 +152,7 @@ const AccountMenu = ({ handleLogout }) => {
 
     const open = Boolean(anchorEl);
     const isAuth = useSelector((store) =>
-        store.userAuth.status
+        store.userAuth.isAuth
     )
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
