@@ -20,27 +20,20 @@ const ContainerStyle = {
 };
 
 
-export const EditOriginDestination = ({ setOpen }) => {
-    const handleClose = () => {
-        // check if user entered origin or destination
-        // if (start && end) {
-        //     setOpen(false)
-        // }
-        setOpen(false)
-
-    }
+export const EditOriginDestination = () => {
     const start = useSelector((store) =>
         store.trip.origin
     )
     const end = useSelector((store) =>
         store.trip.destination
     )
+    //TODO the plan trip button currently does nothing on click
     return ReactDOM.createPortal(<>
         <Modal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
             open={true}
-            onClose={() => handleClose() }
+            onClose={() => console.log() }
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
@@ -56,7 +49,7 @@ export const EditOriginDestination = ({ setOpen }) => {
                     <SearchDestination placeholder={end.name || "e.g. Las Vegas"} label="Destination" />
                 </Grid>
                 <Grid item xs={12} md={2} sx={{textAlign:'right'}}>
-                    <Button variant='contained' sx={{width:{xs: '100%', md:'auto'}}} onClick={() => handleClose()}>Plan Trip</Button>
+                    <Button variant='contained' sx={{width:{xs: '100%', md:'auto'}}} >Plan Trip</Button>
                 </Grid>
             </Grid>
 

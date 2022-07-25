@@ -11,6 +11,7 @@ import { DayTripsSection } from './DayTrips/DayTripsSection'
 
 import { css, keyframes } from '@emotion/react'
 // import { setOrigin, setDestination } from './Features/tripSlice'
+import { useSelector } from 'react-redux';
 import { useLoadScript } from "@react-google-maps/api";
 import { Link } from 'react-router-dom';
 import { Navbar } from '../Navbar';
@@ -139,7 +140,9 @@ export const Home = () => {
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries
     })
-
+    const tripid = useSelector((store) =>
+        store.trip._id
+    )
 
     const spin = keyframes`
         0%, 20%:{
@@ -182,7 +185,8 @@ export const Home = () => {
                         <Grid item sm={12} md={2}>
                             <Button variant='contained' color='primary' sx={styles.planTripButton} >
                             {/* TODO: wait for tripid to return from mongodb, and then send use to '/trip/:tripId */}
-                                <Link to="/trip"> Plan Trip </Link>
+                                {/* <Link to="/trip"> Plan Trip </Link> */}
+                                <Link to={`/trip/${tripid}`} >Plan trip</Link>
                             </Button>
                         </Grid>
                     </Grid>

@@ -58,7 +58,7 @@ export const MapComponent = () => {
   const businessesSelected = useSelector((store) =>
     store.trip.businessesSelected
   )
-  const [showEditTripModal, setShowEditTripModal] = useState(false)
+  // const [showEditTripModal, setShowEditTripModal] = useState(false)
   const [directions, setDirections] = useState(null)
   const [searchCategory, setSearchCategory] = useState('tourist')
   const [yelpSearchPoints, setYelpSearchPoints] = useState([])
@@ -176,7 +176,7 @@ export const MapComponent = () => {
       />
     )}
     {!tripId &&
-      <EditOriginDestination setShow={setShowEditTripModal} />
+      <EditOriginDestination  />
     }
     {/* {showEditTripModal &&
       <EditOriginDestination setShow={setShowEditTripModal} />
