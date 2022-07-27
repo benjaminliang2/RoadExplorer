@@ -1,4 +1,4 @@
-import { SearchOrigin, SearchDestination } from "../TripPage/TripView/Places";
+import { SearchOrigin, SearchDestination } from "../TripPage/TripContainer/Places";
 import ReactDOM from 'react-dom';
 import { Backdrop, Button, Grid, Modal } from '@mui/material';
 import { useSelector } from "react-redux";

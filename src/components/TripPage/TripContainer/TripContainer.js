@@ -5,35 +5,21 @@ import { useDispatch } from "react-redux";
 import { setTitle } from '../../../Features/tripSlice'
 
 import { SearchBox, SearchOrigin, SearchDestination } from "./Places";
-import { Leg } from "./Leg"
-import { Businesses } from "../../TripPage/Businesses/businesses";
-import { EditOriginDestination } from '../../EditOriginDestination/EditOriginDestination';
+import { Businesses } from "./BusinessView/businesses";
+import {Sidebar} from "./TripView/Sidebar"
 
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { Backdrop, Box, Button, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Stack, TextField, Typography } from "@mui/material";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { TripView } from './TripView/TripView';
+import store from '../../../redux/store';
 
-
-
-export const TripView = (props) => {
-    const {businesses, directions, setSearchCategory, setActiveMarker, panTo, showTripDetails, setShowTripDetails, showSearch, addToTrip, removeFromTrip } = props;
-    const start = useSelector((store) =>
-        store.trip.origin
-    )
-    const end = useSelector((store) =>
-        store.trip.destination
-    )
-    const waypoints = useSelector((store) => 
-        store.trip.waypoints    
-    )
-    // console.log(businesses)
-    //open/close modal that allows origin/dest editing. 
-    const [editOrigin, setEditOrigin] = useState(false)
-    const [editDestination, setEditDestination] = useState(false)
-
+export const TripContainer = (props) => {
+    const { businesses, directions, setActiveMarker, panTo} = props;
+    //loading, trip, business, form
+    const view = useSelector((store) => store.tripContainer.view )
     let totalDistance = 0;
     let seconds = 0;
     directions.routes[0].legs.forEach(leg => {
@@ -44,27 +30,26 @@ export const TripView = (props) => {
         return (new Date(seconds * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
     }
     var totalDuration = toTimeString(seconds)
+
     return (
         <>
-            <Stack sx={styles.tripViewBox}>
-                <TripSummary totalDistance={totalDistance} totalDuration={totalDuration} />
-                {showSearch &&
-                    <SearchBox panTo={panTo} setShowTripDetails={setShowTripDetails} />
+            <Stack sx={styles.TripContainerBox}>
+                <Sidebar />
+                {view === 'loading' &&
+                    <h1>loading...</h1>
+                }
+                {view !== 'loading' &&
+                    <TripSummary totalDistance={totalDistance} totalDuration={totalDuration} />
                 }
 
-                <Box sx={showTripDetails ? null : styles.hide}>
-                    <Leg name={start.name} directions={directions} index={0} setEdit={setEditOrigin} />
-                    {waypoints?.map((waypoint, index) =>
-                        <Leg name={waypoint.name} imgURL={waypoint.image_url} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.id} />
-                    )}
-                    <Leg name={end.name} setEdit={setEditDestination} />
+                <Box sx={view === 'trip' ? null : styles.hide}>
+                    <TripView direction={directions} />
                 </Box>
                 {businesses &&
-                    <Box sx={!showTripDetails ? { display: 'contents' } : styles.hide}>
+                    <Box sx={view === 'business' ? { display: 'contents' } : styles.hide}>
+                        <SearchBox panTo={panTo}/>
                         <Businesses
                             businesses={businesses}
-                            addToTrip={addToTrip}
-                            setSearchCategory={setSearchCategory}
                             setActiveMarker={setActiveMarker}
                             panTo={panTo}
                         />
@@ -72,70 +57,7 @@ export const TripView = (props) => {
                 }
             </Stack>
 
-            {editOrigin &&
-                ReactDOM.createPortal(
-                    <>
-                        <Modal
-                            aria-labelledby="transition-modal-title"
-                            aria-describedby="transition-modal-description"
-                            open={true}
-                            onClose={() => {setEditOrigin(false) }}
-                            closeAfterTransition
-                            BackdropComponent={Backdrop}
-                            BackdropProps={{
-                                timeout: 500,
-                            }}
-                        >
-                            <Box sx={styles.modalBox}>
-                                <Stack direction='row' justifyContent='flex-end'>
-                                    <Button
-                                        variant="text"
-                                        color='secondary'
-                                        onClick={() => setEditOrigin(false)}
-                                    >
-                                        Back 
-                                    </Button>                           
-                                </Stack>
-                                <SearchOrigin label="Enter New Origin"/>
-                            </Box>
 
-                        </Modal>
-
-                    </>
-                    , document.getElementById("portal"))
-            }
-            {editDestination &&
-                ReactDOM.createPortal(
-                    <>
-                        <Modal
-                            aria-labelledby="transition-modal-title"
-                            aria-describedby="transition-modal-description"
-                            open={true}
-                            onClose={() => {setEditDestination(false) }}
-                            closeAfterTransition
-                            BackdropComponent={Backdrop}
-                            BackdropProps={{
-                                timeout: 500,
-                            }}
-                        >
-                            <Box sx={styles.modalBox}>
-                                <Stack direction='row' justifyContent='flex-end'>
-                                    <Button
-                                        variant="text"
-                                        color='secondary'
-                                        onClick={() => setEditDestination(false)}
-                                    >
-                                        Back 
-                                    </Button>                           
-                                </Stack>
-                                <SearchDestination label="Enter New Destination"/>
-                            </Box>
-
-                        </Modal>
-
-                    </>
-                    , document.getElementById("portal"))
-            }
         </>
 
 
@@ -143,26 +65,12 @@ export const TripView = (props) => {
 }
 
 const TripSummary = ({ totalDistance, totalDuration }) => {
-    const title = useSelector((store) => 
+    const title = useSelector((store) =>
         store.trip.title
     )
-    // const originTemp = useSelector((store) =>
-    //     store.trip.origin.name
-    // )
-    // const destinationTemp = useSelector((store) =>
-    //     store.trip.destination.name
-    // )
-    // let origin = originTemp.substr(0, originTemp.indexOf(','))
-    // let destination = destinationTemp.substr(0, destinationTemp.indexOf(','))
 
     const [editTitleModal, setEditTitleModal] = useState(false)
-    const [resetTripModal, setResetTripModal] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
-
-
-
-
-
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -170,10 +78,7 @@ const TripSummary = ({ totalDistance, totalDuration }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const handleResetTrip = () => {
-        setResetTripModal(true)
-       
-    }
+
     return (<>
         <Stack >
             <Box sx={styles.tripTitle} component={Stack} position='relative'>
@@ -205,12 +110,7 @@ const TripSummary = ({ totalDistance, totalDuration }) => {
                             </ListItemIcon>
                             <ListItemText primary='Rename' />
                         </MenuItem>
-                        <MenuItem onClick={() => handleResetTrip()}>
-                            <ListItemIcon>
-                                <RestartAltIcon />
-                            </ListItemIcon>
-                            <ListItemText primary='Reset Trip' />
-                        </MenuItem>
+
                     </Menu>
                 </Box>
             </Box>
@@ -234,16 +134,13 @@ const TripSummary = ({ totalDistance, totalDuration }) => {
             <EditTitleModal setOpen={setEditTitleModal} />
         }
 
-        {resetTripModal &&
-            <EditOriginDestination setOpen={setResetTripModal} />
-        }
     </>)
 
 }
 
 const EditTitleModal = ({ setOpen }) => {
     const dispatch = useDispatch()
-    const title = useSelector((store) => 
+    const title = useSelector((store) =>
         store.trip.title
     )
     const [name, setName] = useState(title)
@@ -292,7 +189,7 @@ const EditTitleModal = ({ setOpen }) => {
 }
 
 const styles = {
-    tripViewBox: {
+    TripContainerBox: {
         backgroundColor: 'white',
         height: '90%',
         borderRadius: '25px'
@@ -316,7 +213,7 @@ const styles = {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        minWidth:'400px',
+        minWidth: '400px',
         bgcolor: 'background.paper',
         border: '2px solid #000',
         boxShadow: 24,

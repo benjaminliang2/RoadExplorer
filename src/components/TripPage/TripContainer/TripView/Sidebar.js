@@ -11,28 +11,30 @@ import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import ForestIcon from '@mui/icons-material/Forest';
 import FlagIcon from '@mui/icons-material/Flag';
+import { setView, setYelpCategory } from '../../../../Features/tripContainerSlice';
 
-export const Sidebar = ({ setSearchCategory, setShowTripDetails, setShowSearch }) => {
+import { useDispatch } from 'react-redux';
+export const Sidebar = () => {
+    const dispatch = useDispatch()
     const show = true;
     const styles = {
         height: '100%'
     }
 
     const handleIcon = (category) => {
-        setShowTripDetails(false);
-        setShowSearch(false)
-        setSearchCategory(category)
+        dispatch(setView("business"))
+        dispatch(setYelpCategory(category))
     }
     return (
         <Box width='min-content' sx={{margin: '10px', backgroundColor: 'white', borderRadius: '20px'}}>
             <Stack sx={show ? styles : null} spacing={2} direction='row'>
                 <Tooltip title="My Trip" placement='bottom'>
-                    <IconButton color="secondary" onClick={() => { setShowTripDetails(true) }}>
+                    <IconButton color="secondary" onClick={() => {dispatch(setView("trip"))}}>
                         <DirectionsCarIcon fontSize='medium' />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Search" placement='bottom'>
-                    <IconButton color="secondary" onClick={() => { setShowSearch(true) }}>
+                    <IconButton color="secondary" onClick={() => { dispatch(setView("business")) }}>
                         <SearchIcon fontSize='medium' />
                     </IconButton>
                 </Tooltip>

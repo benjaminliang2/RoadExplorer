@@ -6,10 +6,9 @@ import { useParams } from 'react-router-dom';
 import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer } from "@react-google-maps/api";
 import { useTrip } from './useTrip'
 
-import { TripView } from "./TripView/TripView"
+import { TripContainer } from "./TripContainer/TripContainer"
 import { InfoModal } from "./InfoModal/InfoModal"
 import { EditOriginDestination } from "../EditOriginDestination/EditOriginDestination";
-import { Sidebar } from "./Sidebar/Sidebar";
 import { Navbar } from "../Navbar";
 //styles.css required for google map rendering. 
 import "../../styles/styles.css"
@@ -23,9 +22,7 @@ export const MapComponent = () => {
 
   //tripId should always be defined
   let { tripId } = useParams();
-  console.log(tripId)
   useEffect(() => {
-    console.log(tripId)
     dispatch(setTripId(tripId))
   }, [])
 
@@ -59,9 +56,11 @@ export const MapComponent = () => {
   const businessesSelected = useSelector((store) =>
     store.trip.businessesSelected
   )
+  const yelpCategory = useSelector((store) => 
+    store.tripContainer.yelpCategory
+  )
   // const [showEditTripModal, setShowEditTripModal] = useState(false)
   const [directions, setDirections] = useState(null)
-  const [searchCategory, setSearchCategory] = useState('tourist')
   const [yelpSearchPoints, setYelpSearchPoints] = useState([])
 
   //businessesSelected are selected POIs that users want to add to their trip.
@@ -72,20 +71,14 @@ export const MapComponent = () => {
   const [activeMarker, setActiveMarker] = useState({ id: 'none' })
   const [selectedMarker, setSelectedMarker] = useState(false)
   const isMounted = useRef(false)
-  const [showTripDetails, setShowTripDetails] = useState(false)
-  const [showSearch, setShowSearch] = useState(false)
 
-  // useSave()
   useEffect(() => {
-    getNearbyBusinesses(yelpSearchPoints, searchCategory)
-
+    getNearbyBusinesses(yelpSearchPoints, yelpCategory)
   }, [yelpSearchPoints])
 
   useEffect(() => {
-    //if user changes origin or destination, then reset everything. 
     setYelpSearchPoints([start, end])
     zeroMiddleman([])
-    // setBusinessesSelected([])
     fetchDirections();
 
   }, [start, end])
@@ -113,25 +106,22 @@ export const MapComponent = () => {
       } else {
         setGoogleWaypoints([])
       }
-
     }
 
   }, [businessesSelected])
+  //TODO yelpcategory is a global state so i should put it
   useEffect(() => {
     if (isMounted.current) {
-      if (searchCategory) {
+      if (yelpCategory) {
         zeroMiddleman([])
-        getNearbyBusinesses(yelpSearchPoints, searchCategory)
+        getNearbyBusinesses(yelpSearchPoints, yelpCategory)
       }
     }
-  }, [searchCategory])
+  }, [yelpCategory])
 
   useEffect(() => {
     isMounted.current = true;
-    // controller.current = new AbortController();
   }, [])
-
-  // setMidpoints(useGenerateCoordinates(directions))
 
   const panTo = (position) => {
     mapRef.current.panTo(position)
@@ -180,9 +170,7 @@ export const MapComponent = () => {
     {!tripId &&
       <EditOriginDestination  />
     }
-    {/* {showEditTripModal &&
-      <EditOriginDestination setShow={setShowEditTripModal} />
-    } */}
+
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Box>
         <Navbar />
@@ -203,23 +191,16 @@ export const MapComponent = () => {
               position: 'relative'
             }
           }}>
-            <Sidebar setSearchCategory={setSearchCategory} setShowTripDetails={setShowTripDetails} setShowSearch={setShowSearch} />
+            
             {(directions &&
               <>
-                <TripView
-                  addToTrip={addToTrip}
-                  removeFromTrip={removeFromTrip}
-                  start={start}
+                <TripContainer
+                  start={start} 
                   end={end}
                   businesses={businesses}
                   directions={directions}
-                  setSearchCategory={setSearchCategory}
                   setActiveMarker={setActiveMarker}
                   panTo={panTo}
-                  showTripDetails={showTripDetails}
-                  setShowTripDetails={setShowTripDetails}
-                  showSearch={showSearch}
-
                 />
               </>)}
           </Box>

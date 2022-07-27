@@ -1,6 +1,7 @@
 import { configureStore, createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
 import tripReducer, { saveTrip, fetchTrip, setDestination, setOrigin, setTitle, setWaypoints, setTripId, } from "../Features/tripSlice";
 import userAuthReducer from '../Features/userAuthSlice'
+import tripContainerReducer from "../Features/tripContainerSlice";
 
 
 const listenerMiddleWare = createListenerMiddleware()
@@ -33,7 +34,9 @@ listenerMiddleWare.startListening({
 export default configureStore({
     reducer: {
         trip: tripReducer,
+        tripContainer: tripContainerReducer,
         userAuth: userAuthReducer,
+        
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().prepend(listenerMiddleWare.middleware)

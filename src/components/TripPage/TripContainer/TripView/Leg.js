@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { SearchOrigin, SearchDestination } from './Places';
+import { SearchOrigin, SearchDestination } from '../Places';
 
 import { Backdrop, Box, Grid, IconButton, Modal, Stack, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';

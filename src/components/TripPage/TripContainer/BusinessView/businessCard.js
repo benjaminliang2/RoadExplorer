@@ -3,23 +3,24 @@ import StarRateIcon from '@mui/icons-material/StarRate';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Button from '@mui/material/Button';
 import { Box, IconButton, Stack, Typography } from '@mui/material';
-import zerostar from '../../../images/regular_0.png'
-import halfstar from '../../../images/regular_1_half.png'
-import onestar from '../../../images/regular_1.png'
-import oneandhalfstar from '../../../images/regular_2_half.png'
-import twostar from '../../../images/regular_2.png'
-import twoandhalfstar from '../../../images/regular_3_half.png'
-import threestar from '../../../images/regular_3.png'
-import threeandhalfstar from '../../../images/regular_3_half.png'
-import fourstar from '../../../images/regular_4.png'
-import fourandhalfstar from '../../../images/regular_4_half.png'
-import fivestar from '../../../images/regular_5.png'
+import zerostar from '../../../../images/regular_0.png'
+import halfstar from '../../../../images/regular_1_half.png'
+import onestar from '../../../../images/regular_1.png'
+import oneandhalfstar from '../../../../images/regular_2_half.png'
+import twostar from '../../../../images/regular_2.png'
+import twoandhalfstar from '../../../../images/regular_3_half.png'
+import threestar from '../../../../images/regular_3.png'
+import threeandhalfstar from '../../../../images/regular_3_half.png'
+import fourstar from '../../../../images/regular_4.png'
+import fourandhalfstar from '../../../../images/regular_4_half.png'
+import fivestar from '../../../../images/regular_5.png'
 
+import { useTrip } from '../../useTrip';
 
 
 export const BusinessCard = (props) => {
-
-    const { img, index, name, location, description, star, reviewCount, addToTrip, setActiveMarker, coordinates, yelpID } = props;
+    const {addToTrip} = useTrip()
+    const { img, index, name, location, description, star, reviewCount, setActiveMarker, coordinates, yelpID } = props;
     const handleOnClick = () => {
         // setIsChecked(!isChecked);
         addToTrip(coordinates, name, yelpID, img);

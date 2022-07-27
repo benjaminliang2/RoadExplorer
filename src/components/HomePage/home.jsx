@@ -1,4 +1,4 @@
-import { SearchDestination, SearchOrigin } from '../TripPage/TripView/Places';
+import { SearchDestination, SearchOrigin } from '../TripPage/TripContainer/Places';
 import travelGlobeImage from '../../images/travelGlobe.png'
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';

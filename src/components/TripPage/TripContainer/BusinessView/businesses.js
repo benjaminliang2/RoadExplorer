@@ -4,7 +4,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
 export const Businesses = (props) => {
-    const { businesses, addToTrip, setActiveMarker} = props
+    const { businesses, setActiveMarker} = props
     // console.log(businesses);
     return (<>
 
@@ -26,7 +26,6 @@ export const Businesses = (props) => {
                             reviewCount={business.review_count}
                             coordinates={business.coordinates}
                             yelpID={business.id}
-                            addToTrip={addToTrip}
                             setActiveMarker={setActiveMarker}
                         />
                     ))
