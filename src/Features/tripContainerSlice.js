@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-
+import { fetchTrip } from './tripSlice'
 const initialState = {
     view: 'loading',
     yelpCategory: 'tourist',
@@ -14,6 +14,11 @@ const tripContainerSlice = createSlice({
         },
         setYelpCategory: (state, {payload}) => {
             state.yelpCategory = payload
+        }
+    }, 
+    extraReducers:{
+        [fetchTrip.fulfilled]: (state, action) => {
+            state.view = 'trip'
         }
     }
 })

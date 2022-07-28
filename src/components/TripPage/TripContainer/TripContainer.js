@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setTitle } from '../../../Features/tripSlice'
 
 import { SearchBox, SearchOrigin, SearchDestination } from "./Places";
-import { Businesses } from "./BusinessView/businesses";
+import { BusinessView } from "./BusinessView/BusinessView";
 import {Sidebar} from "./TripView/Sidebar"
 
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -14,6 +14,7 @@ import { Backdrop, Box, Button, IconButton, ListItemIcon, ListItemText, Menu, Me
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import { TripView } from './TripView/TripView';
+import { FormView } from './FormView'
 import store from '../../../redux/store';
 
 export const TripContainer = (props) => {
@@ -48,12 +49,15 @@ export const TripContainer = (props) => {
                 {businesses &&
                     <Box sx={view === 'business' ? { display: 'contents' } : styles.hide}>
                         <SearchBox panTo={panTo}/>
-                        <Businesses
+                        <BusinessView
                             businesses={businesses}
                             setActiveMarker={setActiveMarker}
                             panTo={panTo}
                         />
                     </Box>
+                }
+                {view === 'form' && 
+                    <FormView/>
                 }
             </Stack>
 

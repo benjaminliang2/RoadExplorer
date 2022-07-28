@@ -6,14 +6,27 @@ import { add, remove } from "../../Features/tripSlice"
 
 
 export const useTrip = () => {
+    const start = useSelector((store) =>
+        store.trip.origin
+    )
+    const end = useSelector((store) =>
+        store.trip.destination
+    )
     const businessesSelected = useSelector((store) =>
         store.trip.businessesSelected
     )
+    const yelpCategory = useSelector((store) =>
+        store.tripContainer.yelpCategory
+    )
     const [middleman, setMiddleman] = useState([])
     const [businesses, setBusinesses] = useState(false)
+    const [yelpSearchPoints, setYelpSearchPoints] = useState([])
     const controller = useRef()
     const dispatch = useDispatch()
-
+    useEffect(() => {
+        setYelpSearchPoints([start, end])
+        setMiddleman([])
+    }, [start, end])
     useEffect(() => {
         controller.current = new AbortController()
     }, [])
@@ -23,6 +36,13 @@ export const useTrip = () => {
         setBusinesses(Array.from(dataMap.values()));
 
     }, [middleman])
+    useEffect(() => {
+        setMiddleman([])
+        getNearbyBusinesses(yelpSearchPoints, yelpCategory)
+    }, [yelpCategory])
+    useEffect(() => {
+        getNearbyBusinesses(yelpSearchPoints, yelpCategory)
+    }, [yelpSearchPoints])
 
     // useEffect(() => {
     //     console.log(businesses)
@@ -55,6 +75,10 @@ export const useTrip = () => {
                 count += 1
             }
             count = 1;
+        }
+        if(midpoints.length > 0){
+            setYelpSearchPoints((prevState) => [...prevState, ...midpoints])
+
         }
 
         return midpoints
@@ -89,9 +113,6 @@ export const useTrip = () => {
             }
         }
     }
-    const zeroMiddleman = (value) => {
-        setMiddleman(value)
-    }
 
     const getCustomBusinesses = async (name, lat, lng) => {
         const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + name)
@@ -100,5 +121,5 @@ export const useTrip = () => {
     }
 
 
-    return { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, getCustomBusinesses, businesses, middleman, zeroMiddleman }
+    return { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, getCustomBusinesses, businesses, middleman, yelpSearchPoints }
 }

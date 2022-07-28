@@ -8,7 +8,7 @@ import { useTrip } from './useTrip'
 
 import { TripContainer } from "./TripContainer/TripContainer"
 import { InfoModal } from "./InfoModal/InfoModal"
-import { EditOriginDestination } from "../EditOriginDestination/EditOriginDestination";
+import { EditOriginDestination } from "./TripContainer/FormView";
 import { Navbar } from "../Navbar";
 //styles.css required for google map rendering. 
 import "../../styles/styles.css"
@@ -26,7 +26,7 @@ export const MapComponent = () => {
     dispatch(setTripId(tripId))
   }, [])
 
-  const { getMidpoints, addToTrip, removeFromTrip, getNearbyBusinesses, businesses, zeroMiddleman } = useTrip();
+  const { getMidpoints, addToTrip, getNearbyBusinesses, businesses, yelpSearchPoints } = useTrip();
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -52,7 +52,6 @@ export const MapComponent = () => {
   const end = useSelector((store) =>
     store.trip.destination
   )
-
   const businessesSelected = useSelector((store) =>
     store.trip.businessesSelected
   )
@@ -61,7 +60,7 @@ export const MapComponent = () => {
   )
   // const [showEditTripModal, setShowEditTripModal] = useState(false)
   const [directions, setDirections] = useState(null)
-  const [yelpSearchPoints, setYelpSearchPoints] = useState([])
+  // const [yelpSearchPoints, setYelpSearchPoints] = useState([])
 
   //businessesSelected are selected POIs that users want to add to their trip.
   // const [businessesSelected, setBusinessesSelected] = useState([])
@@ -77,17 +76,11 @@ export const MapComponent = () => {
   }, [yelpSearchPoints])
 
   useEffect(() => {
-    setYelpSearchPoints([start, end])
-    zeroMiddleman([])
     fetchDirections();
-
   }, [start, end])
 
   useEffect(() => {
-    const midpoints = getMidpoints(directions)
-    if (midpoints.length > 0) {
-      setYelpSearchPoints((prevState) => [...prevState, ...midpoints])
-    }
+    getMidpoints(directions)
   }, [directions])
 
   useEffect(() => {
@@ -109,15 +102,6 @@ export const MapComponent = () => {
     }
 
   }, [businessesSelected])
-  //TODO yelpcategory is a global state so i should put it
-  useEffect(() => {
-    if (isMounted.current) {
-      if (yelpCategory) {
-        zeroMiddleman([])
-        getNearbyBusinesses(yelpSearchPoints, yelpCategory)
-      }
-    }
-  }, [yelpCategory])
 
   useEffect(() => {
     isMounted.current = true;
@@ -167,9 +151,7 @@ export const MapComponent = () => {
         addToTrip={addToTrip}
       />
     )}
-    {!tripId &&
-      <EditOriginDestination  />
-    }
+
 
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Box>
@@ -191,7 +173,7 @@ export const MapComponent = () => {
               position: 'relative'
             }
           }}>
-            
+            {/* TODO:  */}
             {(directions &&
               <>
                 <TripContainer

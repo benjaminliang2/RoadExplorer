@@ -50,7 +50,7 @@ export const signup = createAsyncThunk(
     'userAuth/signup',
     async (payload, thunkAPI) => {
         console.log(payload)
-        const {email, password} = payload
+        const { email, password } = payload
         const result = await fetch(
             'http://localhost:5000/signup', {
             mode: 'cors',
@@ -70,7 +70,7 @@ export const signup = createAsyncThunk(
 export const logout = createAsyncThunk(
     'userAuth/logout',
     async (payload, thunkAPI) => {
-        
+
     }
 )
 
@@ -79,10 +79,10 @@ const userAuthSlice = createSlice({
     initialState,
     reducers: {
         setUserAuthStatus: (state, { payload }) => {
-            state.status = payload
+            state.isAuth = payload
         },
     },
-    extraReducers:{
+    extraReducers: {
         [login.pending]: (state) => {
             state.isLoading = true
         },
@@ -106,15 +106,17 @@ const userAuthSlice = createSlice({
             state.isLoading = true
         },
         [verify.fulfilled]: (state, action) => {
-            // console.log(action.payload)
             state.isLoading = false
-            state.isAuth = true
+            if (action.payload.loggedIn === true) {
+
+                state.isAuth = true
+            }
         },
         [verify.rejected]: (state) => {
             state.isLoading = false
         },
     }
-    })
+})
 
 export const { setUserAuthStatus } = userAuthSlice.actions;
 export default userAuthSlice.reducer
