@@ -12,130 +12,23 @@ import { DayTripsSection } from './DayTrips/DayTripsSection'
 import { css, keyframes } from '@emotion/react'
 // import { setOrigin, setDestination } from './Features/tripSlice'
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLoadScript } from "@react-google-maps/api";
 import { Link } from 'react-router-dom';
 import { Navbar } from '../Navbar';
+import { useEffect } from 'react';
+import { resetState } from '../../Features/tripSlice';
 
 
-const styles = {
-    paperContainer: {
-        backgroundImage: `url(${travelGlobeImage})`,
-        backgroundRepeat: 'no-repeat',
-        height: '100vh',
-        backgroundSize: '800px',
-        backgroundPosition: 'right 20%',
-        margin: '25px',
+// when user creates a new trip (enters origin and destination from home page), and navigates to the next page
+// BEFORE the saving trip is fulfilled, the /trip page will not have the required tripID.
+//TODO: create a loading component that waits for the saveTrip promise to fulfill, then navigate /trip
 
-    },
-    placeSearchBox: {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' },
-        alignItems: 'center',
-        bgcolor: 'background.paper',
-        border: '1px solid #000',
-        boxShadow: 24,
-        borderRadius: '12px',
-        marginLeft: '20%',
-        padding: '10px',
-    },
-    planTripButton: {
-        width: '100%',
-        backgroundColor: '#FFEF82',
-        color: '#383838'
-    },
-    gridItem: {
-        bgcolor: 'background.paper',
-        border: '1px solid #000',
-        boxShadow: 14,
-        borderRadius: '8px',
-        margin: 0,
-        minWidth: '200px'
-    },
-    header: {
-        fontFamily: 'Roboto',
-        fontWeight: 500,
-    },
-    main: {
-        paddingTop: '12vh',
-        marginLeft: '20%',
-        marginRight: '20%'
-    },
-    intro: {
-        maxWidth: 'md',
-        marginBottom: '300px'
-    }
-}
-const carouselTextStyles = {
-    container: {
-        width: '300px',
-        height: '150px',
-        position: 'absolute',
-        top: '35%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        borderRadius: '4px',
-        backgroundColor: 'rgba(0,0,0,0.2)',
-        color: 'white'
-    },
-    box: {
-        position: 'absolute',
-        top: '50%',
-        left: 0,
-        right: 0,
-        marginTop: '-35px',
-
-    },
-    carousel: {
-        width: "100%",
-        height: '70px',
-        textAlign: 'center',
-        lineHeight: '45px'
-
-    },
-    hide: {
-        width: '700px',
-        height: '208px',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        lineHeight: '208px',
-        overflow: 'hidden',
-
-
-    },
-    slide: {
-        animation: 'txt 7s ease-in-out infinite',
-    },
-    text: {
-        fontSize: '40px'
-    },
-    "@keyframes txt": {
-        "0%, 20%": {
-            transform: "translateY(0)"
-        },
-        "25%, 45%": {
-            transform: "translateY(-208px)"
-        },
-        "50%, 70%": {
-            transform: "translateY(-416px)"
-        },
-        "75%, 95%": {
-            transform: "translateY(-624px)"
-        },
-        "100%": {
-            transform: "translateY(-832px)"
-        }
-    }
-}
 
 const libraries = ["places"]
 
 export const Home = () => {
+    const dispatch = useDispatch();
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries
@@ -143,6 +36,11 @@ export const Home = () => {
     const tripid = useSelector((store) =>
         store.trip._id
     )
+
+    useEffect(()=>{
+        const test = dispatch(resetState())
+        console.log(test)
+    },[])
 
     const spin = keyframes`
         0%, 20%:{
@@ -215,4 +113,121 @@ export const Home = () => {
 
 
     </>)
+}
+
+const styles = {
+    paperContainer: {
+        backgroundImage: `url(${travelGlobeImage})`,
+        backgroundRepeat: 'no-repeat',
+        height: '100vh',
+        backgroundSize: '800px',
+        backgroundPosition: 'right 20%',
+        margin: '25px',
+
+    },
+    placeSearchBox: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        alignItems: 'center',
+        bgcolor: 'background.paper',
+        border: '1px solid #000',
+        boxShadow: 24,
+        borderRadius: '12px',
+        marginLeft: '20%',
+        padding: '10px',
+    },
+    planTripButton: {
+        width: '100%',
+        backgroundColor: '#FFEF82',
+        color: '#383838'
+    },
+    gridItem: {
+        bgcolor: 'background.paper',
+        border: '1px solid #000',
+        boxShadow: 14,
+        borderRadius: '8px',
+        margin: 0,
+        minWidth: '200px'
+    },
+    header: {
+        fontFamily: 'Roboto',
+        fontWeight: 500,
+    },
+    main: {
+        paddingTop: '12vh',
+        marginLeft: '20%',
+        marginRight: '20%'
+    },
+    intro: {
+        maxWidth: 'md',
+        marginBottom: '300px'
+    }
+}
+
+const carouselTextStyles = {
+    container: {
+        width: '300px',
+        height: '150px',
+        position: 'absolute',
+        top: '35%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        borderRadius: '4px',
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        color: 'white'
+    },
+    box: {
+        position: 'absolute',
+        top: '50%',
+        left: 0,
+        right: 0,
+        marginTop: '-35px',
+
+    },
+    carousel: {
+        width: "100%",
+        height: '70px',
+        textAlign: 'center',
+        lineHeight: '45px'
+
+    },
+    hide: {
+        width: '700px',
+        height: '208px',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        lineHeight: '208px',
+        overflow: 'hidden',
+
+
+    },
+    slide: {
+        animation: 'txt 7s ease-in-out infinite',
+    },
+    text: {
+        fontSize: '40px'
+    },
+    "@keyframes txt": {
+        "0%, 20%": {
+            transform: "translateY(0)"
+        },
+        "25%, 45%": {
+            transform: "translateY(-208px)"
+        },
+        "50%, 70%": {
+            transform: "translateY(-416px)"
+        },
+        "75%, 95%": {
+            transform: "translateY(-624px)"
+        },
+        "100%": {
+            transform: "translateY(-832px)"
+        }
+    }
 }

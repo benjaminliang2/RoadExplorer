@@ -223,13 +223,8 @@ export const MapComponent = () => {
               />
             )
           )}
-
         </GoogleMap>
-
-
       </Box>
     </Box>
-
-
   </>
 }

@@ -90,6 +90,10 @@ const tripSlice = createSlice({
         },
         setTripId: (state, { payload }) => {
             state._id = payload
+        },
+        resetState: () => {
+            // console.log(initialState)
+            return initialState
         }
     },
     extraReducers: {
@@ -127,5 +131,5 @@ const tripSlice = createSlice({
 })
 
 
-export const { setOrigin, setDestination, setTitle, setWaypoints, add, remove, setTripId } = tripSlice.actions;
+export const { setOrigin, setDestination, setTitle, setWaypoints, add, remove, setTripId, resetState } = tripSlice.actions;
 export default tripSlice.reducer
