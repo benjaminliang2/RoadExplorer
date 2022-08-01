@@ -103,6 +103,8 @@ const tripSlice = createSlice({
         [saveTrip.fulfilled]: (state, action) => {
             state._id = action.payload
             state.isLoading = false
+            console.log("save trip success")
+
         },
         [saveTrip.rejected]: (state) => {
             state.isLoading = false

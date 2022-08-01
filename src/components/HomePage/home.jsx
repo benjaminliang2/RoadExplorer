@@ -14,10 +14,10 @@ import { css, keyframes } from '@emotion/react'
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { useLoadScript } from "@react-google-maps/api";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Navbar } from '../Navbar';
 import { useEffect } from 'react';
-import { resetState } from '../../Features/tripSlice';
+import { resetState, saveTrip } from '../../Features/tripSlice';
 
 
 // when user creates a new trip (enters origin and destination from home page), and navigates to the next page
@@ -29,6 +29,7 @@ const libraries = ["places"]
 
 export const Home = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries
@@ -36,11 +37,12 @@ export const Home = () => {
     const tripid = useSelector((store) =>
         store.trip._id
     )
-
-    useEffect(()=>{
-        const test = dispatch(resetState())
-        console.log(test)
-    },[])
+    const isLoading = useSelector((store) =>
+        store.trip.isLoading
+    )
+    useEffect(() => {
+        dispatch(resetState())
+    }, [])
 
     const spin = keyframes`
         0%, 20%:{
@@ -63,11 +65,23 @@ export const Home = () => {
     const animated = css`
         animation: ${spin} 7s ease-in-out infinite 
     `
+    const handlePlan = async () => {
+        if(isLoading === 'false'){
+            navigate(`/trip/${tripid}`)
+        } else {
+            //try to abort the existing call
+            const test = await dispatch(saveTrip())
+            if(test.meta.requestStatus === 'fulfilled'){
+                navigate(`/trip/${tripid}`)
+            }
+
+        }
+    }
 
     if (!isLoaded) return <div> Loading...</div>
     return (<>
         <CssBaseline />
-        <Navbar/>
+        <Navbar />
         <Paper sx={styles.paperContainer}>
             <Box sx={styles.main} >
                 <Box sx={styles.intro}>
@@ -81,10 +95,8 @@ export const Home = () => {
                             <SearchDestination placeholder="Destination" />
                         </Grid>
                         <Grid item sm={12} md={2}>
-                            <Button variant='contained' color='primary' sx={styles.planTripButton} >
-                            {/* TODO: wait for tripid to return from mongodb, and then send use to '/trip/:tripId */}
-                                {/* <Link to="/trip"> Plan Trip </Link> */}
-                                <Link to={`/trip/${tripid}`} >Plan trip</Link>
+                            <Button variant='contained' color='primary' sx={styles.planTripButton} onClick={() => handlePlan()}>
+                                Plan Trip
                             </Button>
                         </Grid>
                     </Grid>
@@ -93,7 +105,7 @@ export const Home = () => {
             </Box>
         </Paper>
 
-            {/* <Box sx={carouselTextStyles.container}>
+        {/* <Box sx={carouselTextStyles.container}>
                 <Box sx={carouselTextStyles.box}>
                     <Box sx={carouselTextStyles.carousel}>
                         <Box sx={carouselTextStyles.hide}>

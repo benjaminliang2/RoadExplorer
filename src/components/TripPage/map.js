@@ -55,7 +55,7 @@ export const MapComponent = () => {
   const businessesSelected = useSelector((store) =>
     store.trip.businessesSelected
   )
-  const yelpCategory = useSelector((store) => 
+  const yelpCategory = useSelector((store) =>
     store.tripContainer.yelpCategory
   )
   // const [showEditTripModal, setShowEditTripModal] = useState(false)
@@ -75,34 +75,29 @@ export const MapComponent = () => {
     getNearbyBusinesses(yelpSearchPoints, yelpCategory)
   }, [yelpSearchPoints])
 
-  useEffect(() => {
-    fetchDirections();
-  }, [start, end])
 
   useEffect(() => {
     getMidpoints(directions)
   }, [directions])
 
-  useEffect(() => {
-    fetchDirections();
-  }, [googleWaypoints])
 
   useEffect(() => {
-    if (isMounted.current) {
-      console.log("useeffect")
-      if (businessesSelected.length > 0) {
-        const temp = []
-        businessesSelected.map((business) => {
-          temp.push({ location: { lat: business.coordinates.latitude, lng: business.coordinates.longitude } })
-        })
-        setGoogleWaypoints(temp)
-      } else {
-        setGoogleWaypoints([])
-      }
+    if (businessesSelected.length > 0) {
+      const temp = []
+      businessesSelected.map((business) => {
+        temp.push({ location: { lat: business.coordinates.latitude, lng: business.coordinates.longitude } })
+      })
+      setGoogleWaypoints(temp)
+    } else {
+      setGoogleWaypoints([])
     }
 
   }, [businessesSelected])
 
+  useEffect(() => {
+    fetchDirections();
+  }, [start, end, googleWaypoints])
+  
   useEffect(() => {
     isMounted.current = true;
   }, [])
@@ -134,6 +129,7 @@ export const MapComponent = () => {
   }
 
   const sortWaypoints = () => {
+    console.log('twice')
     const optimizedRoute = waypoint_order.current.map(index => businessesSelected[index])
     dispatch(setWaypoints(optimizedRoute))
   }
@@ -177,7 +173,7 @@ export const MapComponent = () => {
             {(directions &&
               <>
                 <TripContainer
-                  start={start} 
+                  start={start}
                   end={end}
                   businesses={businesses}
                   directions={directions}
