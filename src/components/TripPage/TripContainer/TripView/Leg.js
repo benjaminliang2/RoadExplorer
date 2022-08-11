@@ -38,7 +38,7 @@ export const Leg = ({ name, address, imgURL, directions, index, removeFromTrip, 
             <Grid container spacing={1} sx={{ marginTop: '5px' }}>
                 <Grid item xs={3} sx={{ textAlign: 'center' }}>
                     {imgURL
-                        ? <Box component='img' sx={{ 'object-fit': 'cover', width: '80px', height: '80px' }} src={imgURL} />
+                        ? <Box component='img' sx={{ 'objectFit': 'cover', width: '80px', height: '80px' }} src={imgURL} />
                         : <PinDropIcon />
                     }
                 </Grid>

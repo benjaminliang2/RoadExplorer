@@ -26,6 +26,7 @@ export const BusinessView = (props) => {
                             reviewCount={business.review_count}
                             coordinates={business.coordinates}
                             yelpID={business.id}
+                            key={business.id}
                             setActiveMarker={setActiveMarker}
                         />
                     ))

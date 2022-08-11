@@ -15,7 +15,7 @@ const initialState = {
 export const saveTrip = createAsyncThunk(
     'trip/saveTrip',
     async (payload, thunkAPI) => {
-        console.log("saving trip");
+        // console.log("saving trip");
         const trip = thunkAPI.getState().trip
         const result = await fetch(
             'http://localhost:5000/user/trip', {
@@ -47,7 +47,7 @@ export const fetchTrip = createAsyncThunk(
                 },
             })
             .then(response => response.json())
-        console.log(trip)
+        // console.log(trip)
         const businessesSelected = trip.trips[0].businessesSelected
         const details = await Promise.all(
             businessesSelected.map((business) =>
@@ -55,7 +55,7 @@ export const fetchTrip = createAsyncThunk(
                 .then((response) => response.json())
             )
         )
-        console.log(details)
+        // console.log(details)
         return {...trip, businessesSelected: details}
     }
 )
@@ -119,10 +119,10 @@ const tripSlice = createSlice({
             state.isLoading = false
             const trip = action.payload.trips[0]
             //put fetched data into the redux store
+            state.businessesSelected = action.payload.businessesSelected
             state.title = trip.title
             state.origin = trip.origin
             state.destination = trip.destination
-            state.businessesSelected = action.payload.businessesSelected
 
         },
         [fetchTrip.rejected]: (state) => {

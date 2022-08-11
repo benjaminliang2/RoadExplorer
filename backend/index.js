@@ -189,7 +189,9 @@ app.post('/user/trip', async (req, res) => {
   console.log(trip._id);
   if (!trip._id) {
     trip._id = new mongoose.Types.ObjectId()
-    trip.title = trip.destination.name  + " Trip" 
+    let temp = trip.destination.name;
+    let destination = temp.substr(0, temp.indexOf(','))
+    trip.title = destination  + " Trip" 
     console.log(trip.title)
     try {
       let result = await User.findOneAndUpdate(

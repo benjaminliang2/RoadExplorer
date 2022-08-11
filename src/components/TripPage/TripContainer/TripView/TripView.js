@@ -23,7 +23,7 @@ export const TripView = ({directions}) => {
     return (<>
         <Leg name={start.name} directions={directions} index={0} setEdit={setEditOrigin} />
         {waypoints?.map((waypoint, index) =>
-            <Leg name={waypoint.name} imgURL={waypoint.image_url} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.id} />
+            <Leg name={waypoint.name} imgURL={waypoint.image_url} directions={directions} index={index + 1} removeFromTrip={removeFromTrip} id={waypoint.id} key={waypoint.id}/>
         )}
         <Leg name={end.name} setEdit={setEditDestination} />
 

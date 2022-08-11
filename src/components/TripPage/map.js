@@ -1,14 +1,15 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setTripId, setWaypoints } from "../../Features/tripSlice";
+import { debounce, throttle } from 'lodash';
 import { useParams } from 'react-router-dom';
-import { GoogleMap, useLoadScript, Marker, Circle, DirectionsRenderer } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker, DirectionsRenderer } from "@react-google-maps/api";
+import { setTripId, setWaypoints } from "../../Features/tripSlice";
 import { useTrip } from './useTrip'
+
 
 import { TripContainer } from "./TripContainer/TripContainer"
 import { InfoModal } from "./InfoModal/InfoModal"
-import { EditOriginDestination } from "./TripContainer/FormView";
 import { Navbar } from "../Navbar";
 //styles.css required for google map rendering. 
 import "../../styles/styles.css"
@@ -26,7 +27,7 @@ export const MapComponent = () => {
     dispatch(setTripId(tripId))
   }, [])
 
-  const { getMidpoints, addToTrip, getNearbyBusinesses, businesses, yelpSearchPoints } = useTrip();
+  const { getMidpoints, addToTrip, businesses } = useTrip();
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -34,7 +35,6 @@ export const MapComponent = () => {
   })
   const center = useMemo(() => ({ lat: 44, lng: -80 }), []);
   const mapRef = useRef();
-  // const controller = useRef()
   const waypoint_order = useRef();
   const options = useMemo(() => ({
     mapId: 'e9159de94dc8cc93',
@@ -55,49 +55,67 @@ export const MapComponent = () => {
   const businessesSelected = useSelector((store) =>
     store.trip.businessesSelected
   )
-  const yelpCategory = useSelector((store) =>
-    store.tripContainer.yelpCategory
-  )
-  // const [showEditTripModal, setShowEditTripModal] = useState(false)
   const [directions, setDirections] = useState(null)
-  // const [yelpSearchPoints, setYelpSearchPoints] = useState([])
-
-  //businessesSelected are selected POIs that users want to add to their trip.
-  // const [businessesSelected, setBusinessesSelected] = useState([])
-  //googlewaypoint are waypoints/locations that i pass into Directions API.
   const [googleWaypoints, setGoogleWaypoints] = useState([])
-
   const [activeMarker, setActiveMarker] = useState({ id: 'none' })
   const [selectedMarker, setSelectedMarker] = useState(false)
   const isMounted = useRef(false)
 
   useEffect(() => {
-    getNearbyBusinesses(yelpSearchPoints, yelpCategory)
-  }, [yelpSearchPoints])
-
-
-  useEffect(() => {
     getMidpoints(directions)
   }, [directions])
 
-
   useEffect(() => {
-    if (businessesSelected.length > 0) {
-      const temp = []
-      businessesSelected.map((business) => {
+    const temp = []
+    if (isMounted.current == true) {
+      businessesSelected.forEach((business) => {
         temp.push({ location: { lat: business.coordinates.latitude, lng: business.coordinates.longitude } })
       })
       setGoogleWaypoints(temp)
-    } else {
-      setGoogleWaypoints([])
+      console.log(temp)
     }
 
   }, [businessesSelected])
 
+  // const service = useMemo(() => new google.maps.DirectionsService(), [])
+
+  const debouncedFetchDirections = useCallback(debounce(
+    (s, e, w, bus) => {
+      console.log("once")
+      const service = new google.maps.DirectionsService()
+      service.route(
+        {
+          origin: s.coordinates,
+          destination: e.coordinates,
+          travelMode: google.maps.TravelMode.DRIVING,
+          waypoints: w,
+          optimizeWaypoints: true
+        },
+        (result, status) => {
+          if (status === "OK" && result) {
+            setDirections(result);
+            waypoint_order.current = result.routes[0].waypoint_order;
+            const optimizedRoute = waypoint_order.current.map(index => bus[index])
+
+            if (bus) {
+              dispatch(setWaypoints(optimizedRoute))
+            }
+          }
+        }
+      );
+    }, 
+    100),
+    []
+  );
+
   useEffect(() => {
-    fetchDirections();
+    if (start && end) {
+      debouncedFetchDirections(start, end, googleWaypoints, businessesSelected);
+    }
   }, [start, end, googleWaypoints])
-  
+
+
+
   useEffect(() => {
     isMounted.current = true;
   }, [])
@@ -106,34 +124,6 @@ export const MapComponent = () => {
     mapRef.current.panTo(position)
     mapRef.current.setZoom(15)
   }
-
-  const fetchDirections = () => {
-    if (!start || !end) return
-    const service = new google.maps.DirectionsService();
-    service.route(
-      {
-        origin: start.coordinates,
-        destination: end.coordinates,
-        travelMode: google.maps.TravelMode.DRIVING,
-        waypoints: googleWaypoints,
-        optimizeWaypoints: true
-      },
-      (result, status) => {
-        if (status === "OK" && result) {
-          setDirections(result);
-          waypoint_order.current = result.routes[0].waypoint_order;
-          sortWaypoints();
-        }
-      }
-    );
-  }
-
-  const sortWaypoints = () => {
-    console.log('twice')
-    const optimizedRoute = waypoint_order.current.map(index => businessesSelected[index])
-    dispatch(setWaypoints(optimizedRoute))
-  }
-
 
 
 
@@ -169,7 +159,6 @@ export const MapComponent = () => {
               position: 'relative'
             }
           }}>
-            {/* TODO:  */}
             {(directions &&
               <>
                 <TripContainer
@@ -214,8 +203,7 @@ export const MapComponent = () => {
                     ? 1 : undefined)
                 }
                 onClick={() => { setSelectedMarker(hike) }}
-              // onClick={()=>{console.log(hike)}}
-
+                key={index}
               />
             )
           )}
@@ -224,3 +212,5 @@ export const MapComponent = () => {
     </Box>
   </>
 }
+
+

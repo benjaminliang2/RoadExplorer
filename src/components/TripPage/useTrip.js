@@ -44,10 +44,6 @@ export const useTrip = () => {
         getNearbyBusinesses(yelpSearchPoints, yelpCategory)
     }, [yelpSearchPoints])
 
-    // useEffect(() => {
-    //     console.log(businesses)
-    // }, [businesses])
-
     const getMidpoints = (directions) => {
         if (!directions) {
             return []
