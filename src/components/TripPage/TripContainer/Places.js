@@ -68,9 +68,9 @@ export const SearchDestination = ({ placeholder, label }) => {
     </>
 }
 
-export const SearchBox = ({ panTo }) => {
+export const SearchBox = ({ panTo, getCustomBusinesses }) => {
     const { ready, value, setValue, suggestions: { status, data }, clearSuggestions } = usePlacesAutocomplete();
-    const { getCustomBusinesses } = useTrip()
+    // const { getCustomBusinesses } = useTrip()
     const handleSelect = async (val) => {
         // setValue(val, false);
         // clearSuggestions();

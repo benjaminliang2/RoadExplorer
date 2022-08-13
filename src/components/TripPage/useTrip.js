@@ -113,6 +113,7 @@ export const useTrip = () => {
     const getCustomBusinesses = async (name, lat, lng) => {
         const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + name)
         const result = await response.json();
+        console.log(result)
         setMiddleman([...result.businesses])
     }
 

@@ -271,6 +271,7 @@ const AccountMenu = ({ handleLogout }) => {
                                                     </IconButton>
                                                 }
                                                 disablePadding
+                                                onClick={() => setShowTripList(false)}
                                             >
                                                 <Link to={`/trip/${trip._id}`} >
                                                     <ListItemButton>

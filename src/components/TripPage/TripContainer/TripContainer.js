@@ -18,7 +18,7 @@ import { FormView } from './FormView'
 import store from '../../../redux/store';
 
 export const TripContainer = (props) => {
-    const { businesses, directions, setActiveMarker, panTo} = props;
+    const { businesses, directions, setActiveMarker, panTo,getCustomBusinesses} = props;
     //loading, trip, business, form
     const view = useSelector((store) => store.tripContainer.view )
     let totalDistance = 0;
@@ -48,11 +48,10 @@ export const TripContainer = (props) => {
                 </Box>
                 {businesses &&
                     <Box sx={view === 'business' ? { display: 'contents' } : styles.hide}>
-                        <SearchBox panTo={panTo}/>
+                        <SearchBox panTo={panTo} getCustomBusinesses={getCustomBusinesses}/>
                         <BusinessView
                             businesses={businesses}
                             setActiveMarker={setActiveMarker}
-                            panTo={panTo}
                         />
                     </Box>
                 }

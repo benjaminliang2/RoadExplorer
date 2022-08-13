@@ -2,11 +2,10 @@ import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { debounce, throttle } from 'lodash';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { GoogleMap, useLoadScript, Marker, DirectionsRenderer } from "@react-google-maps/api";
 import { setTripId, setWaypoints } from "../../Features/tripSlice";
 import { useTrip } from './useTrip'
-
 
 import { TripContainer } from "./TripContainer/TripContainer"
 import { InfoModal } from "./InfoModal/InfoModal"
@@ -20,14 +19,15 @@ const libraries = ["places"];
 
 export const MapComponent = () => {
   const dispatch = useDispatch()
-
+  const navigate = useNavigate();
   //tripId should always be defined
   let { tripId } = useParams();
+
   useEffect(() => {
     dispatch(setTripId(tripId))
-  }, [])
+  }, [tripId])
 
-  const { getMidpoints, addToTrip, businesses } = useTrip();
+  const { getMidpoints, addToTrip, getCustomBusinesses, businesses } = useTrip();
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -46,20 +46,21 @@ export const MapComponent = () => {
     mapRef.current = map;
   }, [])
 
-  const start = useSelector((store) =>
-    store.trip.origin
-  )
-  const end = useSelector((store) =>
-    store.trip.destination
-  )
-  const businessesSelected = useSelector((store) =>
-    store.trip.businessesSelected
-  )
+  const start = useSelector((store) => store.trip.origin)
+  const end = useSelector((store) => store.trip.destination)
+  const businessesSelected = useSelector((store) => store.trip.businessesSelected)
+  const tripid2 = useSelector((store) => store.trip._id)
   const [directions, setDirections] = useState(null)
   const [googleWaypoints, setGoogleWaypoints] = useState([])
   const [activeMarker, setActiveMarker] = useState({ id: 'none' })
   const [selectedMarker, setSelectedMarker] = useState(false)
   const isMounted = useRef(false)
+
+  useEffect(() => {
+    if (isMounted.current) {
+      navigate(`/trip/${tripid2}`)
+    }
+  }, [tripid2])
 
   useEffect(() => {
     getMidpoints(directions)
@@ -96,14 +97,12 @@ export const MapComponent = () => {
             setDirections(result);
             waypoint_order.current = result.routes[0].waypoint_order;
             const optimizedRoute = waypoint_order.current.map(index => bus[index])
+            dispatch(setWaypoints(optimizedRoute))
 
-            if (bus) {
-              dispatch(setWaypoints(optimizedRoute))
-            }
           }
         }
       );
-    }, 
+    },
     100),
     []
   );
@@ -168,6 +167,7 @@ export const MapComponent = () => {
                   directions={directions}
                   setActiveMarker={setActiveMarker}
                   panTo={panTo}
+                  getCustomBusinesses={getCustomBusinesses}
                 />
               </>)}
           </Box>

@@ -12,7 +12,6 @@ const saltRounds = 6
 
 
 mongoose.connect(process.env.ATLAS_URI)
-// console.log(mongoose.rsconnection)
 
 app.use(express.json());
 app.use(cors({
@@ -33,12 +32,7 @@ app.use(session({
   })
 }))
 
-// not used or relevant 
-// app.get('/', (req, res) => {
-//   res.send("Server is Running OK")
-//   console.log(req.session.id)
 
-// })
 app.get("/category/:lat/:lng/:searchCategory", (req, res) => {
   const searchCategory = req.params.searchCategory
   // console.log(req.session.id)
@@ -187,7 +181,7 @@ app.get('/logout', (req, res) => {
 app.post('/user/trip', async (req, res) => {
   const trip = req.body.trip
   console.log(trip._id);
-  if (!trip._id) {
+  if (!trip._id || trip._id === 'undefined') {
     trip._id = new mongoose.Types.ObjectId()
     let temp = trip.destination.name;
     let destination = temp.substr(0, temp.indexOf(','))

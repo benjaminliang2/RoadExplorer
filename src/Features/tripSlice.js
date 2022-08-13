@@ -17,6 +17,7 @@ export const saveTrip = createAsyncThunk(
     async (payload, thunkAPI) => {
         // console.log("saving trip");
         const trip = thunkAPI.getState().trip
+        console.log(trip)
         const result = await fetch(
             'http://localhost:5000/user/trip', {
             mode: 'cors',
