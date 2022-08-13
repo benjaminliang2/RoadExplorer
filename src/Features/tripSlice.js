@@ -61,7 +61,23 @@ export const fetchTrip = createAsyncThunk(
     }
 )
 
-
+export const deleteTrip = createAsyncThunk(
+    'trip/deleteTrip',
+    async (payload, thunkAPI) => {
+        const result = await fetch(
+            'http://localhost:5000/user/trip/' + payload, {
+            mode: 'cors',
+            credentials: 'include',
+            method: "delete",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        const response = await result.json()
+        console.log(response)
+        return response
+    }
+)
 
 
 

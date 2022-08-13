@@ -16,7 +16,7 @@ mongoose.connect(process.env.ATLAS_URI)
 app.use(express.json());
 app.use(cors({
   origin: ["http://localhost:3000"],
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "DELETE"],
   credentials: true
 }))
 // app.use(express.urlencoded())
@@ -176,7 +176,7 @@ app.get('/logout', (req, res) => {
     res.send({ loggedIn: false })
   })
 })
-
+//TODO: refactor to post for creating new trip and put for updating existing trips. 
 //save single trip
 app.post('/user/trip', async (req, res) => {
   const trip = req.body.trip
@@ -253,6 +253,15 @@ app.get('/user/trips', async (req, res) => {
 
 })
 
+app.delete('/user/trip/:id', async (req, res) => {
+  try {
+    let result = await User.updateOne({_id: req.session.user}, {$pull: {trips: {_id: req.params.id}}})
+    res.json(result)
+  } catch (error) {
+    res.send(error)
+    console.log("error deleting trip: " + error)
+  }
+})
 
 let port = process.env.PORT;
 if (port == null || port == "") {

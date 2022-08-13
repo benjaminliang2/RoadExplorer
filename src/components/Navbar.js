@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setUserAuthStatus, verify, logout } from '../Features/userAuthSlice';
+import { deleteTrip } from '../Features/tripSlice';
 
 import { LoginModal } from "./Login/LoginModal";
 import { CustomModal } from "../styles/CustomModal"
@@ -42,27 +43,6 @@ export const Navbar = () => {
     )
 
     useEffect(() => {
-        // const verifyAuth = () => {
-        //     fetch(
-        //         'http://localhost:5000/login', {
-        //         mode: 'cors',
-        //         credentials: 'include',
-        //         method: "get",
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //     })
-        //         .then(res => res.json())
-        //         .then(response => {
-        //             // console.log(response)
-        //             if (response.loggedIn == true) {
-        //                 // console.log("user is already authenticated")
-        //                 // setIsAuth(response.loggedIn)
-        //                 dispatch(setUserAuthStatus(true))
-        //             }
-        //         })
-        // }
-        // verifyAuth();
         dispatch(verify())
     }, [])
 
@@ -83,6 +63,9 @@ export const Navbar = () => {
                 dispatch(setUserAuthStatus(false))
             })
     }
+
+
+
     return (
         <>
             <AppBar position="sticky">
@@ -140,6 +123,7 @@ export const Navbar = () => {
 }
 
 const AccountMenu = ({ handleLogout }) => {
+    const dispatch = useDispatch();
     const [anchorEl, setAnchorEl] = useState(null);
     const [showTripList, setShowTripList] = useState(false)
     const [trips, setTrips] = useState(null)
@@ -178,6 +162,16 @@ const AccountMenu = ({ handleLogout }) => {
                 setTrips(response[0].trips)
             })
     }
+//TODO: is this foolproof? would fetchTrip stille xecute if trip was deleted successfully?
+
+    const handleDelete = async (id) => {
+        let result = await dispatch(deleteTrip(id))
+        if(result){
+            console.log(result)
+            fetchTrips()
+        }
+    }
+
     return (
         <>
 
@@ -266,15 +260,16 @@ const AccountMenu = ({ handleLogout }) => {
                                             <ListItem
                                                 key={index}
                                                 secondaryAction={
-                                                    <IconButton edge="end" aria-label="delete">
+
+                                                    <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(trip._id)}>
                                                         <DeleteIcon />
                                                     </IconButton>
                                                 }
                                                 disablePadding
-                                                onClick={() => setShowTripList(false)}
                                             >
                                                 <Link to={`/trip/${trip._id}`} >
-                                                    <ListItemButton>
+                                                    <ListItemButton onClick={() => setShowTripList(false)}>
+
                                                         <ListItemText id={trip._id} primary={trip.title} />
                                                     </ListItemButton>
                                                 </Link>
