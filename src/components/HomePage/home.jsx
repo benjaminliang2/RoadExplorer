@@ -66,17 +66,7 @@ export const Home = () => {
         animation: ${spin} 7s ease-in-out infinite 
     `
     const handlePlan = async () => {
-        console.log(tripid)
         navigate(`/trip/${tripid}`)
-        // if(isLoading === 'false'){
-        // } else {
-        //     //try to abort the existing call
-        //     const test = await dispatch(saveTrip())
-        //     if(test.meta.requestStatus === 'fulfilled'){
-        //         navigate(`/trip/${tripid}`)
-        //     }
-
-        // }
     }
 
     if (!isLoaded) return <div> Loading...</div>

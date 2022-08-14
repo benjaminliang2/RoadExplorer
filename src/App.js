@@ -12,8 +12,8 @@ function App() {
       <Router>
         <Routes>
           <Route exact path='/' element={<Home />} />
-          <Route exact path='/trip' element={<MapComponent />} />
-          <Route path='/trip/:tripId' element={<MapComponent />} />
+          <Route exact path='/trip' element={<MapComponent key='null'/>} />
+          <Route path='/trip/:tripId' element={<MapComponent key='custom'/>} />
         </Routes>
       </Router>
     </ThemeProvider>

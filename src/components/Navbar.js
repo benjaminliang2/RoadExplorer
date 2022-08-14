@@ -4,7 +4,9 @@ import { useEffect } from 'react';
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setUserAuthStatus, verify, logout } from '../Features/userAuthSlice';
-import { deleteTrip } from '../Features/tripSlice';
+import { deleteTrip, resetState } from '../Features/tripSlice';
+import { useNavigate } from 'react-router-dom';
+
 
 import { LoginModal } from "./Login/LoginModal";
 import { CustomModal } from "../styles/CustomModal"
@@ -22,6 +24,7 @@ import Person from '@mui/icons-material/Person';
 import Logout from '@mui/icons-material/Logout';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
+import { current } from '@reduxjs/toolkit';
 
 
 
@@ -124,6 +127,7 @@ export const Navbar = () => {
 
 const AccountMenu = ({ handleLogout }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     const [anchorEl, setAnchorEl] = useState(null);
     const [showTripList, setShowTripList] = useState(false)
     const [trips, setTrips] = useState(null)
@@ -138,6 +142,7 @@ const AccountMenu = ({ handleLogout }) => {
     const isAuth = useSelector((store) =>
         store.userAuth.isAuth
     )
+    const currentTripId = useSelector((store) => store.trip._id)
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -162,13 +167,20 @@ const AccountMenu = ({ handleLogout }) => {
                 setTrips(response[0].trips)
             })
     }
-//TODO: is this foolproof? would fetchTrip stille xecute if trip was deleted successfully?
+    //TODO: is this foolproof? would fetchTrip stille xecute if trip was deleted successfully?
 
     const handleDelete = async (id) => {
         let result = await dispatch(deleteTrip(id))
-        if(result){
-            console.log(result)
-            fetchTrips()
+        if (result) {
+            if (id === currentTripId) {
+                //TODO: need to reset state to initial state. or force map component to unmount and remount. 
+                
+                setShowTripList(false)
+                navigate('/trip')
+                dispatch(resetState())
+            } else {
+                fetchTrips()
+            }
         }
     }
 

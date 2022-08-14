@@ -14,6 +14,7 @@ import { Navbar } from "../Navbar";
 import "../../styles/styles.css"
 /*global google*/
 import { Box } from "@mui/material";
+import { setView } from "../../Features/tripContainerSlice";
 
 const libraries = ["places"];
 
@@ -24,7 +25,13 @@ export const MapComponent = () => {
   let { tripId } = useParams();
 
   useEffect(() => {
-    dispatch(setTripId(tripId))
+    if (tripId === undefined) {
+      dispatch(setView('create'))
+      console.log('path is just /trip');
+    } else {
+      dispatch(setTripId(tripId))
+      console.log('dispatching settripid')
+    }
   }, [tripId])
 
   const { getMidpoints, addToTrip, getCustomBusinesses, businesses } = useTrip();
@@ -117,6 +124,8 @@ export const MapComponent = () => {
 
   useEffect(() => {
     isMounted.current = true;
+    console.log('component has mounted')
+    return () => console.log("component unmounted")
   }, [])
 
   const panTo = (position) => {
@@ -158,18 +167,16 @@ export const MapComponent = () => {
               position: 'relative'
             }
           }}>
-            {(directions &&
-              <>
-                <TripContainer
-                  start={start}
-                  end={end}
-                  businesses={businesses}
-                  directions={directions}
-                  setActiveMarker={setActiveMarker}
-                  panTo={panTo}
-                  getCustomBusinesses={getCustomBusinesses}
-                />
-              </>)}
+
+            <TripContainer
+              start={start}
+              end={end}
+              businesses={businesses}
+              directions={directions}
+              setActiveMarker={setActiveMarker}
+              panTo={panTo}
+              getCustomBusinesses={getCustomBusinesses}
+            />
           </Box>
           {directions && (
             <>
@@ -189,7 +196,6 @@ export const MapComponent = () => {
           {businesses && (
             businesses.map((hike, index) =>
               <Marker
-
                 position={{ lat: hike.coordinates.latitude, lng: hike.coordinates.longitude }}
                 // icon={
                 //   {

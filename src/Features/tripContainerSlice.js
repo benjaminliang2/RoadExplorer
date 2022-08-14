@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { fetchTrip } from './tripSlice'
+//tripContainer.view can either be loading, trip, business, or create. 
 const initialState = {
     view: 'loading',
     yelpCategory: 'tourist',

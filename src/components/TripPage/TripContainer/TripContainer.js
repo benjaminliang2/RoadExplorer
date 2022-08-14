@@ -6,7 +6,7 @@ import { setTitle } from '../../../Features/tripSlice'
 
 import { SearchBox, SearchOrigin, SearchDestination } from "./Places";
 import { BusinessView } from "./BusinessView/BusinessView";
-import {Sidebar} from "./TripView/Sidebar"
+import { Sidebar } from "./TripView/Sidebar"
 
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -14,24 +14,25 @@ import { Backdrop, Box, Button, IconButton, ListItemIcon, ListItemText, Menu, Me
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import { TripView } from './TripView/TripView';
-import { FormView } from './FormView'
+import { CreateView } from './CreateView'
 import store from '../../../redux/store';
 
 export const TripContainer = (props) => {
-    const { businesses, directions, setActiveMarker, panTo,getCustomBusinesses} = props;
+    const { businesses, directions, setActiveMarker, panTo, getCustomBusinesses } = props;
     //loading, trip, business, form
-    const view = useSelector((store) => store.tripContainer.view )
+    const view = useSelector((store) => store.tripContainer.view)
     let totalDistance = 0;
     let seconds = 0;
-    directions.routes[0].legs.forEach(leg => {
-        totalDistance += leg.distance.value;
-        seconds += leg.duration.value;
-    })
+    if (directions) {
+        directions.routes[0].legs.forEach(leg => {
+            totalDistance += leg.distance.value;
+            seconds += leg.duration.value;
+        })
+    }
     var toTimeString = (seconds) => {
         return (new Date(seconds * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
     }
     var totalDuration = toTimeString(seconds)
-
     return (
         <>
             <Stack sx={styles.TripContainerBox}>
@@ -39,7 +40,7 @@ export const TripContainer = (props) => {
                 {view === 'loading' &&
                     <h1>loading...</h1>
                 }
-                {view !== 'loading' &&
+                {(view === 'trip' || view === 'business') &&
                     <TripSummary totalDistance={totalDistance} totalDuration={totalDuration} />
                 }
 
@@ -48,22 +49,18 @@ export const TripContainer = (props) => {
                 </Box>
                 {businesses &&
                     <Box sx={view === 'business' ? { display: 'contents' } : styles.hide}>
-                        <SearchBox panTo={panTo} getCustomBusinesses={getCustomBusinesses}/>
+                        <SearchBox panTo={panTo} getCustomBusinesses={getCustomBusinesses} />
                         <BusinessView
                             businesses={businesses}
                             setActiveMarker={setActiveMarker}
                         />
                     </Box>
                 }
-                {view === 'form' && 
-                    <FormView/>
+                {view === 'create' &&
+                    <CreateView/>
                 }
             </Stack>
-
-
         </>
-
-
     )
 }
 
