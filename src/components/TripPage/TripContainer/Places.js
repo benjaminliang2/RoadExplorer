@@ -33,7 +33,7 @@ export const SearchOrigin = ({ placeholder, label }) => {
             options={data.map(({ description }) => description)}
             onChange={(event, value) => handleSelect(value)}
             renderInput={(params) =>
-                <TextField {...params} label={label} onChange={(e) => setValue(e.target.value, true)} placeholder={placeholder} variant="standard" required={true} />
+                <TextField {...params} label={label} onChange={(e) => setValue(e.target.value, true)} placeholder={placeholder} variant="standard" />
             }
             sx={{ margin: '0px 10px 0px 10px' }}
         />
@@ -61,7 +61,7 @@ export const SearchDestination = ({ placeholder, label }) => {
             options={data.map(({ description }) => description)}
             onChange={(event, value) => handleSelect(value)}
             renderInput={(params) =>
-                <TextField {...params} label={label} onChange={(e) => setValue(e.target.value, true)} placeholder={placeholder} variant="standard" required={true} />
+                <TextField {...params} label={label} onChange={(e) => setValue(e.target.value, true)} placeholder={placeholder} variant="standard"  />
             }
             sx={{ margin: '0px 10px 0px 10px' }}
         />

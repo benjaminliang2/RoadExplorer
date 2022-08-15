@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import StarRateIcon from '@mui/icons-material/StarRate';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import Button from '@mui/material/Button';
 import { Box, IconButton, Stack, Typography } from '@mui/material';
 import zerostar from '../../../../images/regular_0.png'
@@ -19,11 +20,15 @@ import { useTrip } from '../../useTrip';
 
 
 export const BusinessCard = (props) => {
-    const {addToTrip} = useTrip()
-    const { img, index, name, location, description, star, reviewCount, setActiveMarker, coordinates, yelpID } = props;
+    // const {addToTrip} = useTrip()
+    const { img, index, name, location, description, star, reviewCount, setActiveMarker, coordinates, yelpID, addToTrip, removeFromTrip } = props;
+    // console.log(addToTrip)
     const handleOnClick = () => {
-        // setIsChecked(!isChecked);
-        addToTrip(coordinates, name, yelpID, img);
+        if(removeFromTrip === undefined){
+            addToTrip(coordinates, name, yelpID, img);
+        } else {
+            removeFromTrip(yelpID);
+        }
     }
     const renderStars = (rating) => {
         switch (true) {
@@ -69,7 +74,10 @@ export const BusinessCard = (props) => {
                 </Stack>
                 <Box>
                     <IconButton onClick={handleOnClick}>
-                        <FavoriteBorderIcon />
+                        {removeFromTrip === undefined ? 
+                        <AddCircleIcon color='secondary'/> :
+                        <RemoveCircleIcon/>
+                        }
                     </IconButton>
                 </Box>
             </Stack>

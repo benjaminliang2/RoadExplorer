@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 //_id is the trip's specific id
 const initialState = {
-    title: "untitled",
+    title: "Unsaved",
     origin: false,
     destination: false,
     businessesSelected: [],

@@ -18,7 +18,7 @@ import { CreateView } from './CreateView'
 import store from '../../../redux/store';
 
 export const TripContainer = (props) => {
-    const { businesses, directions, setActiveMarker, panTo, getCustomBusinesses } = props;
+    const { businesses, directions, setActiveMarker, panTo, getCustomBusinesses, addToTrip, removeFromTrip } = props;
     //loading, trip, business, form
     const view = useSelector((store) => store.tripContainer.view)
     let totalDistance = 0;
@@ -36,7 +36,9 @@ export const TripContainer = (props) => {
     return (
         <>
             <Stack sx={styles.TripContainerBox}>
-                <Sidebar />
+                {view !== 'create' &&
+                    <Sidebar />
+                }
                 {view === 'loading' &&
                     <h1>loading...</h1>
                 }
@@ -53,11 +55,13 @@ export const TripContainer = (props) => {
                         <BusinessView
                             businesses={businesses}
                             setActiveMarker={setActiveMarker}
+                            addToTrip={addToTrip}
+                            removeFromTrip={removeFromTrip}
                         />
                     </Box>
                 }
                 {view === 'create' &&
-                    <CreateView/>
+                    <CreateView />
                 }
             </Stack>
         </>
@@ -192,7 +196,7 @@ const styles = {
     TripContainerBox: {
         backgroundColor: 'white',
         height: '90%',
-        borderRadius: '25px'
+        borderRadius: '25px',
     },
     tripTitle: {
         backgroundImage: `url("https://static.vecteezy.com/system/resources/thumbnails/000/207/539/small_2x/Road_Trip_Sunset.jpg")`,

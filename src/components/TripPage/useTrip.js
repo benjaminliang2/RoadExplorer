@@ -34,15 +34,14 @@ export const useTrip = () => {
         const dataMap = new Map();
         middleman.forEach((res) => dataMap.set(res.id, res));
         setBusinesses(Array.from(dataMap.values()));
-
     }, [middleman])
     useEffect(() => {
         setMiddleman([])
         getNearbyBusinesses(yelpSearchPoints, yelpCategory)
-    }, [yelpCategory])
-    useEffect(() => {
-        getNearbyBusinesses(yelpSearchPoints, yelpCategory)
-    }, [yelpSearchPoints])
+    }, [yelpCategory, yelpSearchPoints])
+    // useEffect(() => {
+    //     getNearbyBusinesses(yelpSearchPoints, yelpCategory)
+    // }, [yelpSearchPoints])
 
     const getMidpoints = (directions) => {
         if (!directions) {
@@ -94,6 +93,7 @@ export const useTrip = () => {
     }
     //TODO can this be improved? 
     const getNearbyBusinesses = async (points, searchCategory) => {
+        // console.log("getNearbyBusinesses")
         controller.current.abort();
         // points.forEach(async (point) => {
         controller.current = new AbortController()
@@ -104,6 +104,7 @@ export const useTrip = () => {
                 const { lat, lng } = point.coordinates
                 const response = await fetch('http://localhost:5000/category/' + lat + "/" + lng + '/' + searchCategory, { signal })
                 const result = await response.json();
+                // console.log('setting middleman ');
                 setMiddleman((prevState) => [...prevState, ...result.businesses])
                 // controller.abort()
             }

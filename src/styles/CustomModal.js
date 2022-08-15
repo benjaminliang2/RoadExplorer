@@ -1,4 +1,4 @@
-import { Backdrop, Button, Grid, Modal, Stack, TextField, Typography } from "@mui/material"
+import { Backdrop, Button, Grid, List, ListItem, Modal, Stack, TextField, Typography } from "@mui/material"
 
 
 const styles = {
@@ -7,7 +7,8 @@ const styles = {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        height: '75%',
+        minHeight: '55%',
+        maxHeight: '80%',
         maxWidth: '600px',
         bgcolor: '#ffff',
         backgroundColor: 'white',
@@ -33,13 +34,24 @@ export const CustomModal = ({ setOpen, title, children }) => {
             }}
         >
             <Grid container sx={styles.modalBox} spacing={1}>
-                <Grid item xs={12}>
+                <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: '25px' }}>
                         {title}
                     </Typography>
-                </Grid>
-                <Grid item xs={12}>
-
+                    {/* <List sx={{ height: '100%' }}>
+                        <ListItem>
+                            one
+                        </ListItem>
+                        <ListItem>
+                            two
+                        </ListItem>
+                        <ListItem>
+                            three
+                        </ListItem>
+                    </List>
+                    <Button variant="contained">
+                        Create New
+                    </Button> */}
                     {children}
                 </Grid>
             </Grid>

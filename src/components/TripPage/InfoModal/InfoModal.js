@@ -7,6 +7,8 @@ import { styled } from '@mui/material/styles';
 import { borderRadius, flexbox, margin } from '@mui/system';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ParkIcon from '@mui/icons-material/Park';
+import { remove } from '../../../Features/tripSlice';
+import { useSelector } from 'react-redux';
 
 const ContainerStyle = {
   position: 'absolute',
@@ -25,7 +27,7 @@ const ContainerStyle = {
 };
 
 const AddButton = styled(Button)({
-  background: 'linear-gradient(45deg ,#75d1ff 30%, #209fff 90%)',
+  background: 'linear-gradient(45deg ,#FFC837 30%, #FF8008 90%)',
   border: 0,
   borderRadius: 3,
   color: 'white',
@@ -34,7 +36,18 @@ const AddButton = styled(Button)({
   marginTop: '10px'
 
 })
-export const InfoModal = ({ selectedBusiness, setSelectedMarker, addToTrip }) => {
+
+const RemoveButton = styled(Button)({
+  background: 'linear-gradient(45deg ,#e53935 30%, #e35d5b 90%)',
+  border: 0,
+  borderRadius: 3,
+  color: 'white',
+  padding: '5px 10px',
+  width: '100%',
+  marginTop: '10px'
+
+})
+export const InfoModal = ({ selectedBusiness, setSelectedMarker, addToTrip, removeFromTrip }) => {
   const { name, image_url, price, rating, review_count, categories, url, location, coordinates, id } = selectedBusiness;
   const formattedCategories = categories.map((catergory) => catergory.title).join(" • ");
   const formattedAddress = location.display_address.map((each) => each).join(" ,")
@@ -42,31 +55,25 @@ export const InfoModal = ({ selectedBusiness, setSelectedMarker, addToTrip }) =>
     } • 🎫 • ⭐ ${rating} • ${review_count}+ Reviews`;
   const [reviews, setReviews] = useState([])
   const [open, setOpen] = useState(true);
+  const businessesSelected = useSelector((store) => store.trip.businessesSelected)
+
   const handleClose = () => {
     setOpen(false)
     setSelectedMarker(false);
   }
 
   const fetchReviews = async (businessID) => {
-    // const response = await fetch('http://localhost:5000/business/' + businessID + '/reviews')
-    // const result = await response.json();
     await fetch(
       'http://localhost:5000/businesses/' + businessID + '/reviews'
     )
       .then(res => res.json())
       .then(res => setReviews(res.reviews))
-
   }
-
-
 
   useEffect(() => {
     fetchReviews(id)
     console.log(reviews)
   }, [])
-
-
-
 
   return ReactDOM.createPortal(
     <>
@@ -139,7 +146,13 @@ export const InfoModal = ({ selectedBusiness, setSelectedMarker, addToTrip }) =>
                 }}
               />
             </Button>
-            <AddButton onClick={()=>addToTrip(coordinates, name, id, image_url)} variant='body1'>Add to Trip</AddButton>
+            {
+              businessesSelected.some(e => e.id === id)
+                ?
+                <RemoveButton onClick={() => removeFromTrip(id)} variant='body1'>Remove From Trip</RemoveButton>
+                :
+                <AddButton onClick={() => addToTrip(coordinates, name, id, image_url)} variant='body1'>Add to Trip</AddButton>
+            }
 
           </Box>
         </Box>

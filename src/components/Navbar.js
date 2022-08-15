@@ -174,7 +174,7 @@ const AccountMenu = ({ handleLogout }) => {
         if (result) {
             if (id === currentTripId) {
                 //TODO: need to reset state to initial state. or force map component to unmount and remount. 
-                
+
                 setShowTripList(false)
                 navigate('/trip')
                 dispatch(resetState())
@@ -182,6 +182,12 @@ const AccountMenu = ({ handleLogout }) => {
                 fetchTrips()
             }
         }
+    }
+
+    const handleCreateTrip = () => {
+        setShowTripList(false)
+        navigate('/trip')
+        dispatch(resetState())
     }
 
     return (
@@ -263,34 +269,36 @@ const AccountMenu = ({ handleLogout }) => {
             {showTripList &&
                 ReactDOM.createPortal(<>
                     <CustomModal setOpen={setShowTripList} title={"Saved Trips"}>
-                        <Stack direction='column-reverse' height='100%'>
-                            <Button><Typography>Create New Trip</Typography></Button>
-                            <List>
-                                {trips && trips.length > 0 &&
-                                    trips.map((trip, index) => {
-                                        return (
-                                            <ListItem
-                                                key={index}
-                                                secondaryAction={
+                        {/* <Stack direction='column' justifyContent="flex-start" height='100%'> */}
+                        <List sx={{ height: '100%' }}>
+                            {trips && trips.length > 0 &&
+                                trips.map((trip, index) => {
+                                    return (
+                                        <ListItem
+                                            key={index}
+                                            secondaryAction={
 
-                                                    <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(trip._id)}>
-                                                        <DeleteIcon />
-                                                    </IconButton>
-                                                }
-                                                disablePadding
-                                            >
-                                                <Link to={`/trip/${trip._id}`} >
-                                                    <ListItemButton onClick={() => setShowTripList(false)}>
+                                                <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(trip._id)}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            }
+                                            disablePadding
+                                        >
+                                            <Link to={`/trip/${trip._id}`} >
+                                                <ListItemButton onClick={() => setShowTripList(false)}>
 
-                                                        <ListItemText id={trip._id} primary={trip.title} />
-                                                    </ListItemButton>
-                                                </Link>
-                                            </ListItem>
-                                        )
-                                    })
-                                }
-                            </List>
-                        </Stack>
+                                                    <ListItemText id={trip._id} primary={trip.title} />
+                                                </ListItemButton>
+                                            </Link>
+                                        </ListItem>
+                                    )
+                                })
+                            }
+                        </List>
+                        <Button variant='contained' color='secondary' onClick={() => handleCreateTrip()}>
+                            Create New Trip
+                        </Button>
+                        {/* </Stack> */}
                     </CustomModal>
                 </>
                     , document.getElementById("portal"))

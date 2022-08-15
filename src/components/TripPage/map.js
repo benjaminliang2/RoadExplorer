@@ -34,7 +34,7 @@ export const MapComponent = () => {
     }
   }, [tripId])
 
-  const { getMidpoints, addToTrip, getCustomBusinesses, businesses } = useTrip();
+  const { getMidpoints, addToTrip, removeFromTrip, getCustomBusinesses, businesses } = useTrip();
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -140,9 +140,11 @@ export const MapComponent = () => {
   return <>
     {selectedMarker && (
       <InfoModal
+        businesses={businesses}
         selectedBusiness={selectedMarker}
         setSelectedMarker={setSelectedMarker}
         addToTrip={addToTrip}
+        removeFromTrip={removeFromTrip}
       />
     )}
 
@@ -162,7 +164,7 @@ export const MapComponent = () => {
           onLoad={onMapLoad}
         >
           <Box sx={{
-            position: 'absolute', height: '100%', margin: '15px', borderRadius: '25px',
+            position: 'absolute', height: '100%', margin: '15px', borderRadius: '25px', minWidth: '25%',
             ['@media screen and (max-width: 767.9)']: { // eslint-disable-line no-useless-computed-key
               position: 'relative'
             }
@@ -176,6 +178,8 @@ export const MapComponent = () => {
               setActiveMarker={setActiveMarker}
               panTo={panTo}
               getCustomBusinesses={getCustomBusinesses}
+              addToTrip={addToTrip}
+              removeFromTrip={removeFromTrip}
             />
           </Box>
           {directions && (
