@@ -1,7 +1,7 @@
 import { configureStore, createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
 import tripReducer, { saveTrip, fetchTrip, setDestination, setOrigin, setTitle, setWaypoints, setTripId, } from "../Features/tripSlice";
 import userAuthReducer from '../Features/userAuthSlice'
-import tripContainerReducer from "../Features/tripContainerSlice";
+import tripContainerReducer, { setView } from "../Features/tripContainerSlice";
 
 
 const listenerMiddleWare = createListenerMiddleware()
@@ -13,8 +13,11 @@ listenerMiddleWare.startListening({
         await listenerAPI.delay(500)
         const origin = listenerAPI.getState().trip.origin
         const dest = listenerAPI.getState().trip.destination
-        if (origin && dest) {
+        const auth = listenerAPI.getState().userAuth.isauth
+        if (origin && dest && auth) {
             listenerAPI.dispatch(saveTrip(action.payload))
+        } else if(origin && dest) {
+            listenerAPI.dispatch(setView('trip'))
         }
     }
 })

@@ -20,6 +20,9 @@ const tripContainerSlice = createSlice({
     extraReducers:{
         [fetchTrip.fulfilled]: (state, action) => {
             state.view = 'trip'
+        }, 
+        [fetchTrip.rejected]: (state, action) => {
+            state.view = 'trip'
         }
     }
 })
