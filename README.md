@@ -3,28 +3,11 @@
 
 ## Project Description
 
-<img src = "images\roadtripscreenshot.png" >
-
-This Road Trip Planner allows users to plan an optimized itinerary for their Road Trip. Users would first enter their origin and destination, and select suggested points of interests along their route provided by Yelp Fusion API. A optimized route would be generated that allows users to visit their waypoints along their trip. 
-
-I created this App after my recent trip to L.A. During my trip, I took many day trips to nearby cities such as San Diego and I wanted to visit all the noteworthy points of interest along the way. I was searching the web for such tool that would provide a suggested itinerary but to no avail.  
+![roadexplorer_example1](https://user-images.githubusercontent.com/28040242/190529422-cfb504a5-04e4-451e-afb9-5846f94bffd6.png)
+![roadexplorer_example2](https://user-images.githubusercontent.com/28040242/190529426-8d593004-f169-401e-a681-985f5ff22989.png)
+![roadexplorer_example3](https://user-images.githubusercontent.com/28040242/190529507-98db88a8-0b4e-49b9-9f75-2c0704a14eb3.png)
 
 
-## Get Started
-
-After cloning Repository, initialize project by running 
-
-`npm install`
-
-to install all required node_modules.
+RoadExplorer is a road trip planner that allows users to discover new and exciting places along their way. It is a mobile responsive web application and a live demo can be viewed on [Heroku](https://roadexplorer.herokuapp.com/)
 
 
-In the project directory, you can run:
-
-`npm start`
-
-In `backend` directory, you can run:
-
-'nodemon index.js`
-
-*Google Maps and Yelp Fusion API Keys are required. 
